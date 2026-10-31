@@ -1,0 +1,7 @@
+{
+  "name": "@gagufit/config",
+  "private": true,
+  "exports": {
+    "./tsconfig/*": "./tsconfig/*"
+  }
+}
