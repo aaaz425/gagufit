@@ -3,6 +3,7 @@
 3D 방 배치 시뮬레이터
 
 ## 스택
+
 - pnpm + Turborepo 모노레포
 - Next.js App Router, TypeScript, Tailwind
 - r3f + drei
@@ -11,6 +12,7 @@
 - Vercel 시작, AWS 이전 가능하게 유지
 
 ## 구조
+
 ```
 apps/web         Next.js, 편집기
 apps/mobile      Expo WebView 예정
@@ -22,6 +24,7 @@ supabase/        마이그레이션 SQL
 ```
 
 ## 규칙
+
 - core에서 React·Next.js·three.js import 금지, 테스트 필수
 - api에서 React DOM·Next.js import 금지 - 앱에서도 사용
 - Supabase 호출은 api에서만
@@ -36,9 +39,12 @@ supabase/        마이그레이션 SQL
 - 쿠팡 링크 옆 대가성 문구 필수, 크롤링 금지
 
 ## 작업
+
 - 더 간단한 방법이 있으면 그걸로 - 코드·문서 공통
 - 확장이 확실하면 미리 대비 - 구현의 간단함과 충돌 시 확인
 - 단계마다 계획 확인 후 코드
 - 요청 범위 밖 수정 금지
 - 커밋은 요청 시에만
+- 커밋·PR 제목: Conventional Commits, 범위는 패키지명(web, core 등), 한국어
+- 브랜치: main 직접 푸시 금지, `feat/*` `fix/*` `chore/*` → PR → squash merge
 - 문서는 두괄식 개조식, 마침표·군더더기 없이, 대시는 `-`만
