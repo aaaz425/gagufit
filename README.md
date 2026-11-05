@@ -4,7 +4,7 @@
 
 ## 시작
 
-Node 22, pnpm 11 필요
+Node 26, pnpm 11 필요
 
 ```bash
 pnpm install
