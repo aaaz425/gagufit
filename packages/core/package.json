@@ -1,0 +1,15 @@
+{
+  "name": "@gagufit/core",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@gagufit/config": "workspace:*",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
+  }
+}
