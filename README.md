@@ -4,10 +4,12 @@
 
 ## 시작
 
-Node 22, pnpm 11 필요
+Node 26, pnpm 11, Docker, Supabase CLI 필요
 
 ```bash
 pnpm install
+supabase start
+cp apps/web/.env.example apps/web/.env.local  # supabase status 값 입력
 pnpm dev
 ```
 
@@ -22,4 +24,8 @@ pnpm dev
 | `pnpm test`      | 테스트        |
 | `pnpm format`    | Prettier 적용 |
 
-작업 규칙은 [AGENTS.md](./AGENTS.md)
+## 문서
+
+- 작업 규칙 - [AGENTS.md](./AGENTS.md)
+- 기획 - [docs/product](./docs/product)
+- 주요 결정 - [docs/adr](./docs/adr)

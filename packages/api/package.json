@@ -1,0 +1,16 @@
+{
+  "name": "@gagufit/api",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gagufit/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@gagufit/config": "workspace:*",
+    "typescript": "^5.9.3"
+  }
+}

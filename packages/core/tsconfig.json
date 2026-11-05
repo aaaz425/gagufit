@@ -1,0 +1,4 @@
+{
+  "extends": "@gagufit/config/tsconfig/base.json",
+  "include": ["src"]
+}
