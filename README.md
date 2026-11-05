@@ -22,4 +22,4 @@ pnpm dev
 | `pnpm test`      | 테스트        |
 | `pnpm format`    | Prettier 적용 |
 
-작업 규칙은 [AGENTS.md](./AGENTS.md)
+작업 규칙은 [AGENTS.md](./AGENTS.md), 기획은 [docs/product](./docs/product)
