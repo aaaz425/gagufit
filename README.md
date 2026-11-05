@@ -4,10 +4,12 @@
 
 ## 시작
 
-Node 26, pnpm 11 필요
+Node 26, pnpm 11, Docker, Supabase CLI 필요
 
 ```bash
 pnpm install
+supabase start
+cp apps/web/.env.example apps/web/.env.local  # supabase status 값 입력
 pnpm dev
 ```
 
