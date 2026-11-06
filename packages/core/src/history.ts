@@ -1,4 +1,7 @@
-/** 실행 취소 기록 - 불변 값, 함수마다 새 History 반환 */
+/**
+ * 실행 취소 기록 - 불변 값, 함수마다 새 History 반환
+ * - 공개는 `history.create` 처럼 namespace로
+ */
 export type History<T> = {
   readonly past: readonly T[];
   readonly present: T;
@@ -7,7 +10,7 @@ export type History<T> = {
   readonly limit: number;
 };
 
-export function createHistory<T>(initial: T, limit = 50): History<T> {
+export function create<T>(initial: T, limit = 50): History<T> {
   if (!Number.isInteger(limit) || limit < 1) {
     throw new RangeError(`limit은 1 이상 정수: ${limit}`);
   }
