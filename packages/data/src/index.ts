@@ -5,3 +5,9 @@ export {
   FURNITURE_COLORS,
   WALL_MATERIALS,
 } from "./materials";
+export { FURNITURE_PRESETS } from "./presets";
+export {
+  ROOM_TEMPLATES,
+  roomFromTemplate,
+  type RoomTemplate,
+} from "./templates";
