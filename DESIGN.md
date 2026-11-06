@@ -6,6 +6,7 @@ colors:
   primary: "#0B7D61"
   primary-hover: "#096A52"
   primary-soft: "#E6F4EF"
+  primary-inverse: "#7FD6B9"
   ink: "#1F2328"
   ink-muted: "#5B616E"
   ink-subtle: "#8A909C"
@@ -73,6 +74,7 @@ shadow:
 
 - `primary` - 주요 버튼, 선택된 가구 외곽선, 활성 탭, 링크
 - `primary-soft` - 선택 항목 배경, 활성 칩
+- `primary-inverse` - 어두운 바탕(토스트) 위 동작 글자, `ink` 위 9.2:1
 - `ink` 본문, `ink-muted` 보조 문구·저장 상태, `ink-subtle` 비활성·placeholder 전용
 - `canvas` 기본 배경, `surface` 패널·카드 영역 구분, `border` 구분선
 - `danger` - 겹침·벽 밖 이탈 경고, 삭제
@@ -128,6 +130,9 @@ shadow:
 - 가구 항목 - 썸네일 + 이름 + 치수 + `primary` circle-plus
 - 경고 안내 - 속성 패널 안, `danger-soft` 배경 + 이유 한 줄
 - 설정 행 - 라벨·설명 + 오른쪽 토글·값·화살표, `border` 구분
+- 메뉴 - `canvas` + `border` + `floating`, 항목 40px, 삭제만 `danger`
+- 토스트 - `ink` 바탕 흰 글자 + `primary-inverse` 동작, 화면 아래 가운데
+- 확인 모달 - 제목에 대상 이름, 결과 한 줄, 오른쪽 취소·확인, 지우기는 `danger`
 - 패널 - 데스크톱 좌·우 고정, `canvas` 배경, `border` 구분
 - 바텀시트 - 모바일 패널, 손잡이 표시, 위로 끌어 확장
 - 모달 - 템플릿 선택, 모바일은 전체 화면
