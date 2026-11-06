@@ -14503,6 +14503,136 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "kXTSP",
+          "name": "재질",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "text",
+              "id": "PiEhD",
+              "name": "제목",
+              "fill": "$ink",
+              "content": "재질·색",
+              "fontFamily": "$font",
+              "fontSize": 16,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "suQPz",
+              "name": "목록",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "yz6hY",
+                  "name": "재질 칩",
+                  "reusable": true,
+                  "width": 64,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "LyMwe",
+                      "name": "견본",
+                      "width": 56,
+                      "height": 56,
+                      "fill": "$scene-floor",
+                      "cornerRadius": 10,
+                      "stroke": "$border",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "M4kDko",
+                      "name": "이름",
+                      "fill": "$ink-muted",
+                      "content": "밝은 마루",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "D94tvy",
+                  "name": "재질 칩/선택",
+                  "reusable": true,
+                  "width": 64,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sAbTF",
+                      "name": "견본",
+                      "width": 56,
+                      "height": 56,
+                      "fill": "$scene-floor",
+                      "cornerRadius": 10,
+                      "stroke": "$primary",
+                      "strokeWidth": 2,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0B7D6133",
+                        "spread": 3
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "Gcna3",
+                      "name": "이름",
+                      "fill": "$primary",
+                      "content": "밝은 마루",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HL8ii",
+                  "name": "색 칩",
+                  "reusable": true,
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#D9C7A8",
+                  "cornerRadius": 999,
+                  "stroke": "$border",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "vMyR7",
+                  "name": "색 칩/선택",
+                  "reusable": true,
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#D9C7A8",
+                  "cornerRadius": 999,
+                  "stroke": "$primary",
+                  "strokeWidth": 2,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0B7D6133",
+                    "spread": 3
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -17220,8 +17350,8 @@
     {
       "type": "frame",
       "id": "l6d2q",
-      "x": 2100,
-      "y": 6300,
+      "x": 1540,
+      "y": 7400,
       "name": "가구 표현 비교",
       "width": 1100,
       "fill": "$canvas",
@@ -18430,8 +18560,8 @@
     {
       "type": "frame",
       "id": "Gxhz6",
-      "x": 2100,
-      "y": 7250,
+      "x": 1540,
+      "y": 8461,
       "name": "가구 평면 기호 16종",
       "width": 1100,
       "fill": "$canvas",
@@ -20805,7 +20935,7 @@
     {
       "type": "frame",
       "id": "M9TBoP",
-      "x": 3300,
+      "x": 2030,
       "y": 6300,
       "name": "H12 모바일 편집기 - 속성 전체",
       "clip": true,
@@ -21350,7 +21480,7 @@
     {
       "type": "frame",
       "id": "W7Y60y",
-      "x": 3800,
+      "x": 2520,
       "y": 6300,
       "name": "H13 편집기 - 설정 창",
       "theme": {},
@@ -22385,6 +22515,589 @@
               "content": "실행 취소 ⌘Z · 다시 실행 ⇧⌘Z",
               "fontFamily": "$font",
               "fontSize": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "zQMMR",
+      "x": 2740,
+      "y": 7400,
+      "name": "재질·색 선택",
+      "width": 1100,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 40,
+      "children": [
+        {
+          "type": "text",
+          "id": "CEYhJ",
+          "name": "제목",
+          "fill": "$ink",
+          "content": "재질·색 선택",
+          "fontFamily": "$font",
+          "fontSize": 24,
+          "fontWeight": "800"
+        },
+        {
+          "type": "text",
+          "id": "kBv22",
+          "name": "설명",
+          "fill": "$ink-muted",
+          "content": "3D는 사실적 재질, 2D는 바닥 대표색만",
+          "fontFamily": "$font",
+          "fontSize": 13
+        },
+        {
+          "type": "frame",
+          "id": "qaJpw",
+          "name": "줄",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "RTHA2",
+              "name": "방 패널 - 재질",
+              "width": 300,
+              "fill": "$canvas",
+              "cornerRadius": "$radius-card",
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "l4kl1W",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "바닥",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "PTE9j",
+                  "name": "바닥 견본",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "j3qeur",
+                      "name": "줄1",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "id": "sVDLI",
+                          "type": "ref",
+                          "ref": "D94tvy",
+                          "name": "밝은 마루",
+                          "width": 84,
+                          "descendants": {
+                            "sAbTF": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950956280.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "Gcna3": {
+                              "content": "밝은 마루"
+                            }
+                          }
+                        },
+                        {
+                          "id": "zh2E4",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "진한 마루",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950955966.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "진한 마루"
+                            }
+                          }
+                        },
+                        {
+                          "id": "lt2Ay",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "회색 타일",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950955707.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "회색 타일"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BRVdL",
+                      "name": "줄2",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "id": "MNK0B",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "흰 타일",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950956175.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "흰 타일"
+                            }
+                          }
+                        },
+                        {
+                          "id": "izv7R",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "장판",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950954840.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "장판"
+                            }
+                          }
+                        },
+                        {
+                          "id": "BbgND",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "카펫",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950956098.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "카펫"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "YrsrZ",
+                  "name": "구분선",
+                  "fill": "$border",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "lHO36",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "벽",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "Qh8gl",
+                  "name": "벽 견본",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "S8S9oW",
+                      "name": "줄1",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "id": "dmTy7",
+                          "type": "ref",
+                          "ref": "D94tvy",
+                          "name": "흰 페인트",
+                          "width": 84,
+                          "descendants": {
+                            "sAbTF": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950957505.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "Gcna3": {
+                              "content": "흰 페인트"
+                            }
+                          }
+                        },
+                        {
+                          "id": "tpeK0",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "웜 베이지",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950961924.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "웜 베이지"
+                            }
+                          }
+                        },
+                        {
+                          "id": "jF4yD",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "연회색",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950958883.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "연회색"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cWOjj",
+                      "name": "줄2",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "id": "v8obtJ",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "실크 도배",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950958853.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "실크 도배"
+                            }
+                          }
+                        },
+                        {
+                          "id": "wN6kL",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "줄무늬 도배",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793950957585.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "줄무늬 도배"
+                            }
+                          }
+                        },
+                        {
+                          "id": "ZEXRQ",
+                          "type": "ref",
+                          "ref": "yz6hY",
+                          "name": "콘크리트",
+                          "width": 84,
+                          "descendants": {
+                            "LyMwe": {
+                              "width": 84,
+                              "height": 60,
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "./images/generated-1793951062632.png",
+                                "mode": "fill"
+                              }
+                            },
+                            "M4kDko": {
+                              "content": "콘크리트"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "J3zaaQ",
+              "name": "가구 속성 - 색",
+              "width": 300,
+              "fill": "$canvas",
+              "cornerRadius": "$radius-card",
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "U73aQC",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "색",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "zycg8",
+                  "name": "색 줄",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "id": "x9mTW",
+                      "type": "ref",
+                      "ref": "HL8ii",
+                      "name": "화이트",
+                      "fill": "#F4F1EA"
+                    },
+                    {
+                      "id": "jTYoL",
+                      "type": "ref",
+                      "ref": "vMyR7",
+                      "name": "오크",
+                      "fill": "#D9C7A8"
+                    },
+                    {
+                      "id": "l9kjPW",
+                      "type": "ref",
+                      "ref": "HL8ii",
+                      "name": "월넛",
+                      "fill": "#8A6546"
+                    },
+                    {
+                      "id": "t8aXdB",
+                      "type": "ref",
+                      "ref": "HL8ii",
+                      "name": "그레이",
+                      "fill": "#A7A9AC"
+                    },
+                    {
+                      "id": "EZQ7i",
+                      "type": "ref",
+                      "ref": "HL8ii",
+                      "name": "차콜",
+                      "fill": "#3E4044"
+                    },
+                    {
+                      "id": "NUey3",
+                      "type": "ref",
+                      "ref": "HL8ii",
+                      "name": "베이지 패브릭",
+                      "fill": "#D8CBB6"
+                    },
+                    {
+                      "id": "s6naP",
+                      "type": "ref",
+                      "ref": "HL8ii",
+                      "name": "그린 패브릭",
+                      "fill": "#7E9480"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Vz5nq",
+                  "name": "선택값",
+                  "fill": "$ink-muted",
+                  "content": "오크 · 나무",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "dQKMN",
+                  "name": "설명",
+                  "fill": "$ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "재질은 종류별로 정해짐 - 침대·책상은 나무, 소파·의자는 패브릭",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 12
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Lc3Ma",
+              "name": "2D 바닥 대표색",
+              "width": 300,
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oPeQK",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "2D 반영 - 진한 마루 고른 경우",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "cGgbN",
+                  "name": "바닥",
+                  "width": 300,
+                  "height": 300,
+                  "fill": "#A8835F",
+                  "stroke": "$scene-wall",
+                  "strokeWidth": 6,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "mXUKk",
+                      "x": 14,
+                      "y": 14,
+                      "name": "침대",
+                      "fill": "$scene-furniture",
+                      "width": 100,
+                      "height": 134,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "mgDOq",
+                      "x": 180,
+                      "y": 230,
+                      "name": "책상",
+                      "fill": "$scene-furniture",
+                      "width": 100,
+                      "height": 50,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "s7yzq",
+                  "name": "설명",
+                  "fill": "$ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "가구는 2D에서 기본색 유지 - 바닥이 어두워도 구분되게",
+                  "fontFamily": "$font",
+                  "fontSize": 12
+                }
+              ]
             }
           ]
         }
