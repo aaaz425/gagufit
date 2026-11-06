@@ -13,6 +13,6 @@ esac
 
 if printf '%s' "$cmd" | grep -Eq 'git( -C [^ ]+)? (commit|push)'; then
   [ "$branch" = "main" ] && block "main에서 커밋·푸시 금지 - feat/* fix/* chore/* 브랜치 사용"
-  printf '%s' "$cmd" | grep -Eq 'git( -C [^ ]+)? push.*([ :]main( |$))' && block "main으로 푸시 금지"
+  printf '%s' "$cmd" | grep -Eo 'git( -C [^ ]+)? push[^;&|]*' | grep -Eq '[ :]main( |$)' && block "main으로 푸시 금지"
 fi
 exit 0
