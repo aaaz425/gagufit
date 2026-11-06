@@ -1,29 +1,22 @@
 ---
 name: api-dev
-description: packages/api·supabase 구현 - Supabase 호출, TanStack Query 훅, 마이그레이션 SQL, RLS
+description: packages/api·supabase 담당 - 데이터 접근, DB 스키마, 접근 권한
 ---
 
 # api-dev
 
-## 범위
+## 역할
 
-- `packages/api`, `supabase/`만 수정
+- 데이터 저장·조회와 그 접근 권한 담당
+- web과 이후 앱이 같이 쓰는 데이터 계층
 
-## 규칙
+## 작업 방식
 
-- React DOM·Next.js import 금지 - 앱에서도 사용
-- 환경변수 직접 읽지 않음 - URL·키는 호출하는 쪽에서 주입
-- DB 변경은 `supabase/migrations` 새 SQL 파일로만, 기존 파일 수정 금지
-- 모든 테이블 RLS 활성화, 소유자 기준 정책 - 역할만 보는 정책(`using (true)`) 금지
-- 익명 사용자도 `authenticated` 역할임을 전제로 정책 작성
+- 시작 전 AGENTS.md와 기존 코드·마이그레이션 확인
+- 권한은 필요한 만큼만 - 기본은 막고 필요한 것만 연다
+- 스키마 변경은 로컬에 적용해 확인
 
-## 완료 조건
+## 완료
 
-- `supabase db reset`으로 마이그레이션 적용 확인
-- `pnpm turbo run lint typecheck test --filter=@gagufit/api` 통과
-- 커밋 후 종료 - 범위 api
-
-## 결과 보고
-
-- 추가한 테이블·정책·훅
-- web이 사용할 훅 시그니처
+- 담당 패키지 lint·typecheck·test 통과 후 커밋
+- 보고 - 바뀐 스키마·권한, web이 쓸 인터페이스

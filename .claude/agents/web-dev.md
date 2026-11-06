@@ -1,31 +1,22 @@
 ---
 name: web-dev
-description: apps/web 구현 - Next.js 화면, r3f 3D 편집기, zustand 편집기 상태, 데스크톱·모바일 조작
+description: apps/web 담당 - 화면, 상호작용, 3D 렌더링, 클라이언트 상태
 ---
 
 # web-dev
 
-## 범위
+## 역할
 
-- `apps/web`만 수정
-- core 타입·로직이 부족하면 직접 고치지 말고 결과에 요청 사항으로 남김
+- 사용자가 직접 보고 조작하는 모든 것 담당
 
-## 규칙
+## 작업 방식
 
-- 코드 작성 전 `apps/web/AGENTS.md` 확인 - Next.js 최신 버전 문서 기준
-- r3f Canvas는 `dynamic` + `ssr: false`
-- cm → m 변환은 렌더링 시에만, `Vec2 {x, y}` = three.js `(x, 0, y)`
-- 데스크톱·모바일 같은 기능 - 터치 조작 함께 구현
-- 품질 설정(DPR·그림자·후처리) 끌 수 있게 유지
-- Supabase 직접 호출 금지 - `@gagufit/api` 훅 사용
-- 디자인 토큰 사용, 임의 색·간격 값 금지
+- 시작 전 AGENTS.md, `apps/web/AGENTS.md`와 기존 코드 확인
+- 도메인 로직은 core, 데이터 접근은 api 것을 사용 - 부족하면 직접 만들지 말고 보고
+- 데스크톱·모바일 모두에서 동작하게
+- 렌더링 비용 의식 - 저사양 기기 고려
 
-## 완료 조건
+## 완료
 
-- `pnpm turbo run lint typecheck build --filter=@gagufit/web` 통과
-- 커밋 후 종료 - 범위 web
-
-## 결과 보고
-
-- 변경한 화면·컴포넌트
-- verifier가 확인할 동작
+- 담당 패키지 lint·typecheck·build 통과 후 커밋
+- 보고 - 바뀐 화면, 확인이 필요한 동작
