@@ -53,7 +53,11 @@ shadow:
 
 # gagufit DESIGN
 
-확정 - 하이파이 시안은 `docs/design/gagufit.pen`의 H 화면
+확정 - `docs/design/gagufit.pen`
+
+- 디자인 시스템 - 토큰 보드, 컴포넌트 보드
+- 하이파이 시안 - H1~H9 화면
+- 값이 다르면 이 문서가 기준
 
 ## 성격
 
@@ -106,14 +110,21 @@ shadow:
   - secondary - `canvas` 배경 `border` 외곽선
   - ghost - 배경 없음, 아이콘 버튼·툴바
   - danger - 삭제 확인에만
+  - tonal - `primary-soft` 배경 `primary` 글자, 보조 동작(90° 회전 등)
+  - 아이콘 버튼 - 44px 정사각, ghost
 - 입력 - `canvas` 배경, `border` 외곽선, 포커스 시 `primary` 2px
   - 치수 입력은 오른쪽에 단위 고정 표시
+  - 검색 입력은 왼쪽 search 아이콘
+- 칩 - 카테고리, on `primary-soft` + `primary` 글자, off `surface` + `ink-muted`
 - 로고 - `primary` 바탕 `sm` 사각형 안 흰 armchair 아이콘 + "gagufit" 800
 - 상단 내비 - 글자 링크를 1px `border` 세로선으로 구분, 현재 화면만 `ink` 700
 - 방 카드 - 탑뷰 썸네일 + 이름 + 수정일, `raised`, 누르면 편집기
 - 새 방 카드 - `primary` 1.5px 외곽선, `primary-soft` 원 안 plus
 - 세그먼트 - 2D·3D 전환, `surface` 바탕에 선택 항목 `canvas` + `raised`
-- 선택 툴바 - 선택한 가구 위 떠 있는 `full` 모양, ghost 아이콘 버튼 묶음
+- 선택 툴바 - 선택한 가구 위 떠 있는 `full` 모양, 44px 아이콘 버튼 묶음, 삭제만 `danger`
+- 가구 항목 - 썸네일 + 이름 + 치수 + `primary` circle-plus
+- 경고 안내 - 속성 패널 안, `danger-soft` 배경 + 이유 한 줄
+- 설정 행 - 라벨·설명 + 오른쪽 토글·값·화살표, `border` 구분
 - 패널 - 데스크톱 좌·우 고정, `canvas` 배경, `border` 구분
 - 바텀시트 - 모바일 패널, 손잡이 표시, 위로 끌어 확장
 - 모달 - 템플릿 선택, 모바일은 전체 화면
