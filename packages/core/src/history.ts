@@ -27,6 +27,25 @@ export function push<T>(history: History<T>, next: T): History<T> {
   };
 }
 
+/** 기록 없이 현재 값만 바꿈 - 끌기 중 매 프레임 갱신용, past·future 그대로 */
+export function replace<T>(history: History<T>, next: T): History<T> {
+  return { ...history, present: next };
+}
+
+/**
+ * replace로 바꾼 현재 값을 한 단계로 확정 - before는 끌기 시작 때 present
+ * - undo 한 번에 before로 돌아감, 다시 실행 기록 비움
+ * - before와 present가 같은 참조면 기록 안 함 - 움직이지 않은 클릭
+ */
+export function commit<T>(history: History<T>, before: T): History<T> {
+  if (Object.is(before, history.present)) return history;
+  return {
+    ...history,
+    past: [...history.past, before].slice(-history.limit),
+    future: [],
+  };
+}
+
 export function undo<T>(history: History<T>): History<T> {
   if (!canUndo(history)) return history;
   return {
