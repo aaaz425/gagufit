@@ -22609,7 +22609,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950956280.png",
+                                "url": "images/floor-light-oak.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22631,7 +22631,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950955966.png",
+                                "url": "images/floor-dark-walnut.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22653,7 +22653,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950955707.png",
+                                "url": "images/floor-grey-tile.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22685,7 +22685,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950956175.png",
+                                "url": "images/floor-white-tile.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22707,7 +22707,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950954840.png",
+                                "url": "images/floor-vinyl.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22729,7 +22729,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950956098.png",
+                                "url": "images/floor-carpet.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22789,7 +22789,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950957505.png",
+                                "url": "images/wall-white-paint.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22811,7 +22811,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950961924.png",
+                                "url": "images/wall-warm-beige.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22833,7 +22833,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950958883.png",
+                                "url": "images/wall-light-grey.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22865,7 +22865,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950958853.png",
+                                "url": "images/wall-silk.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22887,7 +22887,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793950957585.png",
+                                "url": "images/wall-stripe.jpg",
                                 "mode": "fill"
                               }
                             },
@@ -22909,7 +22909,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "./images/generated-1793951062632.png",
+                                "url": "images/wall-concrete.jpg",
                                 "mode": "fill"
                               }
                             },
