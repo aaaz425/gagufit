@@ -18,6 +18,9 @@ colors:
   scene-wall: "#3D3A36"
   scene-grid: "#E2D7C6"
   scene-furniture: "#D4C3AA"
+  scene-furniture-line: "#B5A285"
+  scene-furniture-soft: "#C8B597"
+  scene-rug: "#E6D6BF"
 typography:
   font-family: "Pretendard Variable, Pretendard, -apple-system, system-ui, sans-serif"
   display:
@@ -138,6 +141,17 @@ shadow:
 - 경고 - `danger` 외곽선 2px + `danger-soft` 채움, 선택과 겹치면 경고 우선
 - 드래그 중 - 벽까지 거리 치수 가이드, `ink-muted` 가는 선 + caption 숫자
 - 품질 끄기 - 그림자·후처리 없이도 가구 구분되게 외곽선 유지
+
+## 가구 탑뷰
+
+- 기호 16종 - 침대, 책상, 의자, 소파, 식탁, 옷장, 서랍장, 책장, 행거, TV장, 협탁, 화장대, 냉장고, 세탁기, 러그, 기타
+- 시안 - `docs/design/gagufit.pen`의 가구 평면 기호 16종
+- 위쪽이 등·벽 쪽, 아래쪽이 앞 - 회전해도 앞방향이 보이게
+- 몸체 `scene-furniture` + `scene-furniture-line` 1px, 장식은 `scene-furniture-line`·흰색 50%
+- 침대 이불 `scene-furniture-soft`, 폭 120cm 미만이면 베개 1개
+- 러그 `scene-rug`, 외곽선 없이 안쪽 테두리 - 다른 가구 아래에 깔림
+- 장식은 실제 치수에 맞춰 늘이고 몸체 모서리 4px 유지
+- 이름은 선택했을 때만 - 속성 패널·선택 툴바 근처
 
 ## 반응형
 
