@@ -14818,6 +14818,1866 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "P7rDwU",
+      "x": 0,
+      "y": 6300,
+      "name": "H10 편집기 - 방 패널·문 선택",
+      "theme": {},
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$canvas",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "gPcaj",
+          "name": "상단 바",
+          "width": "fill_container",
+          "height": 60,
+          "stroke": "$border",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 14,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "aAusU",
+              "type": "ref",
+              "ref": "krF7B",
+              "name": "내 방으로",
+              "descendants": {
+                "bRogl": {
+                  "icon": "chevron-left"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "sD3EB",
+              "name": "방 이름",
+              "fill": "$ink",
+              "content": "자취방 1",
+              "fontFamily": "$font",
+              "fontSize": 16,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "oASZY",
+              "name": "저장",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "v5H6e0",
+                  "name": "아이콘",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "check",
+                  "library": "lucide",
+                  "fill": "$ink-muted"
+                },
+                {
+                  "type": "text",
+                  "id": "Ndslk",
+                  "name": "라벨",
+                  "fill": "$ink-muted",
+                  "content": "저장됨",
+                  "fontFamily": "$font",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Ixomg",
+              "name": "여백",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "id": "rRIRp",
+              "type": "ref",
+              "ref": "Bmlah",
+              "name": "경고 배지",
+              "descendants": {
+                "i7Tct": {
+                  "content": "문 막힘 1"
+                }
+              }
+            },
+            {
+              "id": "DoGJ1",
+              "type": "ref",
+              "ref": "Fb9OH",
+              "name": "2D·3D"
+            },
+            {
+              "id": "ekYUC",
+              "type": "ref",
+              "ref": "krF7B",
+              "name": "설정"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "urBT2",
+          "name": "본문",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "type": "frame",
+              "id": "UicwH",
+              "name": "왼쪽 패널",
+              "width": 300,
+              "height": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "right": 1
+              },
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "e8kjIz",
+                  "name": "탭",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": "$radius-btn",
+                  "padding": 3,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "cZYeZ",
+                      "name": "가구",
+                      "width": "fill_container",
+                      "fill": "#FFFFFF00",
+                      "cornerRadius": "$radius-btn",
+                      "padding": [
+                        7,
+                        0
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BwHiP",
+                          "name": "라벨",
+                          "fill": "$ink-muted",
+                          "content": "가구",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "J2kVUS",
+                      "name": "방",
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius-btn",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#1F23280F",
+                        "offset": {
+                          "x": 0,
+                          "y": 2
+                        },
+                        "blur": 8
+                      },
+                      "padding": [
+                        7,
+                        0
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OyZq9",
+                          "name": "라벨",
+                          "fill": "$ink",
+                          "content": "방",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "wvjpT",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "방 크기",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "KEfo9",
+                  "name": "크기 줄",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "t2ZyS",
+                      "type": "ref",
+                      "ref": "b4UW4",
+                      "name": "가로",
+                      "width": "fill_container",
+                      "descendants": {
+                        "NpkQT": {
+                          "content": "가로"
+                        },
+                        "ZBwY6": {
+                          "content": "300"
+                        }
+                      }
+                    },
+                    {
+                      "id": "ky8wn",
+                      "type": "ref",
+                      "ref": "b4UW4",
+                      "name": "세로",
+                      "width": "fill_container",
+                      "descendants": {
+                        "NpkQT": {
+                          "content": "세로"
+                        },
+                        "ZBwY6": {
+                          "content": "400"
+                        }
+                      }
+                    },
+                    {
+                      "id": "z4Gw1",
+                      "type": "ref",
+                      "ref": "b4UW4",
+                      "name": "층고",
+                      "width": "fill_container",
+                      "descendants": {
+                        "NpkQT": {
+                          "content": "층고"
+                        },
+                        "ZBwY6": {
+                          "content": "240"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "KLYBA",
+                  "name": "구분선",
+                  "fill": "$border",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "msPdG",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "문·창문",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "VgN1f",
+                  "name": "현관문",
+                  "width": "fill_container",
+                  "fill": "$primary-soft",
+                  "cornerRadius": "$radius-btn",
+                  "stroke": "$primary",
+                  "strokeWidth": 1.5,
+                  "gap": 12,
+                  "padding": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ASYSF",
+                      "name": "아이콘 칸",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$canvas",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "rAbnW",
+                          "name": "아이콘",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "door-open",
+                          "library": "lucide",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ukp4w",
+                      "name": "텍스트",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KgUaM",
+                          "name": "이름",
+                          "fill": "$primary",
+                          "content": "현관문",
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "C24P2",
+                          "name": "설명",
+                          "fill": "$ink-muted",
+                          "content": "여닫이 · 아래쪽 벽 · 80 cm",
+                          "fontFamily": "$font",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ooP0Z",
+                  "name": "베란다 문",
+                  "width": "fill_container",
+                  "fill": "$canvas",
+                  "cornerRadius": "$radius-btn",
+                  "stroke": "$border",
+                  "strokeWidth": 1,
+                  "gap": 12,
+                  "padding": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i8ljL",
+                      "name": "아이콘 칸",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$surface",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "WHGMv",
+                          "name": "아이콘",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "panel-left-open",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HjOB7",
+                      "name": "텍스트",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I0drcU",
+                          "name": "이름",
+                          "fill": "$ink",
+                          "content": "베란다 문",
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MDAAp",
+                          "name": "설명",
+                          "fill": "$ink-muted",
+                          "content": "미닫이 · 위쪽 벽 · 120 cm",
+                          "fontFamily": "$font",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oyRaH",
+                  "name": "창문",
+                  "width": "fill_container",
+                  "fill": "$canvas",
+                  "cornerRadius": "$radius-btn",
+                  "stroke": "$border",
+                  "strokeWidth": 1,
+                  "gap": 12,
+                  "padding": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "B4y5J",
+                      "name": "아이콘 칸",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$surface",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "u198lB",
+                          "name": "아이콘",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "app-window",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xcCNm",
+                      "name": "텍스트",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Gl6ew",
+                          "name": "이름",
+                          "fill": "$ink",
+                          "content": "창문",
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Ow9DA",
+                          "name": "설명",
+                          "fill": "$ink-muted",
+                          "content": "왼쪽 벽 · 100 cm",
+                          "fontFamily": "$font",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YpZBM",
+                  "name": "추가 버튼 줄",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "uu6sL",
+                      "type": "ref",
+                      "ref": "w0tD3",
+                      "name": "문 추가",
+                      "width": "fill_container",
+                      "descendants": {
+                        "A11stl": {
+                          "content": "+ 문",
+                          "fontSize": 14
+                        }
+                      }
+                    },
+                    {
+                      "id": "cmLyK",
+                      "type": "ref",
+                      "ref": "w0tD3",
+                      "name": "창문 추가",
+                      "width": "fill_container",
+                      "descendants": {
+                        "A11stl": {
+                          "content": "+ 창문",
+                          "fontSize": 14
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Z28Sz",
+                  "name": "안내",
+                  "fill": "$ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "추가하면 빈 벽 가운데에 놓여요. 끌어서 벽을 따라 옮기기",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 12
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Pz1HG",
+              "name": "캔버스",
+              "clip": true,
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$surface",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mDSA6",
+                  "x": 130,
+                  "y": 80,
+                  "name": "방",
+                  "width": 450,
+                  "height": 600,
+                  "fill": "$scene-floor",
+                  "stroke": "$scene-wall",
+                  "strokeWidth": 8,
+                  "strokeAlignment": "outer",
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "V6ixY",
+                      "x": -8,
+                      "y": 180,
+                      "name": "창문",
+                      "fill": "$canvas",
+                      "width": 8,
+                      "height": 150,
+                      "stroke": "$scene-wall",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "rupfH",
+                      "x": 300,
+                      "y": 600,
+                      "name": "문",
+                      "fill": "$canvas",
+                      "width": 120,
+                      "height": 8
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 8,
+                      "id": "HQ75f",
+                      "x": 22,
+                      "y": 22,
+                      "name": "침대 - 선택",
+                      "fill": "$scene-furniture",
+                      "width": 150,
+                      "height": 200,
+                      "stroke": "#00000000",
+                      "strokeAlignment": "outer"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 6,
+                      "id": "JbfVk",
+                      "x": 36,
+                      "y": 32,
+                      "name": "베개",
+                      "fill": "#FFFFFF66",
+                      "width": 122,
+                      "height": 36
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 8,
+                      "id": "t8wZt",
+                      "x": 280,
+                      "y": 470,
+                      "name": "책상",
+                      "fill": "$danger-soft",
+                      "width": 150,
+                      "height": 70,
+                      "stroke": "$danger",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 8,
+                      "id": "bSPYJ",
+                      "x": 22,
+                      "y": 460,
+                      "name": "옷장",
+                      "fill": "$scene-furniture",
+                      "width": 60,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "pLhBc",
+                      "x": 300,
+                      "y": 480,
+                      "name": "문 열림 영역",
+                      "startAngle": 90,
+                      "sweepAngle": 90,
+                      "fill": "#0B7D611F",
+                      "width": 240,
+                      "height": 240,
+                      "stroke": "$primary",
+                      "strokeWidth": 1.5
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "lGC4f",
+                      "x": 417,
+                      "y": 480,
+                      "name": "문짝",
+                      "fill": "$primary",
+                      "width": 4,
+                      "height": 120
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "r7AqB",
+                      "x": 300,
+                      "y": 598,
+                      "name": "문 - 선택",
+                      "fill": "$canvas",
+                      "width": 120,
+                      "height": 12,
+                      "stroke": "$primary",
+                      "strokeWidth": 3,
+                      "strokeAlignment": "outer",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0B7D6133",
+                        "spread": 4
+                      }
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "D1QIhY",
+                      "x": 294,
+                      "y": 598,
+                      "name": "폭 핸들",
+                      "fill": "$canvas",
+                      "width": 12,
+                      "height": 12,
+                      "stroke": "$primary",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "Ckj25",
+                      "x": 414,
+                      "y": 598,
+                      "name": "폭 핸들",
+                      "fill": "$canvas",
+                      "width": 12,
+                      "height": 12,
+                      "stroke": "$primary",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "Gqnuc",
+                      "x": 0,
+                      "y": 584,
+                      "name": "위치 가이드",
+                      "fill": "$ink-muted",
+                      "width": 300,
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "akoFc",
+                      "x": 118,
+                      "y": 574,
+                      "name": "위치 값",
+                      "fill": "$canvas",
+                      "cornerRadius": 4,
+                      "padding": [
+                        2,
+                        6
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "v6Tr8z",
+                          "name": "값",
+                          "fill": "$ink-muted",
+                          "content": "200 cm",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "UCOfl",
+                      "x": 250,
+                      "y": -7,
+                      "name": "미닫이 고정짝",
+                      "fill": "$scene-wall",
+                      "width": 90,
+                      "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "Hbgpz",
+                      "x": 330,
+                      "y": -3,
+                      "name": "미닫이 움직짝",
+                      "fill": "$ink-muted",
+                      "width": 100,
+                      "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "U8sbu2",
+                      "x": -5,
+                      "y": 180,
+                      "name": "창문 유리",
+                      "fill": "#9CC3D5",
+                      "width": 2,
+                      "height": 150
+                    },
+                    {
+                      "id": "jrQvQ",
+                      "type": "ref",
+                      "ref": "CEDmh",
+                      "name": "선택 툴바",
+                      "x": 216,
+                      "y": 420
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "TVFXl",
+                  "x": 130,
+                  "y": 700,
+                  "name": "방 치수",
+                  "fill": "$ink-muted",
+                  "content": "300 × 400 cm",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "fhtmk",
+                  "x": 24,
+                  "y": 772,
+                  "name": "확대 축소",
+                  "fill": "$canvas",
+                  "cornerRadius": "$radius-btn",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#1F23280F",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 2,
+                  "padding": 4,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "OylQu",
+                      "name": "minus",
+                      "width": 32,
+                      "height": 32,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "NvtTk",
+                          "name": "아이콘",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "minus",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rr2d0",
+                      "name": "maximize",
+                      "width": 32,
+                      "height": 32,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "V3U8n5",
+                          "name": "아이콘",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "maximize",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q5eADo",
+                      "name": "plus",
+                      "width": 32,
+                      "height": 32,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "hODiA",
+                          "name": "아이콘",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XqSUp",
+              "name": "오른쪽 속성 패널",
+              "width": 300,
+              "height": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "left": 1
+              },
+              "layout": "vertical",
+              "gap": 18,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hxxaP",
+                  "name": "헤더",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "AeSZa",
+                      "name": "아이콘 칸",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "l05iZ",
+                          "name": "아이콘",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "door-open",
+                          "library": "lucide",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YZkTE",
+                      "name": "텍스트",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I1z3ez",
+                          "name": "이름",
+                          "fill": "$ink",
+                          "content": "현관문",
+                          "fontFamily": "$font",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "yyuZh",
+                          "name": "분류",
+                          "fill": "$ink-muted",
+                          "content": "문 · 아래쪽 벽",
+                          "fontFamily": "$font",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "d2m9e",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "종류",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "JnQ9C",
+                  "type": "ref",
+                  "ref": "Fb9OH",
+                  "name": "종류",
+                  "width": "fill_container",
+                  "descendants": {
+                    "hxF5P": {
+                      "width": "fill_container",
+                      "justifyContent": "center"
+                    },
+                    "jafuj": {
+                      "content": "여닫이"
+                    },
+                    "DM0mK": {
+                      "width": "fill_container",
+                      "justifyContent": "center"
+                    },
+                    "mtiLV": {
+                      "content": "미닫이"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "yUvMD",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "크기",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "bSxZ7",
+                  "name": "크기 줄",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "id": "IQWrI",
+                      "type": "ref",
+                      "ref": "b4UW4",
+                      "name": "폭",
+                      "width": "fill_container",
+                      "descendants": {
+                        "NpkQT": {
+                          "content": "폭"
+                        },
+                        "ZBwY6": {
+                          "content": "80"
+                        }
+                      }
+                    },
+                    {
+                      "id": "Q0QSt",
+                      "type": "ref",
+                      "ref": "b4UW4",
+                      "name": "높이",
+                      "width": "fill_container",
+                      "descendants": {
+                        "NpkQT": {
+                          "content": "높이"
+                        },
+                        "ZBwY6": {
+                          "content": "200"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "xt5OU",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "위치",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "l3AvDu",
+                  "type": "ref",
+                  "ref": "b4UW4",
+                  "name": "왼쪽 끝에서",
+                  "width": "fill_container",
+                  "descendants": {
+                    "NpkQT": {
+                      "content": "벽 왼쪽 끝에서"
+                    },
+                    "ZBwY6": {
+                      "content": "200"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "hv64g",
+                  "name": "섹션",
+                  "fill": "$ink",
+                  "content": "열리는 방향",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "id": "i0fmZD",
+                  "type": "ref",
+                  "ref": "Fb9OH",
+                  "name": "경첩",
+                  "width": "fill_container",
+                  "descendants": {
+                    "hxF5P": {
+                      "width": "fill_container",
+                      "justifyContent": "center"
+                    },
+                    "jafuj": {
+                      "content": "경첩 오른쪽"
+                    },
+                    "DM0mK": {
+                      "width": "fill_container",
+                      "justifyContent": "center"
+                    },
+                    "mtiLV": {
+                      "content": "경첩 왼쪽"
+                    }
+                  }
+                },
+                {
+                  "id": "pNIoQ",
+                  "type": "ref",
+                  "ref": "Fb9OH",
+                  "name": "안밖",
+                  "width": "fill_container",
+                  "descendants": {
+                    "hxF5P": {
+                      "width": "fill_container",
+                      "justifyContent": "center"
+                    },
+                    "jafuj": {
+                      "content": "방 안쪽"
+                    },
+                    "DM0mK": {
+                      "width": "fill_container",
+                      "justifyContent": "center"
+                    },
+                    "mtiLV": {
+                      "content": "바깥쪽"
+                    }
+                  }
+                },
+                {
+                  "id": "ppYUE",
+                  "type": "ref",
+                  "ref": "fQf3J",
+                  "name": "경고 안내",
+                  "width": "fill_container",
+                  "descendants": {
+                    "QM2do": {
+                      "content": "책상이 문 열리는 자리를 막아요"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Y4yW8",
+      "x": 1540,
+      "y": 6300,
+      "name": "H11 모바일 편집기 - 방 시트",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$canvas",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "tH6Kj",
+          "name": "상단 바",
+          "width": "fill_container",
+          "height": 52,
+          "stroke": "$border",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 6,
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "MKuHi",
+              "type": "ref",
+              "ref": "krF7B",
+              "name": "내 방으로",
+              "descendants": {
+                "bRogl": {
+                  "icon": "chevron-left",
+                  "width": 22,
+                  "height": 22
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "hPJea",
+              "name": "방 이름",
+              "fill": "$ink",
+              "content": "자취방 1",
+              "fontFamily": "$font",
+              "fontSize": 16,
+              "fontWeight": "700"
+            },
+            {
+              "type": "icon",
+              "id": "R8sLy",
+              "name": "저장됨",
+              "width": 16,
+              "height": 16,
+              "icon": "cloud-check",
+              "library": "lucide",
+              "fill": "$ink-muted"
+            },
+            {
+              "type": "frame",
+              "id": "UibAC",
+              "name": "여백",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "id": "f5fTu",
+              "type": "ref",
+              "ref": "Bmlah",
+              "name": "경고 배지",
+              "descendants": {
+                "i7Tct": {
+                  "content": "1"
+                }
+              }
+            },
+            {
+              "id": "ZiK0x",
+              "type": "ref",
+              "ref": "krF7B",
+              "name": "설정",
+              "descendants": {
+                "bRogl": {
+                  "width": 22,
+                  "height": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "txWqU",
+          "name": "캔버스",
+          "clip": true,
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$surface",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "SuSUY",
+              "x": 45,
+              "y": 56,
+              "name": "방",
+              "width": 300,
+              "height": 400,
+              "fill": "$scene-floor",
+              "stroke": "$scene-wall",
+              "strokeWidth": 6,
+              "strokeAlignment": "outer",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "ryChK",
+                  "x": -6,
+                  "y": 130,
+                  "name": "창문",
+                  "fill": "#BFD9E6",
+                  "width": 6,
+                  "height": 100
+                },
+                {
+                  "type": "rectangle",
+                  "id": "J8yjcK",
+                  "x": 232,
+                  "y": 400,
+                  "name": "문",
+                  "fill": "$canvas",
+                  "width": 54,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 6,
+                  "id": "eVr6M",
+                  "x": 14,
+                  "y": 14,
+                  "name": "침대 - 선택",
+                  "fill": "$scene-furniture",
+                  "width": 100,
+                  "height": 134,
+                  "stroke": "#00000000",
+                  "strokeAlignment": "outer"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 4,
+                  "id": "uWnfY",
+                  "x": 24,
+                  "y": 22,
+                  "name": "베개",
+                  "fill": "#FFFFFF66",
+                  "width": 80,
+                  "height": 24
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 6,
+                  "id": "GagMI",
+                  "x": 186,
+                  "y": 310,
+                  "name": "책상",
+                  "fill": "$scene-furniture",
+                  "width": 100,
+                  "height": 46
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 6,
+                  "id": "bC8ym",
+                  "x": 218,
+                  "y": 340,
+                  "name": "의자 - 경고",
+                  "fill": "$danger-soft",
+                  "width": 34,
+                  "height": 34,
+                  "stroke": "$danger",
+                  "strokeWidth": 2
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 6,
+                  "id": "FE7Zf",
+                  "x": 14,
+                  "y": 310,
+                  "name": "옷장",
+                  "fill": "$scene-furniture",
+                  "width": 40,
+                  "height": 80
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZRUSZ",
+          "name": "속성 요약 시트",
+          "width": "fill_container",
+          "fill": "$canvas",
+          "cornerRadius": [
+            16,
+            16,
+            0,
+            0
+          ],
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#1F232814",
+            "offset": {
+              "x": 0,
+              "y": -4
+            },
+            "blur": 20
+          },
+          "layout": "vertical",
+          "gap": 14,
+          "padding": [
+            8,
+            16,
+            28,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "G3oR5",
+              "name": "손잡이 줄",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "U68yT",
+                  "name": "손잡이",
+                  "fill": "$border",
+                  "width": 36,
+                  "height": 4
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "h5BSQb",
+              "name": "요약",
+              "width": "fill_container",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "CY55w",
+                  "name": "썸네일",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$scene-floor",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "oS9Cd",
+                      "name": "모양",
+                      "fill": "$scene-furniture",
+                      "width": 22,
+                      "height": 30
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mGX0a",
+                  "name": "텍스트",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "L7CVn",
+                      "name": "이름",
+                      "fill": "$ink",
+                      "content": "퀸 침대",
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Dqszx",
+                      "name": "치수",
+                      "fill": "$ink-muted",
+                      "content": "150 × 200 cm · 0°",
+                      "fontFamily": "$font",
+                      "fontSize": 13
+                    }
+                  ]
+                },
+                {
+                  "id": "cp5F4",
+                  "type": "ref",
+                  "ref": "la98g",
+                  "name": "치수 편집",
+                  "descendants": {
+                    "sbMEJ": {
+                      "icon": "sliders-horizontal"
+                    },
+                    "z0Fh7X": {
+                      "content": "치수"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "C5FDa6",
+          "layoutPosition": "absolute",
+          "x": 0,
+          "y": 0,
+          "name": "딤",
+          "width": 390,
+          "height": 844,
+          "fill": "#1F232847"
+        },
+        {
+          "type": "frame",
+          "id": "iLs1F",
+          "layoutPosition": "absolute",
+          "x": 0,
+          "y": 270,
+          "name": "방 바텀시트",
+          "width": 390,
+          "height": 574,
+          "fill": "$canvas",
+          "cornerRadius": [
+            16,
+            16,
+            0,
+            0
+          ],
+          "layout": "vertical",
+          "gap": 14,
+          "padding": [
+            8,
+            16,
+            28,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "bN9su",
+              "name": "손잡이 줄",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "jP6rD",
+                  "name": "손잡이",
+                  "fill": "$border",
+                  "width": 36,
+                  "height": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "qrv5x",
+              "name": "제목",
+              "fill": "$ink",
+              "content": "방",
+              "fontFamily": "$font",
+              "fontSize": 18,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "TO5Bp",
+              "name": "섹션",
+              "fill": "$ink-muted",
+              "content": "방 크기",
+              "fontFamily": "$font",
+              "fontSize": 13,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "U7s3P2",
+              "name": "크기 줄",
+              "width": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "id": "Jb0fC",
+                  "type": "ref",
+                  "ref": "b4UW4",
+                  "name": "가로",
+                  "width": "fill_container",
+                  "descendants": {
+                    "NpkQT": {
+                      "content": "가로"
+                    },
+                    "ZBwY6": {
+                      "content": "300"
+                    }
+                  }
+                },
+                {
+                  "id": "ylo9V",
+                  "type": "ref",
+                  "ref": "b4UW4",
+                  "name": "세로",
+                  "width": "fill_container",
+                  "descendants": {
+                    "NpkQT": {
+                      "content": "세로"
+                    },
+                    "ZBwY6": {
+                      "content": "400"
+                    }
+                  }
+                },
+                {
+                  "id": "Pfxy2",
+                  "type": "ref",
+                  "ref": "b4UW4",
+                  "name": "층고",
+                  "width": "fill_container",
+                  "descendants": {
+                    "NpkQT": {
+                      "content": "층고"
+                    },
+                    "ZBwY6": {
+                      "content": "240"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "bQeHK",
+              "name": "섹션",
+              "fill": "$ink-muted",
+              "content": "문·창문",
+              "fontFamily": "$font",
+              "fontSize": 13,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "wwvVr",
+              "name": "현관문",
+              "width": "fill_container",
+              "gap": 12,
+              "padding": [
+                8,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "evOmj",
+                  "name": "아이콘 칸",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "x3RIy",
+                      "name": "아이콘",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "door-open",
+                      "library": "lucide",
+                      "fill": "$ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OO3fo",
+                  "name": "텍스트",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fOnOx",
+                      "name": "이름",
+                      "fill": "$ink",
+                      "content": "현관문",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Zs8t3",
+                      "name": "설명",
+                      "fill": "$ink-muted",
+                      "content": "여닫이 · 아래쪽 벽 · 80 cm",
+                      "fontFamily": "$font",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "dDtOq",
+                  "name": "화살표",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$ink-subtle"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Syli1",
+              "name": "베란다 문",
+              "width": "fill_container",
+              "gap": 12,
+              "padding": [
+                8,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Z4aU3b",
+                  "name": "아이콘 칸",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "uwEcE",
+                      "name": "아이콘",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "panel-left-open",
+                      "library": "lucide",
+                      "fill": "$ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZaAWj",
+                  "name": "텍스트",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "URgJc",
+                      "name": "이름",
+                      "fill": "$ink",
+                      "content": "베란다 문",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "w9dgdR",
+                      "name": "설명",
+                      "fill": "$ink-muted",
+                      "content": "미닫이 · 위쪽 벽 · 120 cm",
+                      "fontFamily": "$font",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "CaFxs",
+                  "name": "화살표",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$ink-subtle"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dHKhB",
+              "name": "창문",
+              "width": "fill_container",
+              "gap": 12,
+              "padding": [
+                8,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cKZtL",
+                  "name": "아이콘 칸",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "W7Smf",
+                      "name": "아이콘",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "app-window",
+                      "library": "lucide",
+                      "fill": "$ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cMmkR",
+                  "name": "텍스트",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mU5GA",
+                      "name": "이름",
+                      "fill": "$ink",
+                      "content": "창문",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "et5JD",
+                      "name": "설명",
+                      "fill": "$ink-muted",
+                      "content": "왼쪽 벽 · 100 cm",
+                      "fontFamily": "$font",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "RRsD6",
+                  "name": "화살표",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$ink-subtle"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rEpY1",
+              "name": "추가 버튼 줄",
+              "width": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "id": "Obhux",
+                  "type": "ref",
+                  "ref": "w0tD3",
+                  "name": "문 추가",
+                  "width": "fill_container",
+                  "descendants": {
+                    "A11stl": {
+                      "content": "+ 문"
+                    }
+                  }
+                },
+                {
+                  "id": "qLOBj",
+                  "type": "ref",
+                  "ref": "w0tD3",
+                  "name": "창문 추가",
+                  "width": "fill_container",
+                  "descendants": {
+                    "A11stl": {
+                      "content": "+ 창문"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {
