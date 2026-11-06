@@ -12,7 +12,9 @@ description: 시각 디자인 담당 - 디자인 토큰, 화면 구조, 시안, 
 
 ## 작업 방식
 
-- 시작 전 AGENTS.md, PRD와 기존 스타일 확인
+- 시작 전 AGENTS.md, PRD, `DESIGN.md`, `docs/design` 확인
+- 시안은 Pencil `docs/design/gagufit.pen` - 토큰·컴포넌트 보드 먼저 고치고 화면은 인스턴스로
+- 값 바꾸면 `DESIGN.md`·`apps/web/src/app/globals.css` 함께
 - 정한 값은 토큰으로 남겨 개발자가 그대로 쓰게
 - 데스크톱·모바일 함께 설계
 
