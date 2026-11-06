@@ -16,7 +16,7 @@ export function migrate(data: unknown): SavedRoom {
       return { schemaVersion: 1, room: data.room };
     default:
       throw new Error(
-        `지원하지 않는 schemaVersion: ${String(data.schemaVersion)}`,
+        `지원하지 않는 schemaVersion: ${JSON.stringify(data.schemaVersion)}`,
       );
   }
 }
@@ -25,16 +25,57 @@ function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
+const isInt = (v: unknown, min = -Infinity, max = Infinity) =>
+  Number.isInteger(v) && (v as number) >= min && (v as number) <= max;
+
+const isPositiveInt = (v: unknown) => isInt(v, 1);
+
 function isRoomV1(v: unknown): v is Room {
   return (
     isObject(v) &&
     typeof v.name === "string" &&
-    Number.isInteger(v.width) &&
-    Number.isInteger(v.depth) &&
-    Number.isInteger(v.height) &&
+    isPositiveInt(v.width) &&
+    isPositiveInt(v.depth) &&
+    isPositiveInt(v.height) &&
     typeof v.floorMaterial === "string" &&
     typeof v.wallMaterial === "string" &&
     Array.isArray(v.openings) &&
-    Array.isArray(v.furniture)
+    v.openings.every(isOpeningV1) &&
+    Array.isArray(v.furniture) &&
+    v.furniture.every(isFurnitureV1)
+  );
+}
+
+function isOpeningV1(v: unknown): boolean {
+  if (
+    !isObject(v) ||
+    typeof v.id !== "string" ||
+    !isInt(v.wall, 0, 3) ||
+    !isInt(v.offset, 0) ||
+    !isPositiveInt(v.width) ||
+    !isPositiveInt(v.height) ||
+    !isInt(v.sill, 0)
+  ) {
+    return false;
+  }
+  if (v.kind === "hinged") {
+    return (
+      (v.hinge === "left" || v.hinge === "right") &&
+      (v.swing === "in" || v.swing === "out")
+    );
+  }
+  return v.kind === "sliding" || v.kind === "window";
+}
+
+function isFurnitureV1(v: unknown): boolean {
+  return (
+    isObject(v) &&
+    typeof v.id === "string" &&
+    typeof v.presetId === "string" &&
+    isObject(v.position) &&
+    isInt(v.position.x) &&
+    isInt(v.position.y) &&
+    isInt(v.rotation, 0, 359) &&
+    typeof v.color === "string"
   );
 }
