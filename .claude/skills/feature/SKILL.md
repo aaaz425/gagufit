@@ -18,7 +18,12 @@ description: 기능 하나를 에이전트 팀으로 개발 - 계획 확인 1회
 
 ## 2. 브랜치
 
-- main 최신화 후 `feat/<이름>` 생성
+- 원격 main 기준으로 생성 - 로컬 main 상태와 무관
+
+```sh
+git fetch origin
+git switch -c feat/<이름> --no-track origin/main
+```
 
 ## 3. 구현
 
@@ -27,7 +32,7 @@ description: 기능 하나를 에이전트 팀으로 개발 - 계획 확인 1회
 - 에이전트에 전달할 것
   - 계획 중 해당 부분
   - 앞 단계 에이전트의 결과 보고
-  - worktree 첫 작업으로 `pnpm install --frozen-lockfile`
+  - worktree 첫 작업으로 `pnpm install --frozen-lockfile`, `git log -1`로 `feat/*` 최신 커밋 기준인지 확인
 - 의존성 추가는 해당 에이전트가 직접, lockfile 충돌은 병합 시 `pnpm install`로 재생성
 
 ## 4. 병합
