@@ -4,6 +4,7 @@
   --color-primary: #0b7d61;
   --color-primary-hover: #096a52;
   --color-primary-soft: #e6f4ef;
+  --color-primary-inverse: #7fd6b9;
   --color-ink: #1f2328;
   --color-ink-muted: #5b616e;
   --color-ink-subtle: #8a909c;
@@ -15,6 +16,9 @@
   --color-scene-floor: #f1e8da;
   --color-scene-wall: #3d3a36;
   --color-scene-furniture: #d4c3aa;
+  --color-scene-furniture-line: #b5a285;
+  --color-scene-furniture-soft: #c8b597;
+  --color-scene-rug: #e6d6bf;
 
   --font-sans:
     "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;

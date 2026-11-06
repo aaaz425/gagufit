@@ -6,6 +6,7 @@ colors:
   primary: "#0B7D61"
   primary-hover: "#096A52"
   primary-soft: "#E6F4EF"
+  primary-inverse: "#7FD6B9"
   ink: "#1F2328"
   ink-muted: "#5B616E"
   ink-subtle: "#8A909C"
@@ -18,6 +19,9 @@ colors:
   scene-wall: "#3D3A36"
   scene-grid: "#E2D7C6"
   scene-furniture: "#D4C3AA"
+  scene-furniture-line: "#B5A285"
+  scene-furniture-soft: "#C8B597"
+  scene-rug: "#E6D6BF"
 typography:
   font-family: "Pretendard Variable, Pretendard, -apple-system, system-ui, sans-serif"
   display:
@@ -70,6 +74,7 @@ shadow:
 
 - `primary` - 주요 버튼, 선택된 가구 외곽선, 활성 탭, 링크
 - `primary-soft` - 선택 항목 배경, 활성 칩
+- `primary-inverse` - 어두운 바탕(토스트) 위 동작 글자, `ink` 위 9.2:1
 - `ink` 본문, `ink-muted` 보조 문구·저장 상태, `ink-subtle` 비활성·placeholder 전용
 - `canvas` 기본 배경, `surface` 패널·카드 영역 구분, `border` 구분선
 - `danger` - 겹침·벽 밖 이탈 경고, 삭제
@@ -125,6 +130,9 @@ shadow:
 - 가구 항목 - 썸네일 + 이름 + 치수 + `primary` circle-plus
 - 경고 안내 - 속성 패널 안, `danger-soft` 배경 + 이유 한 줄
 - 설정 행 - 라벨·설명 + 오른쪽 토글·값·화살표, `border` 구분
+- 메뉴 - `canvas` + `border` + `floating`, 항목 40px, 삭제만 `danger`
+- 토스트 - `ink` 바탕 흰 글자 + `primary-inverse` 동작, 화면 아래 가운데
+- 확인 모달 - 제목에 대상 이름, 결과 한 줄, 오른쪽 취소·확인, 지우기는 `danger`
 - 패널 - 데스크톱 좌·우 고정, `canvas` 배경, `border` 구분
 - 바텀시트 - 모바일 패널, 손잡이 표시, 위로 끌어 확장
 - 모달 - 템플릿 선택, 모바일은 전체 화면
@@ -138,6 +146,40 @@ shadow:
 - 경고 - `danger` 외곽선 2px + `danger-soft` 채움, 선택과 겹치면 경고 우선
 - 드래그 중 - 벽까지 거리 치수 가이드, `ink-muted` 가는 선 + caption 숫자
 - 품질 끄기 - 그림자·후처리 없이도 가구 구분되게 외곽선 유지
+
+## 가구 탑뷰
+
+- 기호 16종 - 침대, 책상, 의자, 소파, 식탁, 옷장, 서랍장, 책장, 행거, TV장, 협탁, 화장대, 냉장고, 세탁기, 러그, 기타
+- 시안 - `docs/design/gagufit.pen`의 가구 평면 기호 16종
+- 위쪽이 등·벽 쪽, 아래쪽이 앞 - 회전해도 앞방향이 보이게
+- 몸체 `scene-furniture` + `scene-furniture-line` 1px, 장식은 `scene-furniture-line`·흰색 50%
+- 침대 이불 `scene-furniture-soft`, 폭 120cm 미만이면 베개 1개
+- 러그 `scene-rug`, 외곽선 없이 안쪽 테두리 - 다른 가구 아래에 깔림
+- 장식은 실제 치수에 맞춰 늘이고 몸체 모서리 4px 유지
+- 이름은 선택했을 때만 - 속성 패널·선택 툴바 근처
+
+## 3D 보기
+
+- 카메라 - 위 45° 내려다보기로 시작, 방 전체가 화면에 들어오게
+  - 끌어서 회전, 휠·두 손가락 확대, 시점 리셋 버튼, 바닥 아래로 못 내려감
+  - 방 안 1인칭 보기는 2차
+- 벽 - 카메라 쪽 벽 두 면을 90cm 높이로 자동으로 낮춤, 낮춘 벽에도 문·창문 위치 표시
+- 재질 - 사실적 PBR
+  - 바닥·벽은 고른 재질 텍스처, 가구는 종류별 재질(나무·패브릭·가전) + 고른 색
+  - 텍스처는 CC0만(ambientCG, Poly Haven), 출처 기록
+- 조명 - 환경광 + 창문 쪽 햇빛 1개, 그림자는 품질 설정 켤 때만
+- 품질 끄기 - 고해상도 끄면 DPR 1·텍스처 512px, 그림자·후처리 없음
+- 선택 - 가구 `primary` 외곽선, 경고 - `danger` 반투명 덧칠
+- 문 열림 영역 - 바닥에 부채꼴 표시, 2D와 같은 색
+
+## 재질·색
+
+- 바닥 6 - 밝은 마루, 진한 마루, 회색 타일, 흰 타일, 장판, 카펫
+- 벽 6 - 흰 페인트, 웜 베이지, 연회색, 실크 도배, 줄무늬 도배, 콘크리트
+- 가구 색 7 - 화이트, 오크, 월넛, 그레이, 차콜, 베이지 패브릭, 그린 패브릭
+- 기본 - 밝은 마루, 흰 페인트, 가구는 종류별 기본색
+- 2D - 바닥만 재질 대표색으로 칠함, 가구는 `scene-furniture` 유지해 도면 가독성 지킴
+- 견본 - 재질 칩 56px `md` 모서리, 색 칩 32px 원, 선택은 `primary` 2px + `selection`
 
 ## 반응형
 
