@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: 기능 브랜치의 main 대비 변경 검토 - 정확성, AGENTS.md 규칙, 범위. 코드 수정 안 함
+description: 기능 브랜치의 main 대비 변경 검토 - 정확성, 불필요한 복잡도, AGENTS.md 규칙, 범위. 코드 수정 안 함
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -14,6 +14,7 @@ tools: Read, Grep, Glob, Bash
 ## 작업 방식
 
 - `git diff main...HEAD`와 주변 코드를 함께 읽기
+- 정확성과 함께 불필요한 복잡도 확인 - 더 간단한 구현이 있으면 그 방법을 제시
 - 추측보다 근거 - 확인한 것과 의심되는 것 구분
 
 ## 완료
