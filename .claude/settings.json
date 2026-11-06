@@ -13,11 +13,26 @@
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git branch:*)",
-      "Bash(supabase status:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git switch:*)",
+      "Bash(git merge:*)",
+      "Bash(git worktree:*)",
+      "Bash(supabase status:*)",
+      "Bash(supabase start)",
+      "Bash(supabase db reset)"
     ],
-    "ask": ["Bash(gh pr create:*)", "Bash(git push:*)"],
+    "ask": [
+      "Bash(gh pr create:*)",
+      "Bash(git push:*)",
+      "Bash(supabase db push:*)",
+      "Bash(supabase link:*)"
+    ],
     "deny": [
       "Bash(gh pr merge:*)",
+      "Bash(supabase db reset --linked:*)",
+      "Bash(supabase db reset --db-url:*)",
       "Edit(**/.env)",
       "Edit(**/.env.local)",
       "Edit(**/.env.*.local)"
