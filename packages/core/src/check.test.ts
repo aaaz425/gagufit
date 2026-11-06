@@ -28,6 +28,8 @@ function preset(
 const presets = [
   preset("box", 100, 100),
   preset("dot", 2, 2),
+  preset("bar", 200, 4),
+  preset("stick", 120, 4),
   preset("rug", 100, 100, "floor"),
 ];
 
@@ -228,6 +230,32 @@ describe("checkRoom 문 막힘", () => {
     expect(
       checkRoom(
         room([item("a", "dot", { x: 96, y: 76 })], [hinged(0, "left")]),
+        presets,
+      ),
+    ).toEqual([]);
+  });
+
+  it("꼭짓점이 모두 부채꼴 밖이어도 가로지르면 막힘", () => {
+    // 경첩 (110,0), 막대 x 50~250 y 38~42 - 양끝은 경첩 뒤쪽과 호 밖
+    const door: Opening = { ...hinged(0, "left"), offset: 110 };
+    expect(
+      checkRoom(room([item("a", "bar", { x: 150, y: 40 })], [door]), presets),
+    ).toEqual([blocked]);
+  });
+
+  it("30° 회전 가구도 판정", () => {
+    // 경첩 (20,0), 양끝 (112,30)·(8,90) 근처는 부채꼴 밖, 가운데 (60,60)은 안
+    const door = [hinged(0, "left")];
+    expect(
+      checkRoom(
+        room([item("a", "stick", { x: 60, y: 60 }, 30)], door),
+        presets,
+      ),
+    ).toEqual([blocked]);
+    // 같은 막대를 문에서 멀리 - 막힘 아님
+    expect(
+      checkRoom(
+        room([item("a", "stick", { x: 160, y: 160 }, 30)], door),
         presets,
       ),
     ).toEqual([]);
