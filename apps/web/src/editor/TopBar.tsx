@@ -9,9 +9,11 @@ import {
   Undo2,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { warningBadgeLabel } from "./labels";
+import { SettingsPopover } from "./SettingsPopover";
 import { useEditor, useRoom, warningsOf } from "./store";
+import { isWebGLAvailable } from "./webgl";
 import { IconButton, Segment } from "./ui";
 
 const NAME_MAX = 20;
@@ -70,28 +72,57 @@ export function TopBar({ compact }: { compact: boolean }) {
         </span>
       )}
       {!compact && <ViewSwitch />}
-      {/* 설정 창 - 병합 후 연결 */}
-      <IconButton label="설정">
-        <Settings size={compact ? 22 : 20} />
-      </IconButton>
+      <SettingsButton compact={compact} />
     </header>
   );
 }
 
+const noSubscribe = () => () => {};
+
 export function ViewSwitch() {
   const view = useEditor((s) => s.view);
   const setView = useEditor((s) => s.setView);
+  const showToast = useEditor((s) => s.showToast);
+  // 서버·hydration 중에는 false로 그리고 바로 실제 값으로
+  const webgl = useSyncExternalStore(
+    noSubscribe,
+    isWebGLAvailable,
+    () => false,
+  );
   return (
     <Segment
       label="보기"
       value={view}
-      onChange={setView}
+      onChange={(next) => {
+        if (next === "3d" && !webgl) {
+          showToast({
+            message: "이 브라우저에서는 3D를 쓸 수 없어 2D로 보여드려요",
+          });
+          return;
+        }
+        setView(next);
+      }}
       options={[
         { value: "2d", label: "2D" },
-        // 3D 보기 병합 후 연결
-        { value: "3d", label: "3D", disabled: true },
+        { value: "3d", label: "3D", unavailable: !webgl },
       ]}
     />
+  );
+}
+
+function SettingsButton({ compact }: { compact: boolean }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <IconButton
+        label="설정"
+        expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Settings size={compact ? 22 : 20} />
+      </IconButton>
+      {open && <SettingsPopover onClose={() => setOpen(false)} />}
+    </div>
   );
 }
 
