@@ -1,4 +1,12 @@
-import type { FurniturePreset, Room, Vec2 } from "./types";
+import { OPENING_DEFAULTS, roomCorners, wallSegment } from "./room";
+import type {
+  FurniturePreset,
+  Opening,
+  OpeningKind,
+  Room,
+  Vec2,
+  WallIndex,
+} from "./types";
 
 /** 회전 핸들이 0·90·180·270°에 붙는 범위 */
 export const ROTATION_SNAP_THRESHOLD = 5;
@@ -64,5 +72,122 @@ export function duplicateFurniture(
         },
       },
     ],
+  };
+}
+
+function wallLength(room: Pick<Room, "width" | "depth">, wall: WallIndex) {
+  const { start, end } = wallSegment(room, wall);
+  return Math.hypot(end.x - start.x, end.y - start.y);
+}
+
+/** 폭은 벽 길이까지, offset은 [0, 벽 길이 - 폭] */
+function fitToWall<T extends Opening>(opening: T, length: number): T {
+  const width = Math.min(opening.width, length);
+  const offset = Math.min(Math.max(opening.offset, 0), length - width);
+  return { ...opening, width, offset };
+}
+
+function updateOpening(
+  room: Room,
+  openingId: string,
+  update: (opening: Opening) => Opening,
+): Room {
+  if (!room.openings.some((o) => o.id === openingId)) {
+    throw new RangeError(`없는 문·창문: ${openingId}`);
+  }
+  return {
+    ...room,
+    openings: room.openings.map((o) => (o.id === openingId ? update(o) : o)),
+  };
+}
+
+/** 가장 긴 빈 벽 구간 가운데에 추가 - 기본 폭이 들어갈 곳이 없으면 null */
+export function addOpening(
+  room: Room,
+  kind: OpeningKind,
+  id: string,
+): Room | null {
+  const defaults = OPENING_DEFAULTS[kind];
+  let best: { wall: WallIndex; start: number; length: number } | null = null;
+  for (let wall = 0; wall < roomCorners(room).length; wall++) {
+    const used = room.openings
+      .filter((o) => o.wall === wall)
+      .sort((a, b) => a.offset - b.offset);
+    let cursor = 0;
+    for (const end of [...used, { offset: wallLength(room, wall), width: 0 }]) {
+      const length = end.offset - cursor;
+      if (!best || length > best.length) best = { wall, start: cursor, length };
+      cursor = Math.max(cursor, end.offset + end.width);
+    }
+  }
+  if (!best || best.length < defaults.width) return null;
+  const base = {
+    id,
+    wall: best.wall,
+    offset: Math.round(best.start + (best.length - defaults.width) / 2),
+    ...defaults,
+  };
+  const opening: Opening =
+    kind === "hinged"
+      ? { ...base, kind, hinge: "left", swing: "in" }
+      : { ...base, kind };
+  return { ...room, openings: [...room.openings, opening] };
+}
+
+/** point는 개구부 가운데 - 가장 가까운 벽에 붙고 모서리 안으로 제한 */
+export function moveOpening(room: Room, openingId: string, point: Vec2): Room {
+  let nearest = { wall: 0, along: 0, distance: Infinity };
+  for (let wall = 0; wall < roomCorners(room).length; wall++) {
+    const { start, end } = wallSegment(room, wall);
+    const length = wallLength(room, wall);
+    const ux = (end.x - start.x) / length;
+    const uy = (end.y - start.y) / length;
+    const along = Math.min(
+      Math.max((point.x - start.x) * ux + (point.y - start.y) * uy, 0),
+      length,
+    );
+    const distance = Math.hypot(
+      point.x - (start.x + ux * along),
+      point.y - (start.y + uy * along),
+    );
+    if (distance < nearest.distance) nearest = { wall, along, distance };
+  }
+  const { wall, along } = nearest;
+  return updateOpening(room, openingId, (o) =>
+    fitToWall(
+      { ...o, wall, offset: Math.round(along - o.width / 2) },
+      wallLength(room, wall),
+    ),
+  );
+}
+
+/** 왼쪽 끝 유지, 벽을 넘으면 왼쪽으로 밀림 - 1 이상 정수 */
+export function setOpeningWidth(
+  room: Room,
+  openingId: string,
+  width: number,
+): Room {
+  return updateOpening(room, openingId, (o) =>
+    fitToWall(
+      { ...o, width: Math.max(Math.round(width), 1) },
+      wallLength(room, o.wall),
+    ),
+  );
+}
+
+/** 벽보다 길어진 문·창문은 벽에 맞춰 줄임 */
+export function resizeRoom(
+  room: Room,
+  size: Partial<Pick<Room, "width" | "depth" | "height">>,
+): Room {
+  for (const [key, value] of Object.entries(size)) {
+    if (!Number.isInteger(value) || value < 1) {
+      throw new RangeError(`${key}는 1 이상 정수: ${value}`);
+    }
+  }
+  const next = { ...room, ...size };
+  return {
+    ...next,
+    openings: next.openings.map((o) => fitToWall(o, wallLength(next, o.wall))),
   };
 }

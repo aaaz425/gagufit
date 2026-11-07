@@ -2,10 +2,14 @@ export type * from "./types";
 export { checkRoom } from "./check";
 export {
   addFurniture,
+  addOpening,
   DUPLICATE_OFFSET,
   duplicateFurniture,
+  moveOpening,
+  resizeRoom,
   ROTATION_SNAP_THRESHOLD,
   roundVec2,
+  setOpeningWidth,
   snapRotation,
 } from "./edit";
 export { furnitureCorners, polygonsOverlap } from "./geometry";
