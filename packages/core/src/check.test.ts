@@ -117,6 +117,13 @@ describe("checkRoom 벽 밖", () => {
     expect(check(250)).toEqual([]);
     expect(check(251)).toEqual([{ type: "outOfRoom", furnitureId: "a" }]);
   });
+
+  it("회전해서 모서리가 나가면 경고", () => {
+    // 100×100을 45° 돌리면 중심에서 모서리까지 약 70.7
+    expect(
+      checkRoom(room([item("a", "box", { x: 60, y: 200 }, 45)]), presets),
+    ).toEqual([{ type: "outOfRoom", furnitureId: "a" }]);
+  });
 });
 
 describe("checkRoom 문 막힘", () => {
@@ -142,12 +149,47 @@ describe("checkRoom 문 막힘", () => {
     });
   }
 
-  it("밖으로 열리는 문은 무시", () => {
+  it("바깥 여닫이는 문 앞 통로에 걸치면 막힘", () => {
     expect(
       checkRoom(
-        room([item("a", "dot", { x: 30, y: 60 })], [hinged(0, "left", "out")]),
+        room([item("a", "dot", { x: 60, y: 30 })], [hinged(0, "left", "out")]),
         presets,
       ),
+    ).toEqual([blocked]);
+  });
+
+  it("미닫이는 문 앞 통로에 걸치면 막힘, 통로 끝에 맞닿음은 아님", () => {
+    const door: Opening = {
+      id: "door",
+      kind: "sliding",
+      wall: 0,
+      offset: 20,
+      width: 80,
+      height: 200,
+      sill: 0,
+    };
+    // box 100×100 - y 59면 통로(y 0~60)에 1cm 걸침, 60이면 맞닿음
+    const check = (y: number) =>
+      checkRoom(
+        room([item("a", "box", { x: 60, y: y + 50 })], [door]),
+        presets,
+      );
+    expect(check(59)).toEqual([blocked]);
+    expect(check(60)).toEqual([]);
+  });
+
+  it("창문은 판정 없음", () => {
+    const window: Opening = {
+      id: "w",
+      kind: "window",
+      wall: 0,
+      offset: 20,
+      width: 100,
+      height: 120,
+      sill: 90,
+    };
+    expect(
+      checkRoom(room([item("a", "box", { x: 70, y: 50 })], [window]), presets),
     ).toEqual([]);
   });
 

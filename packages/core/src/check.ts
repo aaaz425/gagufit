@@ -1,6 +1,13 @@
 import { EPSILON, furnitureCorners, polygonsOverlap } from "./geometry";
-import { wallSegment } from "./room";
-import type { FurniturePreset, HingedDoor, Room, Vec2, Warning } from "./types";
+import { doorPassageCorners, wallSegment } from "./room";
+import type {
+  FurniturePreset,
+  HingedDoor,
+  Room,
+  SlidingDoor,
+  Vec2,
+  Warning,
+} from "./types";
 
 /** 프리셋 없는 가구는 크기를 몰라 판정 제외 */
 export function checkRoom(
@@ -20,7 +27,7 @@ export function checkRoom(
     ];
   });
   const doors = room.openings.filter(
-    (o): o is HingedDoor => o.kind === "hinged" && o.swing === "in",
+    (o): o is HingedDoor | SlidingDoor => o.kind !== "window",
   );
   const warnings: Warning[] = [];
 
@@ -30,7 +37,7 @@ export function checkRoom(
     }
     if (!item.normal) return;
     for (const door of doors) {
-      if (doorSwingOverlaps(room, door, item.corners)) {
+      if (doorBlocked(room, door, item.corners)) {
         warnings.push({
           type: "doorBlocked",
           openingId: door.id,
@@ -54,6 +61,17 @@ function insideRoom(room: Room, p: Vec2): boolean {
     p.x <= room.width + EPSILON &&
     p.y <= room.depth + EPSILON
   );
+}
+
+function doorBlocked(
+  room: Room,
+  door: HingedDoor | SlidingDoor,
+  corners: readonly Vec2[],
+): boolean {
+  if (door.kind === "hinged" && door.swing === "in") {
+    return doorSwingOverlaps(room, door, corners);
+  }
+  return polygonsOverlap(doorPassageCorners(room, door), corners);
 }
 
 // 경첩점 기준 좌표에서 부채꼴은 x ≥ 0, y ≥ 0, |p| ≤ 문 폭 - 사각형을 사분면으로 잘라 거리 비교
