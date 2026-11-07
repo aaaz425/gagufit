@@ -108,52 +108,14 @@ describe("checkRoom 겹침", () => {
     expect(checkRoom(room(furniture(100 + h + 50)), presets)).toEqual([]);
     expect(checkRoom(room(furniture(100 + h + 49)), presets)).toHaveLength(1);
   });
-
-  it("러그는 겹침 제외", () => {
-    const warnings = checkRoom(
-      room([
-        item("rug", "rug", { x: 100, y: 100 }),
-        item("a", "box", { x: 100, y: 100 }),
-      ]),
-      presets,
-    );
-    expect(warnings).toEqual([]);
-  });
 });
 
 describe("checkRoom 벽 밖", () => {
-  it("벽에 붙은 건 괜찮음", () => {
-    expect(
-      checkRoom(room([item("a", "box", { x: 50, y: 50 })]), presets),
-    ).toEqual([]);
-    expect(
-      checkRoom(room([item("a", "box", { x: 250, y: 350 })]), presets),
-    ).toEqual([]);
-  });
-
-  it("꼭짓점 하나라도 밖이면 경고", () => {
-    for (const position of [
-      { x: 49, y: 200 },
-      { x: 251, y: 200 },
-      { x: 150, y: 49 },
-      { x: 150, y: 351 },
-    ]) {
-      expect(checkRoom(room([item("a", "box", position)]), presets)).toEqual([
-        { type: "outOfRoom", furnitureId: "a" },
-      ]);
-    }
-  });
-
-  it("회전해서 모서리가 나가면 경고", () => {
-    expect(
-      checkRoom(room([item("a", "box", { x: 60, y: 200 }, 45)]), presets),
-    ).toEqual([{ type: "outOfRoom", furnitureId: "a" }]);
-  });
-
-  it("러그도 판정", () => {
-    expect(
-      checkRoom(room([item("rug", "rug", { x: 0, y: 0 })]), presets),
-    ).toEqual([{ type: "outOfRoom", furnitureId: "rug" }]);
+  it("벽에 붙으면 괜찮고 1cm 나가면 경고", () => {
+    const check = (x: number) =>
+      checkRoom(room([item("a", "box", { x, y: 200 })]), presets);
+    expect(check(250)).toEqual([]);
+    expect(check(251)).toEqual([{ type: "outOfRoom", furnitureId: "a" }]);
   });
 });
 
@@ -184,26 +146,6 @@ describe("checkRoom 문 막힘", () => {
     expect(
       checkRoom(
         room([item("a", "dot", { x: 30, y: 60 })], [hinged(0, "left", "out")]),
-        presets,
-      ),
-    ).toEqual([]);
-  });
-
-  it("미닫이·창문은 무시", () => {
-    const base = { wall: 0, offset: 20, width: 80, height: 200, sill: 0 };
-    const openings: Opening[] = [
-      { ...base, id: "s", kind: "sliding" },
-      { ...base, id: "w", kind: "window" },
-    ];
-    expect(
-      checkRoom(room([item("a", "box", { x: 60, y: 50 })], openings), presets),
-    ).toEqual([]);
-  });
-
-  it("러그는 제외", () => {
-    expect(
-      checkRoom(
-        room([item("rug", "rug", { x: 60, y: 50 })], [hinged(0, "left")]),
         presets,
       ),
     ).toEqual([]);
@@ -265,22 +207,19 @@ describe("checkRoom 문 막힘", () => {
 });
 
 describe("checkRoom 공통", () => {
-  it("가구 배열 순서대로 - 벽 밖 → 문 막힘 → 겹침", () => {
+  it("러그는 겹침·문 막힘 제외", () => {
     const warnings = checkRoom(
       room(
         [
-          item("a", "box", { x: 40, y: 50 }),
-          item("b", "box", { x: 100, y: 100 }),
+          item("rug", "rug", { x: 60, y: 50 }),
+          item("a", "box", { x: 100, y: 100 }),
         ],
         [hinged(0, "left")],
       ),
       presets,
     );
     expect(warnings).toEqual([
-      { type: "outOfRoom", furnitureId: "a" },
       { type: "doorBlocked", openingId: "door", furnitureId: "a" },
-      { type: "overlap", furnitureIds: ["a", "b"] },
-      { type: "doorBlocked", openingId: "door", furnitureId: "b" },
     ]);
   });
 

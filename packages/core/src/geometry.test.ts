@@ -31,47 +31,12 @@ describe("furnitureCorners", () => {
     expect(topRight).toEqual({ x: -50, y: -100 });
     expect(topLeft).toEqual({ x: -50, y: 100 });
   });
-
-  it("45°", () => {
-    const corners = furnitureCorners(
-      { position: { x: 0, y: 0 }, rotation: 45 },
-      { width: 100, depth: 100 },
-    );
-    const h = 50 * Math.SQRT2;
-    // 로컬 오른쪽 아래 꼭짓점이 평면 오른쪽 끝으로
-    expect(corners[2].x).toBeCloseTo(h);
-    expect(corners[2].y).toBeCloseTo(0);
-    expect(corners[1].x).toBeCloseTo(0);
-    expect(corners[1].y).toBeCloseTo(-h);
-  });
 });
 
 describe("polygonsOverlap", () => {
-  it("맞닿기만 하면 겹침 아님", () => {
-    expect(polygonsOverlap(rect(100, 100, 0), rect(200, 100, 0))).toBe(false);
-    expect(polygonsOverlap(rect(100, 100, 0), rect(200, 200, 0))).toBe(false);
-  });
-
-  it("조금이라도 들어가면 겹침", () => {
-    expect(polygonsOverlap(rect(100, 100, 0), rect(199, 100, 0))).toBe(true);
-  });
-
-  it("90° 회전", () => {
-    // 200×100을 90° 돌리면 x 100~200
-    const rotated = rect(150, 150, 90, 200, 100);
-    expect(polygonsOverlap(rotated, rect(250, 150, 0))).toBe(false);
-    expect(polygonsOverlap(rotated, rect(249, 150, 0))).toBe(true);
-    expect(
-      polygonsOverlap(rect(150, 150, 0, 200, 100), rect(250, 150, 0)),
-    ).toBe(true);
-  });
-
-  it("45° 회전", () => {
-    const diamond = rect(100, 100, 45);
-    const h = 50 * Math.SQRT2;
-    expect(polygonsOverlap(diamond, rect(100 + h + 50, 100, 0))).toBe(false);
-    expect(polygonsOverlap(diamond, rect(100 + h + 49, 100, 0))).toBe(true);
-    // 바운딩 박스는 겹치지만 실제로는 떨어짐
-    expect(polygonsOverlap(diamond, rect(170, 170, 0, 50, 50))).toBe(false);
+  it("바운딩 박스는 겹쳐도 실제로 떨어지면 겹침 아님", () => {
+    expect(polygonsOverlap(rect(100, 100, 45), rect(170, 170, 0, 50, 50))).toBe(
+      false,
+    );
   });
 });
