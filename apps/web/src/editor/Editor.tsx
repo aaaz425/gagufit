@@ -27,6 +27,7 @@ import { PlanCanvas } from "./plan/PlanCanvas";
 import { useEditor, useRoom, type PanelTab } from "./store";
 import { Toast } from "./Toast";
 import { TopBar, ViewSwitch } from "./TopBar";
+import { View3D } from "./View3D";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
 
@@ -83,8 +84,12 @@ function NotFound() {
 function useShortcuts() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const t = e.target as HTMLElement | null;
-      if (t?.closest("input, textarea, select, [contenteditable=true]")) return;
+      const t = e.target;
+      if (
+        t instanceof Element &&
+        t.closest("input, textarea, select, [contenteditable=true]")
+      )
+        return;
       const { undo, redo } = useEditor.getState();
       const mod = e.metaKey || e.ctrlKey;
       if (mod && e.key.toLowerCase() === "z") {
@@ -112,8 +117,7 @@ function EditorScreen() {
   const view = useEditor((s) => s.view);
   useShortcuts();
 
-  // 3D 보기 자리 - view === "3d"일 때 PlanCanvas 대신
-  const canvas = view === "2d" ? <PlanCanvas compact={!desktop} /> : null;
+  const canvas = view === "2d" ? <PlanCanvas compact={!desktop} /> : <View3D />;
 
   if (desktop) {
     return (
@@ -124,8 +128,10 @@ function EditorScreen() {
           <main className="relative min-w-0 flex-1">
             {canvas}
             <Toast bottom={24} />
+            {/* 3D는 캔버스 크기가 바뀌면 방이 움직여 패널을 위에 띄움 */}
+            {view === "3d" && <RightPanel overlay />}
           </main>
-          <RightPanel />
+          {view === "2d" && <RightPanel />}
         </div>
       </div>
     );
@@ -182,13 +188,15 @@ function LeftPanel() {
   );
 }
 
-function RightPanel() {
+function RightPanel({ overlay }: { overlay?: boolean }) {
   const hasSelection = useEditor((s) => s.selection !== null);
   if (!hasSelection) return null;
   return (
     <aside
       aria-label="속성"
-      className="w-[300px] shrink-0 overflow-y-auto border-l border-border p-5"
+      className={`w-[300px] shrink-0 overflow-y-auto border-l border-border bg-canvas p-5 ${
+        overlay ? "absolute inset-y-0 right-0 z-10" : ""
+      }`}
     >
       <PropertiesPanel />
     </aside>

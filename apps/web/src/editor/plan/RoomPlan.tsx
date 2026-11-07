@@ -9,6 +9,7 @@ import {
 } from "@gagufit/core";
 import { FLOOR_MATERIALS, FURNITURE_PRESETS } from "@gagufit/data";
 import type { ReactNode } from "react";
+import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
 import { FurnitureSymbol } from "./FurnitureSymbol";
 
@@ -216,7 +217,7 @@ function OpeningShape({
   ];
   const color = selected ? "primary" : "ink-muted";
   const area = {
-    fill: tint(color, selected ? 12 : 8),
+    fill: tint(color, DOOR_AREA_OPACITY * 100),
     stroke: selected ? "var(--color-primary)" : tint("ink-muted", 50),
     strokeWidth: selected ? 1.5 : 1,
     ...px,

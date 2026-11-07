@@ -118,7 +118,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               {selected && (
                 <Outlines
                   thickness={SELECTION_PX * dpr}
-                  color={SCENE_COLORS.primary}
+                  // 2D와 같이 경고 우선
+                  color={warning ? SCENE_COLORS.danger : SCENE_COLORS.primary}
                 />
               )}
             </mesh>

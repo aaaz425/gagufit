@@ -199,7 +199,7 @@ export default function Room3D({
         type="button"
         aria-label="시점 초기화"
         onClick={reset}
-        className="absolute right-4 bottom-4 flex size-11 items-center justify-center rounded-sm bg-canvas text-ink shadow-floating"
+        className="absolute bottom-6 left-6 flex size-11 items-center justify-center rounded-sm bg-canvas text-ink shadow-raised hover:bg-surface"
       >
         <RotateCcw size={20} />
       </button>

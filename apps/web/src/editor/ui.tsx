@@ -6,12 +6,15 @@ export function IconButton({
   label,
   onClick,
   disabled,
+  expanded,
   size = 44,
   children,
 }: {
   label: string;
   onClick?: () => void;
   disabled?: boolean;
+  /** 여닫는 창을 여는 버튼 */
+  expanded?: boolean;
   size?: 40 | 44;
   children: ReactNode;
 }) {
@@ -22,6 +25,7 @@ export function IconButton({
       title={label}
       onClick={onClick}
       disabled={disabled}
+      aria-expanded={expanded}
       className={`flex shrink-0 items-center justify-center rounded-sm text-ink hover:bg-surface disabled:text-ink-subtle disabled:hover:bg-transparent ${
         size === 40 ? "size-10" : "size-11"
       }`}
@@ -97,7 +101,8 @@ export function Segment<T extends string>({
   label,
   full,
 }: {
-  options: { value: T; label: string; disabled?: boolean }[];
+  /** unavailable - 흐리게 보이지만 눌러서 이유 안내 가능 */
+  options: { value: T; label: string; unavailable?: boolean }[];
   value: T;
   onChange: (value: T) => void;
   label: string;
@@ -117,14 +122,14 @@ export function Segment<T extends string>({
             type="button"
             role="radio"
             aria-checked={on}
-            disabled={o.disabled}
+            aria-disabled={o.unavailable || undefined}
             onClick={() => onChange(o.value)}
             className={`flex items-center justify-center rounded-full px-4 text-[13px] ${
               full ? "min-h-10 flex-1" : "min-h-8"
             } ${
               on
                 ? "bg-canvas font-bold text-ink shadow-raised"
-                : "font-medium text-ink-muted disabled:text-ink-subtle"
+                : `font-medium ${o.unavailable ? "text-ink-subtle" : "text-ink-muted"}`
             }`}
           >
             {o.label}
