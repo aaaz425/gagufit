@@ -1,7 +1,4 @@
-/**
- * 실행 취소 기록 - 불변 값, 함수마다 새 History 반환
- * - 공개는 `history.create` 처럼 namespace로
- */
+/** 불변 값 - 함수마다 새 History 반환 */
 export type History<T> = {
   readonly past: readonly T[];
   readonly present: T;
@@ -17,7 +14,6 @@ export function create<T>(initial: T, limit = 50): History<T> {
   return { past: [], present: initial, future: [], limit };
 }
 
-/** 새 상태 기록 - 다시 실행 기록 비움, limit 넘으면 가장 오래된 것 버림 */
 export function push<T>(history: History<T>, next: T): History<T> {
   return {
     ...history,
@@ -27,16 +23,12 @@ export function push<T>(history: History<T>, next: T): History<T> {
   };
 }
 
-/** 기록 없이 현재 값만 바꿈 - 끌기 중 매 프레임 갱신용, past·future 그대로 */
+/** 끌기 중 매 프레임 갱신용 - 기록 안 함 */
 export function replace<T>(history: History<T>, next: T): History<T> {
   return { ...history, present: next };
 }
 
-/**
- * replace로 바꾼 현재 값을 한 단계로 확정 - before는 끌기 시작 때 present
- * - undo 한 번에 before로 돌아감, 다시 실행 기록 비움
- * - before와 present가 같은 참조면 기록 안 함 - 움직이지 않은 클릭
- */
+/** 끌기 끝 - before는 끌기 시작 때 present, 같은 참조면 움직이지 않은 클릭이라 기록 안 함 */
 export function commit<T>(history: History<T>, before: T): History<T> {
   if (Object.is(before, history.present)) return history;
   return {

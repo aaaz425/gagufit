@@ -4,7 +4,7 @@ import { withIds } from "./with-ids";
 
 export type RoomTemplate = { id: string; name: string; room: Room };
 
-/** 현관 문 - 아래 벽(2) 오른쪽 구석, 경첩은 구석 쪽, 방 안으로 열림 */
+/** 아래 벽 오른쪽 구석, 경첩은 구석 쪽 */
 const entranceDoor: HingedDoor = {
   id: "door-1",
   kind: "hinged",
@@ -46,7 +46,7 @@ export const ROOM_TEMPLATES: Readonly<Record<string, RoomTemplate>> = withIds<
   empty: template("빈 방", 300, 400, false),
 });
 
-/** 템플릿으로 새 방 - 공유 데이터가 바뀌지 않게 복사 */
+/** 공유 데이터가 바뀌지 않게 복사 */
 export function roomFromTemplate(template: RoomTemplate): Room {
   const { room } = template;
   return {

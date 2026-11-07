@@ -8,7 +8,7 @@ import type {
 } from "@gagufit/core";
 import { withIds } from "./with-ids";
 
-/** 견본 이미지 - web public 기준 상대 경로 */
+/** web public 기준 상대 경로 */
 const image = (id: string) => `materials/${id}.jpg`;
 
 // color2d - 견본 평균색 색조 유지, 벽선(scene-wall) 대비 4.5 이상 되게 명도 보정

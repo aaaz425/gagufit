@@ -1,16 +1,11 @@
-// 길이는 모두 cm 정수, 각도는 도 단위 정수 0~359
+// 길이 cm 정수, 각도 도 단위 정수 0~359
+// 평면 Vec2 = three.js (x, 0, y) - 위에서 볼 때 x 오른쪽·y 아래
 
-/** 평면 좌표 - three.js (x, 0, y), 위에서 본 평면에서 x 오른쪽·y 아래쪽 */
 export type Vec2 = { x: number; y: number };
 
 export type Size = { width: number; depth: number; height: number };
 
-/**
- * 벽 번호 - 벽 i = 꼭짓점 i → i+1 (마지막 벽은 마지막 꼭짓점 → 0)
- * - 꼭짓점은 위에서 본 평면 왼쪽 위 (0,0)부터 시계 방향
- * - 방 안에서 벽을 볼 때 왼쪽 끝이 꼭짓점 i
- * - 직사각형은 0 위, 1 오른쪽, 2 아래, 3 왼쪽 - 다각형도 같은 규칙
- */
+// 꼭짓점은 (0,0)부터 시계 방향, 벽 i = 꼭짓점 i → i+1 - 방 안에서 볼 때 꼭짓점 i가 왼쪽 끝
 export type WallIndex = number;
 
 export type FloorMaterialId =
@@ -41,7 +36,7 @@ export type FurnitureColorId =
 export type FloorMaterial = {
   id: FloorMaterialId;
   name: string;
-  /** 2D 도면 바닥 대표색 hex */
+  /** 2D 도면 대표색 */
   color2d: string;
   image: string;
 };
@@ -57,7 +52,7 @@ export type FurnitureColor = {
 type OpeningBase = {
   id: string;
   wall: WallIndex;
-  /** 방 안에서 벽을 볼 때 벽 왼쪽 끝부터 개구부 왼쪽 끝까지 */
+  /** 벽 왼쪽 끝부터 개구부 왼쪽 끝까지 */
   offset: number;
   width: number;
   height: number;
@@ -100,7 +95,7 @@ export type FurnitureCategory =
 
 export type FurnitureMaterial = "wood" | "fabric" | "appliance";
 
-/** floor - 바닥에 까는 가구(러그), 겹침·문 막힘 판정 제외 */
+/** floor는 러그 - 겹침·문 막힘 판정 제외 */
 export type FurnitureLayer = "floor" | "normal";
 
 export type FurniturePreset = {
@@ -119,16 +114,14 @@ export type PlacedFurniture = {
   presetId: string;
   /** 바닥 면 중심 */
   position: Vec2;
-  /** three.js rotation.y를 도로 - 위에서 본 평면에서 반시계 방향 */
+  /** three.js rotation.y와 같은 방향 - 위에서 볼 때 반시계 */
   rotation: number;
   color: FurnitureColorId;
 };
 
 export type Room = {
   name: string;
-  /** x 방향 */
   width: number;
-  /** y 방향 */
   depth: number;
   /** 층고 */
   height: number;

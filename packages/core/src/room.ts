@@ -8,7 +8,6 @@ export const OPENING_DEFAULTS: Readonly<
   window: { width: 100, height: 120, sill: 90 },
 };
 
-/** 꼭짓점 - 왼쪽 위 (0,0)부터 시계 방향 */
 export function roomCorners(room: Pick<Room, "width" | "depth">): Vec2[] {
   return [
     { x: 0, y: 0 },
@@ -18,7 +17,6 @@ export function roomCorners(room: Pick<Room, "width" | "depth">): Vec2[] {
   ];
 }
 
-/** 벽 양끝 - 방 안에서 볼 때 왼쪽 start, 오른쪽 end */
 export function wallSegment(
   room: Pick<Room, "width" | "depth">,
   wall: WallIndex,

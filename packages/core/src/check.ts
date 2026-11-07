@@ -2,10 +2,7 @@ import { EPSILON, furnitureCorners, polygonsOverlap } from "./geometry";
 import { wallSegment } from "./room";
 import type { FurniturePreset, HingedDoor, Room, Vec2, Warning } from "./types";
 
-/**
- * 배치 경고 - 가구 배열 순서대로, 가구마다 벽 밖 → 문 막힘 → 뒤 가구와 겹침
- * - presetId에 맞는 프리셋이 없는 가구는 크기를 몰라 판정 제외
- */
+/** 프리셋 없는 가구는 크기를 몰라 판정 제외 */
 export function checkRoom(
   room: Room,
   presets: Readonly<Record<string, FurniturePreset>>,
@@ -59,11 +56,7 @@ function insideRoom(room: Room, p: Vec2): boolean {
   );
 }
 
-/**
- * 문이 열리는 90° 부채꼴과 사각형이 넓이를 가지고 겹치는지
- * - 경첩점 기준 좌표로 바꿔 부채꼴을 {x ≥ 0, y ≥ 0, |p| ≤ 문 폭}으로 두고
- * - 사각형을 x ≥ 0, y ≥ 0으로 잘라 넓이가 있고 경첩점까지 거리가 문 폭보다 짧으면 겹침
- */
+// 경첩점 기준 좌표에서 부채꼴은 x ≥ 0, y ≥ 0, |p| ≤ 문 폭 - 사각형을 사분면으로 잘라 거리 비교
 function doorSwingOverlaps(
   room: Room,
   door: HingedDoor,
@@ -72,7 +65,7 @@ function doorSwingOverlaps(
   const { start, end } = wallSegment(room, door.wall);
   const len = Math.hypot(end.x - start.x, end.y - start.y);
   const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
-  // 꼭짓점이 시계 방향이라 방 안쪽은 벽 방향의 오른쪽 (y 아래 좌표계)
+  // 꼭짓점이 시계 방향이라 방 안쪽은 벽 방향의 오른쪽
   const inward = { x: -u.y, y: u.x };
   // 경첩점에서 닫힌 문이 놓인 방향
   const along = door.hinge === "left" ? u : { x: -u.x, y: -u.y };
@@ -96,7 +89,7 @@ function doorSwingOverlaps(
   return distanceToOrigin(poly) < door.width - EPSILON;
 }
 
-/** f(p) ≥ 0 쪽만 남김 - f는 선형 */
+/** f는 선형 */
 function clipHalfPlane(poly: Vec2[], f: (p: Vec2) => number): Vec2[] {
   const out: Vec2[] = [];
   poly.forEach((p, i) => {
@@ -121,7 +114,7 @@ function area(poly: readonly Vec2[]): number {
   return sum / 2;
 }
 
-/** 다각형이 x ≥ 0, y ≥ 0 안에 있어 원점은 안쪽에 올 수 없음 - 변까지 거리만 봄 */
+/** 다각형이 사분면 안이라 원점은 안쪽에 없음 - 변까지 거리만 봄 */
 function distanceToOrigin(poly: readonly Vec2[]): number {
   let min = Infinity;
   poly.forEach((p, i) => {

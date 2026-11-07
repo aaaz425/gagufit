@@ -7,7 +7,7 @@ export type SavedRoom = {
   room: Room;
 };
 
-/** 저장된 데이터를 현재 버전으로 - 버전 올릴 때 이전 버전 변환 case 추가 */
+// 버전 올릴 때 이전 버전 변환 case 추가
 export function migrate(data: unknown): SavedRoom {
   if (!isObject(data)) throw new Error("저장 데이터가 객체가 아님");
   switch (data.schemaVersion) {

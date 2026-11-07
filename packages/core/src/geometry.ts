@@ -1,9 +1,9 @@
 import type { PlacedFurniture, Size, Vec2 } from "./types";
 
-/** 부동소수 오차 허용 - cm 단위 */
+/** 부동소수 오차 허용 */
 export const EPSILON = 1e-6;
 
-/** 90° 배수는 정확한 값 - cos(90°) 같은 오차 방지 */
+/** 90° 배수는 정확한 값 - cos(90°) 오차 방지 */
 function cosSin(deg: number): [number, number] {
   const d = ((deg % 360) + 360) % 360;
   if (d === 0) return [1, 0];
@@ -14,11 +14,7 @@ function cosSin(deg: number): [number, number] {
   return [Math.cos(rad), Math.sin(rad)];
 }
 
-/**
- * 가구 바닥 사각형 꼭짓점 4개
- * - 회전 0일 때 왼쪽 위부터 시계 방향
- * - rotation 양수는 위에서 본 평면에서 반시계 - three.js rotation.y와 같음
- */
+/** 회전 0일 때 왼쪽 위부터 시계 방향 */
 export function furnitureCorners(
   furniture: Pick<PlacedFurniture, "position" | "rotation">,
   size: Pick<Size, "width" | "depth">,
