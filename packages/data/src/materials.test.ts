@@ -47,7 +47,7 @@ describe.each([
   ["가구 색", FURNITURE_COLORS, colorIds],
 ] as const)("%s", (_, list, ids) => {
   it("id가 core 유니온과 일치·중복 없음", () => {
-    const listIds = list.map((m) => m.id);
+    const listIds = Object.values(list).map((m) => m.id);
     expect(new Set(listIds).size).toBe(listIds.length);
     expect([...listIds].sort()).toEqual(Object.keys(ids).sort());
   });
@@ -55,18 +55,22 @@ describe.each([
 
 describe("재질", () => {
   it("견본 경로 = materials/<id>.jpg", () => {
-    for (const m of [...FLOOR_MATERIALS, ...WALL_MATERIALS]) {
+    for (const m of [
+      ...Object.values(FLOOR_MATERIALS),
+      ...Object.values(WALL_MATERIALS),
+    ]) {
       expect(m.image).toBe(`materials/${m.id}.jpg`);
     }
   });
 
   it("색은 hex 6자리", () => {
-    for (const m of FLOOR_MATERIALS) expect(m.color2d).toMatch(HEX);
-    for (const c of FURNITURE_COLORS) expect(c.hex).toMatch(HEX);
+    for (const m of Object.values(FLOOR_MATERIALS))
+      expect(m.color2d).toMatch(HEX);
+    for (const c of Object.values(FURNITURE_COLORS)) expect(c.hex).toMatch(HEX);
   });
 
   it("기본값은 목록 첫 항목", () => {
-    expect(FLOOR_MATERIALS[0].id).toBe(DEFAULT_FLOOR_MATERIAL);
-    expect(WALL_MATERIALS[0].id).toBe(DEFAULT_WALL_MATERIAL);
+    expect(Object.values(FLOOR_MATERIALS)[0].id).toBe(DEFAULT_FLOOR_MATERIAL);
+    expect(Object.values(WALL_MATERIALS)[0].id).toBe(DEFAULT_WALL_MATERIAL);
   });
 });

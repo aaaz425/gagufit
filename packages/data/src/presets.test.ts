@@ -1,7 +1,9 @@
 import type { FurnitureCategory } from "@gagufit/core";
 import { describe, expect, it } from "vitest";
 import { FURNITURE_COLORS } from "./materials";
-import { FURNITURE_PRESETS } from "./presets";
+import { FURNITURE_PRESETS as presetMap } from "./presets";
+
+const FURNITURE_PRESETS = Object.values(presetMap);
 
 const categories: Record<FurnitureCategory, true> = {
   bed: true,
@@ -43,7 +45,7 @@ describe("가구 프리셋", () => {
   });
 
   it("기본색은 색 목록에 있음", () => {
-    const colorIds = FURNITURE_COLORS.map((c) => c.id);
+    const colorIds = Object.keys(FURNITURE_COLORS);
     for (const p of FURNITURE_PRESETS) {
       expect(colorIds).toContain(p.defaultColor);
     }

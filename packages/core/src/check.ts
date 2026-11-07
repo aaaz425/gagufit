@@ -8,12 +8,12 @@ import type { FurniturePreset, HingedDoor, Room, Vec2, Warning } from "./types";
  */
 export function checkRoom(
   room: Room,
-  presets: readonly FurniturePreset[],
+  presets: Readonly<Record<string, FurniturePreset>>,
 ): Warning[] {
-  const presetById = new Map(presets.map((p) => [p.id, p]));
   const items = room.furniture.flatMap((f) => {
-    const preset = presetById.get(f.presetId);
-    if (!preset) return [];
+    // 저장 데이터의 presetId가 "toString" 같은 상속 키일 수 있음
+    if (!Object.hasOwn(presets, f.presetId)) return [];
+    const preset = presets[f.presetId];
     return [
       {
         id: f.id,

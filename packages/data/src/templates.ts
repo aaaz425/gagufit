@@ -1,5 +1,6 @@
 import { OPENING_DEFAULTS, type HingedDoor, type Room } from "@gagufit/core";
 import { DEFAULT_FLOOR_MATERIAL, DEFAULT_WALL_MATERIAL } from "./materials";
+import { withIds } from "./with-ids";
 
 export type RoomTemplate = { id: string; name: string; room: Room };
 
@@ -15,14 +16,12 @@ const entranceDoor: HingedDoor = {
 };
 
 function template(
-  id: string,
   name: string,
   width: number,
   depth: number,
   door: boolean,
-): RoomTemplate {
+): Omit<RoomTemplate, "id"> {
   return {
-    id,
     name,
     room: {
       name,
@@ -37,12 +36,15 @@ function template(
   };
 }
 
-export const ROOM_TEMPLATES: readonly RoomTemplate[] = [
-  template("one-room", "원룸 기본", 300, 400, true),
-  template("one-room-long", "원룸 긴 형", 250, 500, true),
-  template("one-half-room", "1.5룸", 400, 450, true),
-  template("empty", "빈 방", 300, 400, false),
-];
+export const ROOM_TEMPLATES: Readonly<Record<string, RoomTemplate>> = withIds<
+  string,
+  Omit<RoomTemplate, "id">
+>({
+  "one-room": template("원룸 기본", 300, 400, true),
+  "one-room-long": template("원룸 긴 형", 250, 500, true),
+  "one-half-room": template("1.5룸", 400, 450, true),
+  empty: template("빈 방", 300, 400, false),
+});
 
 /** 템플릿으로 새 방 - 공유 데이터가 바뀌지 않게 복사 */
 export function roomFromTemplate(template: RoomTemplate): Room {

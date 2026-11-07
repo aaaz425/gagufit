@@ -1,7 +1,9 @@
 import { checkRoom, wallSegment } from "@gagufit/core";
 import { describe, expect, it } from "vitest";
 import { FURNITURE_PRESETS } from "./presets";
-import { ROOM_TEMPLATES, roomFromTemplate } from "./templates";
+import { ROOM_TEMPLATES as templateMap, roomFromTemplate } from "./templates";
+
+const ROOM_TEMPLATES = Object.values(templateMap);
 
 const wallLength = (room: Parameters<typeof wallSegment>[0], wall: number) => {
   const { start, end } = wallSegment(room, wall);

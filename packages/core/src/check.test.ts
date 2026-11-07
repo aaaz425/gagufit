@@ -25,13 +25,15 @@ function preset(
   };
 }
 
-const presets = [
-  preset("box", 100, 100),
-  preset("dot", 2, 2),
-  preset("bar", 200, 4),
-  preset("stick", 120, 4),
-  preset("rug", 100, 100, "floor"),
-];
+const presets = Object.fromEntries(
+  [
+    preset("box", 100, 100),
+    preset("dot", 2, 2),
+    preset("bar", 200, 4),
+    preset("stick", 120, 4),
+    preset("rug", 100, 100, "floor"),
+  ].map((p) => [p.id, p]),
+);
 
 function item(
   id: string,
@@ -285,7 +287,7 @@ describe("checkRoom 공통", () => {
   it("프리셋 없는 가구는 판정 제외", () => {
     const warnings = checkRoom(
       room([
-        item("a", "missing", { x: 0, y: 0 }),
+        item("a", "toString", { x: 0, y: 0 }),
         item("b", "box", { x: 0, y: 0 }),
       ]),
       presets,
