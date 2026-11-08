@@ -4,9 +4,13 @@ import type {
   Opening,
   OpeningKind,
   Room,
+  Size,
   Vec2,
   WallIndex,
 } from "./types";
+
+/** 배치 가구 크기 범위 - 가로·세로·높이 공통 */
+export const FURNITURE_SIZE_LIMITS = { min: 1, max: 1000 } as const;
 
 /** 회전 핸들이 0·90·180·270°에 붙는 범위 */
 export const ROTATION_SNAP_THRESHOLD = 5;
@@ -46,6 +50,7 @@ export function addFurniture(
         presetId: preset.id,
         position: roundVec2({ x: room.width / 2, y: room.depth / 2 }),
         rotation: 0,
+        size: { ...preset.size },
         color: preset.defaultColor,
       },
     ],
@@ -76,6 +81,40 @@ export function duplicateFurniture(
 }
 
 /** 폭은 벽 길이까지, offset은 [0, 벽 길이 - 폭] */
+function clampInt(v: number, min: number, max: number): number {
+  return Math.min(Math.max(Math.round(v), min), max);
+}
+
+/** 정수로 반올림, FURNITURE_SIZE_LIMITS로 자름 - 바뀐 게 없으면 같은 room */
+export function resizeFurniture(
+  room: Room,
+  furnitureId: string,
+  size: Partial<Size>,
+): Room {
+  const source = room.furniture.find((f) => f.id === furnitureId);
+  if (!source) throw new RangeError(`없는 가구: ${furnitureId}`);
+  const { min, max } = FURNITURE_SIZE_LIMITS;
+  const next = { ...source.size };
+  for (const key of ["width", "depth", "height"] as const) {
+    const value = size[key];
+    if (value !== undefined) next[key] = clampInt(value, min, max);
+  }
+  if (sameValues(next, source.size)) return room;
+  return {
+    ...room,
+    furniture: room.furniture.map((f) =>
+      f === source ? { ...f, size: next } : f,
+    ),
+  };
+}
+
+function sameValues<T extends object>(a: T, b: T): boolean {
+  const keys = Object.keys(a) as (keyof T)[];
+  return (
+    keys.length === Object.keys(b).length && keys.every((k) => a[k] === b[k])
+  );
+}
+
 function fitToWall<T extends Opening>(opening: T, length: number): T {
   const width = Math.min(opening.width, length);
   const offset = Math.min(Math.max(opening.offset, 0), length - width);

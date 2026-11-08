@@ -4,7 +4,9 @@ import {
   addOpening,
   DUPLICATE_OFFSET,
   duplicateFurniture,
+  FURNITURE_SIZE_LIMITS,
   moveOpening,
+  resizeFurniture,
   resizeRoom,
   setOpeningWidth,
   snapRotation,
@@ -55,6 +57,7 @@ describe("addFurniture", () => {
         presetId: "bed-single",
         position: { x: 151, y: 100 },
         rotation: 0,
+        size: { width: 100, depth: 200, height: 40 },
         color: "oak",
       },
     ]);
@@ -166,5 +169,22 @@ describe("resizeRoom", () => {
 
   it("양의 정수가 아니면 throw", () => {
     expect(() => resizeRoom(box, { depth: 0 })).toThrow(RangeError);
+  });
+});
+
+describe("resizeFurniture", () => {
+  const base = addFurniture(room, preset, "a");
+
+  it("정수로 반올림하고 범위로 자름", () => {
+    const next = resizeFurniture(base, "a", { width: 80.6, depth: 5000 });
+    expect(next.furniture[0].size).toEqual({
+      width: 81,
+      depth: FURNITURE_SIZE_LIMITS.max,
+      height: 40,
+    });
+  });
+
+  it("바뀐 게 없으면 같은 room", () => {
+    expect(resizeFurniture(base, "a", { width: 100 })).toBe(base);
   });
 });

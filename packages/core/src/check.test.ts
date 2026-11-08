@@ -41,7 +41,12 @@ function item(
   position: Vec2,
   rotation = 0,
 ): PlacedFurniture {
-  return { id, presetId, position, rotation, color: "white" };
+  const size = presets[presetId]?.size ?? {
+    width: 100,
+    depth: 100,
+    height: 50,
+  };
+  return { id, presetId, position, rotation, size, color: "white" };
 }
 
 function room(furniture: PlacedFurniture[], openings: Opening[] = []): Room {
@@ -265,14 +270,24 @@ describe("checkRoom 공통", () => {
     ]);
   });
 
-  it("프리셋 없는 가구는 판정 제외", () => {
+  it("배치 가구 크기로 판정", () => {
+    const big = {
+      ...item("a", "dot", { x: 40, y: 50 }),
+      size: presets.box.size,
+    };
+    expect(checkRoom(room([big]), presets)).toEqual([
+      { type: "outOfRoom", furnitureId: "a" },
+    ]);
+  });
+
+  it("프리셋 없는 가구는 normal 층으로 판정", () => {
     const warnings = checkRoom(
       room([
-        item("a", "toString", { x: 0, y: 0 }),
-        item("b", "box", { x: 0, y: 0 }),
+        item("a", "toString", { x: 100, y: 100 }),
+        item("b", "box", { x: 100, y: 100 }),
       ]),
       presets,
     );
-    expect(warnings).toEqual([{ type: "outOfRoom", furnitureId: "b" }]);
+    expect(warnings).toEqual([{ type: "overlap", furnitureIds: ["a", "b"] }]);
   });
 });

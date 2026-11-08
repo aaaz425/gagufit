@@ -116,6 +116,8 @@ export type PlacedFurniture = {
   position: Vec2;
   /** three.js rotation.y와 같은 방향 - 위에서 볼 때 반시계 */
   rotation: number;
+  /** 추가할 때 프리셋 크기 복사, 이후 따로 조절 */
+  size: Size;
   color: FurnitureColorId;
 };
 

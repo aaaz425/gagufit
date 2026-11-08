@@ -9,23 +9,19 @@ import type {
   Warning,
 } from "./types";
 
-/** 프리셋 없는 가구는 크기를 몰라 판정 제외 */
+/** 프리셋 없는 가구는 normal 층으로 판정 */
 export function checkRoom(
   room: Room,
   presets: Readonly<Record<string, FurniturePreset>>,
 ): Warning[] {
-  const items = room.furniture.flatMap((f) => {
+  const items = room.furniture.map((f) => ({
+    id: f.id,
     // 저장 데이터의 presetId가 "toString" 같은 상속 키일 수 있음
-    if (!Object.hasOwn(presets, f.presetId)) return [];
-    const preset = presets[f.presetId];
-    return [
-      {
-        id: f.id,
-        normal: preset.layer === "normal",
-        corners: furnitureCorners(f, preset.size),
-      },
-    ];
-  });
+    normal:
+      !Object.hasOwn(presets, f.presetId) ||
+      presets[f.presetId].layer === "normal",
+    corners: furnitureCorners(f),
+  }));
   const doors = room.openings.filter(
     (o): o is HingedDoor | SlidingDoor => o.kind !== "window",
   );
