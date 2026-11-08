@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useEditor, useRoom, warnedFurnitureIds } from "../store";
+import { currentRoom, useEditor, useRoom, warnedFurnitureIds } from "../store";
 import { canvasInsets, fitPadding } from "../layout";
 import { SelectionToolbar } from "../SelectionToolbar";
 import { EmptyHint } from "./EmptyHint";
@@ -16,8 +16,6 @@ import { selectionBox } from "./selection-box";
 import { usePlanGestures } from "./usePlanGestures";
 import { fitView, toScreen, transformOf, zoomAt, type View } from "./view";
 import { ZoomControls } from "./ZoomControls";
-
-const present = () => useEditor.getState().history.present;
 
 /** 지금 열린 패널 기준 - 렌더 밖(맞춤 시점)에서도 쓰려고 store에서 바로 읽음 */
 function currentInsets(desktop: boolean) {
@@ -63,7 +61,11 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const fit = () => {
     if (!size) return;
     setView(
-      fitView(present(), size, fitPadding(!compact, currentInsets(!compact))),
+      fitView(
+        currentRoom(),
+        size,
+        fitPadding(!compact, currentInsets(!compact)),
+      ),
     );
   };
 
@@ -76,7 +78,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       // 처음 한 번만 맞춤 - 이후 창 크기가 바뀌어도 도면은 그대로
       if (!viewRef.current && width > 0 && height > 0) {
         const next = fitView(
-          present(),
+          currentRoom(),
           { width, height },
           fitPadding(!compact, currentInsets(!compact)),
         );

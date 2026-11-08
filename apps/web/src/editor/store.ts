@@ -137,6 +137,9 @@ function emptyRoom(): Room {
   };
 }
 
+/** 렌더 밖(이벤트·액션)에서 현재 방 읽기 */
+export const currentRoom = () => useEditor.getState().history.present;
+
 export const useRoom = () => useEditor((s) => s.history.present);
 
 const warningCache = new WeakMap<Room, Warning[]>();

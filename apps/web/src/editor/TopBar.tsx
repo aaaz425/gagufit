@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { warningBadgeLabel } from "./labels";
 import { SettingsPopover } from "./SettingsPopover";
-import { useEditor, useRoom, warningsOf } from "./store";
+import { currentRoom, useEditor, useRoom, warningsOf } from "./store";
 import { isWebGLAvailable } from "./webgl";
 import { IconButton, Segment } from "./ui";
 
@@ -142,8 +142,7 @@ function RoomName() {
     if (draft === null) return;
     const name = draft.trim();
     setDraft(null);
-    if (name && name !== room.name)
-      update({ ...useEditor.getState().history.present, name });
+    if (name && name !== room.name) update({ ...currentRoom(), name });
   };
 
   if (draft === null) {

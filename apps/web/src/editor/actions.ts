@@ -9,7 +9,7 @@ import {
   type PlacedFurniture,
   type Room,
 } from "@gagufit/core";
-import { useEditor } from "./store";
+import { currentRoom, useEditor } from "./store";
 
 // 가구 이동·회전·색·삭제, 문 경첩·방향 변경은 core 함수 없이 여기서
 // core 편집 함수처럼 바뀐 게 없으면 같은 room을 돌려줌
@@ -61,17 +61,16 @@ export const displayAngle = (rotation: number) => (360 - rotation) % 360;
 export const rotationFromDisplay = (deg: number) => snapRotation(-deg, 0);
 
 const editor = () => useEditor.getState();
-const room = () => editor().history.present;
 
 export function addPresetToRoom(preset: FurniturePreset) {
   const id = crypto.randomUUID();
-  editor().update(addFurniture(room(), preset, id));
+  editor().update(addFurniture(currentRoom(), preset, id));
   editor().select({ kind: "furniture", id });
 }
 
 export function addOpeningToRoom(kind: OpeningKind) {
   const id = crypto.randomUUID();
-  const next = addOpening(room(), kind, id);
+  const next = addOpening(currentRoom(), kind, id);
   if (!next) {
     editor().showToast({ message: "빈 벽이 없어 추가하지 못했어요" });
     return;
@@ -84,10 +83,10 @@ export function addOpeningToRoom(kind: OpeningKind) {
 export function rotateSelected90() {
   const sel = editor().selection;
   if (sel?.kind !== "furniture") return;
-  const f = room().furniture.find((item) => item.id === sel.id);
+  const f = currentRoom().furniture.find((item) => item.id === sel.id);
   if (!f) return;
   editor().update(
-    updateFurniture(room(), f.id, {
+    updateFurniture(currentRoom(), f.id, {
       rotation: rotationFromDisplay(displayAngle(f.rotation) + 90),
     }),
   );
@@ -97,14 +96,14 @@ export function duplicateSelected() {
   const sel = editor().selection;
   if (sel?.kind !== "furniture") return;
   const id = crypto.randomUUID();
-  editor().update(duplicateFurniture(room(), sel.id, id));
+  editor().update(duplicateFurniture(currentRoom(), sel.id, id));
   editor().select({ kind: "furniture", id });
 }
 
 export function deleteSelected() {
   const sel = editor().selection;
   if (!sel) return;
-  const r = room();
+  const r = currentRoom();
   editor().update(
     sel.kind === "furniture"
       ? { ...r, furniture: r.furniture.filter((f) => f.id !== sel.id) }
