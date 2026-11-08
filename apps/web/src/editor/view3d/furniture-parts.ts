@@ -82,11 +82,36 @@ function table({ width: w, depth: d, height: h }: Size, top = 3): Part[] {
   ];
 }
 
-/** 카테고리별 단순 모양 - 전체 경계 상자는 size와 같음 */
+/**
+ * 카테고리별 단순 모양 - 전체 경계 상자는 size와 같음
+ * 크기를 크게 줄여도 조각이 경계를 넘거나 뒤집히지 않게 잘라냄
+ */
 export function furnitureParts(
   category: FurnitureCategory,
   size: Size,
 ): Part[] {
+  const { width: w, depth: d, height: h } = size;
+  const max: [number, number, number] = [w / 2, h, d / 2];
+  const min: [number, number, number] = [-w / 2, 0, -d / 2];
+  return shapes(category, size).flatMap((part) => {
+    const lo = part.center.map((c, i) =>
+      Math.max(min[i], c - part.size[i] / 2),
+    );
+    const hi = part.center.map((c, i) =>
+      Math.min(max[i], c + part.size[i] / 2),
+    );
+    if (hi.some((v, i) => v - lo[i] <= 0)) return [];
+    return [
+      {
+        ...part,
+        size: hi.map((v, i) => v - lo[i]) as Part["size"],
+        center: hi.map((v, i) => (v + lo[i]) / 2) as Part["center"],
+      },
+    ];
+  });
+}
+
+function shapes(category: FurnitureCategory, size: Size): Part[] {
   const { width: w, depth: d, height: h } = size;
   switch (category) {
     case "bed": {
