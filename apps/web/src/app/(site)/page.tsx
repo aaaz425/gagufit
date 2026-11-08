@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Features } from "@/site/Features";
 import { Hero } from "@/site/Hero";
 import { HowItWorks } from "@/site/HowItWorks";
-import { SITE_DESCRIPTION } from "@/site/constants";
+import { HEADLINE, SITE_DESCRIPTION, SITE_NAME } from "@/site/constants";
 
 export const metadata: Metadata = {
-  title: { absolute: "gagufit - 이 가구, 우리 방에 들어갈까?" },
+  title: { absolute: `${SITE_NAME} - ${HEADLINE}` },
   description: SITE_DESCRIPTION,
 };
 

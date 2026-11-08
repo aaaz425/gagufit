@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { SITE_TAGLINE } from "@/site/constants";
+import { HEADLINE, SITE_NAME, SITE_TAGLINE } from "@/site/constants";
 
-export const alt = "gagufit - 이 가구, 우리 방에 들어갈까?";
+export const alt = `${SITE_NAME} - ${HEADLINE}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -14,6 +14,7 @@ const C = {
   inkMuted: "#5b616e",
   canvas: "#ffffff",
   surface: "#f8f6f2",
+  primarySelection: "#0b7d6133",
   danger: "#c8343a",
   dangerSoft: "#fcebec",
   floor: "#f1e8da",
@@ -116,7 +117,7 @@ export default function Image() {
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            whiteSpace: "pre-line",
             fontSize: 64,
             fontWeight: 700,
             letterSpacing: -1.6,
@@ -124,8 +125,7 @@ export default function Image() {
             color: C.ink,
           }}
         >
-          <div>이 가구,</div>
-          <div>우리 방에 들어갈까?</div>
+          {HEADLINE.replace(", ", ",\n")}
         </div>
         <div style={{ fontSize: 24, color: C.inkMuted }}>{SITE_TAGLINE}</div>
       </div>
@@ -149,7 +149,7 @@ export default function Image() {
           style={{
             background: C.furniture,
             borderRadius: 10,
-            boxShadow: `0 0 0 4px ${C.primary}, 0 0 0 10px #0b7d6133`,
+            boxShadow: `0 0 0 4px ${C.primary}, 0 0 0 10px ${C.primarySelection}`,
           }}
         />
         <Piece

@@ -16,15 +16,18 @@ export const DEFAULT_QUALITY: QualitySettings = {
   post: false,
 };
 
-export const QUALITY_ROWS: {
-  key: keyof QualitySettings;
-  label: string;
-  hint?: string;
-}[] = [
-  { key: "hiDpi", label: "고해상도", hint: "끄면 저사양에서 부드러워요" },
-  { key: "shadows", label: "그림자" },
-  { key: "post", label: "후처리 효과" },
-];
+export const QUALITY_ROWS: Record<
+  keyof QualitySettings,
+  { label: string; hint?: string }
+> = {
+  hiDpi: { label: "고해상도", hint: "끄면 저사양에서 부드러워요" },
+  shadows: { label: "그림자" },
+  post: { label: "후처리 효과" },
+};
+
+export const QUALITY_KEYS = Object.keys(
+  QUALITY_ROWS,
+) as (keyof QualitySettings)[];
 
 const STORAGE_KEY = "gagufit:quality";
 

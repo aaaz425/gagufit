@@ -9,7 +9,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gagufit.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "gagufit", template: `%s - ${SITE_NAME}` },
+  title: { default: SITE_NAME, template: `%s - ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
   openGraph: { siteName: SITE_NAME, locale: "ko_KR", type: "website" },
 };

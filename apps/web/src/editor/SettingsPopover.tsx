@@ -3,7 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { QUALITY_ROWS, useQualitySettings } from "./quality";
+import { QUALITY_KEYS, QUALITY_ROWS, useQualitySettings } from "./quality";
 import { Switch } from "./ui";
 
 /** 상단 바 설정 버튼 아래 작은 창 - 바깥 누르거나 Esc면 닫힘 */
@@ -36,11 +36,12 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
       className="absolute top-full right-0 z-30 mt-1 flex w-[min(320px,calc(100vw-16px))] flex-col rounded-md border border-border bg-canvas px-4 pt-2 pb-3 shadow-floating"
     >
       <h2 className="pt-1 text-sm font-bold text-ink-muted">화면 품질</h2>
-      {QUALITY_ROWS.map((row) => {
-        const on = quality[row.key];
+      {QUALITY_KEYS.map((key) => {
+        const row = QUALITY_ROWS[key];
+        const on = quality[key];
         return (
           <label
-            key={row.key}
+            key={key}
             className="flex cursor-pointer items-center gap-3 border-b border-border py-3 last-of-type:border-b-0"
           >
             <span className="flex min-w-0 flex-1 flex-col gap-1">
@@ -51,7 +52,7 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
                 <span className="text-xs text-ink-muted">{row.hint}</span>
               )}
             </span>
-            <Switch on={on} onChange={(v) => setQuality({ [row.key]: v })} />
+            <Switch on={on} onChange={(v) => setQuality({ [key]: v })} />
           </label>
         );
       })}

@@ -37,7 +37,7 @@ export function MiniRoom({ step }: { step: 1 | 2 | 3 }) {
     >
       <span
         className="absolute bg-canvas"
-        style={{ ...place({ x: 150, y: 143, w: 34, h: 7 }) }}
+        style={place({ x: 150, y: 143, w: 34, h: 7 })}
       />
       {step > 1 && (
         <>

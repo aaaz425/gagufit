@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { QualitySection } from "@/settings/QualitySection";
+import { LEGAL_LINKS } from "@/site/constants";
 import pkg from "../../../../package.json";
 
 export const metadata: Metadata = {
@@ -9,11 +10,7 @@ export const metadata: Metadata = {
   description: "화면 품질과 서비스 정보를 확인해요",
 };
 
-const LINKS = [
-  { href: "/", label: "서비스 소개" },
-  { href: "/terms", label: "이용약관" },
-  { href: "/privacy", label: "개인정보처리방침" },
-];
+const LINKS = [{ href: "/", label: "서비스 소개" }, ...LEGAL_LINKS];
 
 const ROW = "flex min-h-14 items-center justify-between border-b border-border";
 

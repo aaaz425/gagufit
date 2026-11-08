@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { COUPANG_NOTICE } from "./constants";
+import { COUPANG_NOTICE, LEGAL_LINKS } from "./constants";
 import { Container } from "./Container";
 
-const LINKS = [
-  { href: "/", label: "서비스 소개" },
-  { href: "/terms", label: "이용약관" },
-  { href: "/privacy", label: "개인정보처리방침" },
-];
+const LINKS = [{ href: "/", label: "서비스 소개" }, ...LEGAL_LINKS];
 
 export function SiteFooter() {
   return (
