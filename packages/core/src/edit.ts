@@ -121,17 +121,19 @@ function fitToWall<T extends Opening>(opening: T, length: number): T {
   return { ...opening, width, offset };
 }
 
+/** 바뀐 게 없으면 같은 room */
 function updateOpening(
   room: Room,
   openingId: string,
   update: (opening: Opening) => Opening,
 ): Room {
-  if (!room.openings.some((o) => o.id === openingId)) {
-    throw new RangeError(`없는 문·창문: ${openingId}`);
-  }
+  const source = room.openings.find((o) => o.id === openingId);
+  if (!source) throw new RangeError(`없는 문·창문: ${openingId}`);
+  const next = update(source);
+  if (sameValues<Opening>(next, source)) return room;
   return {
     ...room,
-    openings: room.openings.map((o) => (o.id === openingId ? update(o) : o)),
+    openings: room.openings.map((o) => (o === source ? next : o)),
   };
 }
 
@@ -158,17 +160,24 @@ export function addOpening(
     }
   }
   if (!best || best.length < defaults.width) return null;
-  const base = {
-    id,
-    wall: best.wall,
-    offset: Math.round(best.start + (best.length - defaults.width) / 2),
-    ...defaults,
+  const offset = Math.round(best.start + (best.length - defaults.width) / 2);
+  return {
+    ...room,
+    openings: [...room.openings, makeOpening(kind, id, best.wall, offset)],
   };
-  const opening: Opening =
-    kind === "hinged"
-      ? { ...base, kind, hinge: "left", swing: "in" }
-      : { ...base, kind };
-  return { ...room, openings: [...room.openings, opening] };
+}
+
+/** 크기는 종류 기본값, 여닫이는 경첩 왼쪽·안쪽 열림 */
+function makeOpening(
+  kind: OpeningKind,
+  id: string,
+  wall: WallIndex,
+  offset: number,
+): Opening {
+  const base = { id, wall, offset, ...OPENING_DEFAULTS[kind] };
+  return kind === "hinged"
+    ? { ...base, kind, hinge: "left", swing: "in" }
+    : { ...base, kind };
 }
 
 /** point는 개구부 가운데 - 가장 가까운 벽에 붙고 모서리 안으로 제한 */
@@ -207,6 +216,44 @@ export function setOpeningWidth(
       wallFrame(room, o.wall).length,
     ),
   );
+}
+
+/** 폭 핸들로 줄일 수 있는 최소 폭 */
+export const OPENING_MIN_WIDTH = 30;
+
+/** along은 벽 왼쪽 끝부터 거리 - 반대쪽 끝은 고정, 벽 안으로 자름 */
+export function setOpeningEdge(
+  room: Room,
+  openingId: string,
+  side: "left" | "right",
+  along: number,
+): Room {
+  return updateOpening(room, openingId, (o) => {
+    const right = o.offset + o.width;
+    if (side === "left") {
+      const left = Math.max(clampInt(along, 0, right - OPENING_MIN_WIDTH), 0);
+      return { ...o, offset: left, width: right - left };
+    }
+    const { length } = wallFrame(room, o.wall);
+    const end = clampInt(along, o.offset + OPENING_MIN_WIDTH, length);
+    return { ...o, width: end - o.offset };
+  });
+}
+
+/** 크기·경첩은 새 종류 기본값, 가운데 유지 */
+export function setOpeningKind(
+  room: Room,
+  openingId: string,
+  kind: OpeningKind,
+): Room {
+  return updateOpening(room, openingId, (o) => {
+    if (o.kind === kind) return o;
+    const offset = o.offset + (o.width - OPENING_DEFAULTS[kind].width) / 2;
+    return fitToWall(
+      makeOpening(kind, o.id, o.wall, Math.round(offset)),
+      wallFrame(room, o.wall).length,
+    );
+  });
 }
 
 type RoomSize = Pick<Room, "width" | "depth" | "height">;

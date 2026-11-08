@@ -6,9 +6,12 @@ import {
   duplicateFurniture,
   FURNITURE_SIZE_LIMITS,
   moveOpening,
+  OPENING_MIN_WIDTH,
   resizeFurniture,
   resizeRoom,
   ROOM_LIMITS,
+  setOpeningEdge,
+  setOpeningKind,
   setOpeningWidth,
   snapRotation,
 } from "./edit";
@@ -157,6 +160,73 @@ describe("setOpeningWidth", () => {
       offset: 0,
       width: 400,
     });
+  });
+});
+
+describe("setOpeningEdge", () => {
+  // 벽 0 길이 400, 개구부 100~200
+  const base = withOpening({ offset: 100 });
+
+  it("반대쪽 끝은 고정", () => {
+    expect(setOpeningEdge(base, "w", "left", 49.6).openings[0]).toMatchObject({
+      offset: 50,
+      width: 150,
+    });
+    expect(setOpeningEdge(base, "w", "right", 250).openings[0]).toMatchObject({
+      offset: 100,
+      width: 150,
+    });
+  });
+
+  it("벽 끝 너머로 끌어도 벽 안, 반대쪽 그대로", () => {
+    expect(setOpeningEdge(base, "w", "right", 999).openings[0]).toMatchObject({
+      offset: 100,
+      width: 300,
+    });
+    expect(setOpeningEdge(base, "w", "left", -50).openings[0]).toMatchObject({
+      offset: 0,
+      width: 200,
+    });
+  });
+
+  it("최소 폭 아래로 안 줄어듦", () => {
+    expect(setOpeningEdge(base, "w", "right", 0).openings[0].width).toBe(
+      OPENING_MIN_WIDTH,
+    );
+  });
+
+  it("바뀐 게 없으면 같은 room", () => {
+    expect(setOpeningEdge(base, "w", "right", 200)).toBe(base);
+  });
+});
+
+describe("setOpeningKind", () => {
+  // 창문 100~200, 가운데 150
+  const base = withOpening({ offset: 100 });
+
+  it("새 종류 기본값으로, 가운데 유지", () => {
+    expect(setOpeningKind(base, "w", "hinged").openings[0]).toEqual({
+      id: "w",
+      kind: "hinged",
+      wall: 0,
+      offset: 110,
+      width: 80,
+      height: 200,
+      sill: 0,
+      hinge: "left",
+      swing: "in",
+    });
+  });
+
+  it("여닫이에서 바꾸면 경첩·열림 방향 없음", () => {
+    const door = setOpeningKind(base, "w", "hinged");
+    expect(setOpeningKind(door, "w", "sliding").openings[0]).not.toHaveProperty(
+      "hinge",
+    );
+  });
+
+  it("같은 종류면 같은 room", () => {
+    expect(setOpeningKind(base, "w", "window")).toBe(base);
   });
 });
 
