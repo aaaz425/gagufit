@@ -8,7 +8,6 @@ import {
   type Vec2,
 } from "@gagufit/core";
 import { FLOOR_MATERIALS, FURNITURE_PRESETS } from "@gagufit/data";
-import type { ReactNode } from "react";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
 import { FurnitureSymbol } from "./FurnitureSymbol";
@@ -187,26 +186,21 @@ function FurnitureShape({
   );
 }
 
-function OpeningShape({
+type OpeningFrame = ReturnType<typeof openingFrame>;
+
+/** 방 안쪽 열림 영역 - 여닫이는 부채꼴, 미닫이는 통로 */
+function OpeningInside({
   room,
   opening: o,
-  scale,
+  frame,
   selected,
 }: {
   room: Room;
   opening: Opening;
-  scale: number;
+  frame: OpeningFrame;
   selected: boolean;
 }) {
-  const { u, n, left, right } = openingFrame(room, o);
-  const wall = WALL_PX / scale;
-  // 벽 띠 - 방 바깥쪽으로 wall 두께, 이음새 가리게 조금 넓힘
-  const gap = [
-    left,
-    right,
-    add(right, n, -wall - 0.5),
-    add(left, n, -wall - 0.5),
-  ];
+  const { u, n, left, right } = frame;
   const color = selected ? "primary" : "ink-muted";
   const area = {
     fill: tint(color, DOOR_AREA_OPACITY * 100),
@@ -215,14 +209,13 @@ function OpeningShape({
     ...px,
   };
 
-  let inside: ReactNode = null;
   if (o.kind === "hinged" && o.swing === "in") {
     const hinge = o.hinge === "left" ? left : right;
     const along = o.hinge === "left" ? u : { x: -u.x, y: -u.y };
     const closed = add(hinge, along, o.width);
     const open = add(hinge, n, o.width);
     const sweep = along.x * n.y - along.y * n.x > 0 ? 1 : 0;
-    inside = (
+    return (
       <>
         <path
           d={`M${hinge.x} ${hinge.y} L${closed.x} ${closed.y} A${o.width} ${o.width} 0 0 ${sweep} ${open.x} ${open.y} Z`}
@@ -239,15 +232,28 @@ function OpeningShape({
         />
       </>
     );
-  } else if (o.kind !== "window") {
-    inside = <polygon points={points(doorPassageCorners(room, o))} {...area} />;
   }
+  if (o.kind === "window") return null;
+  return <polygon points={points(doorPassageCorners(room, o))} {...area} />;
+}
 
-  let inWall: ReactNode;
+/** 벽 속 그림 - 문틈, 창문 살, 미닫이 짝 */
+function OpeningInWall({
+  opening: o,
+  frame,
+  wall,
+  gap,
+}: {
+  opening: Opening;
+  frame: OpeningFrame;
+  wall: number;
+  gap: Vec2[];
+}) {
+  const { u, n, left, right } = frame;
   if (o.kind === "window") {
     const mid = (k: number) => add(left, n, -wall * k);
     const end = (k: number) => add(right, n, -wall * k);
-    inWall = (
+    return (
       <>
         <polygon points={points(gap)} fill="var(--color-canvas)" />
         {[0.15, 0.5, 0.85].map((k) => (
@@ -264,7 +270,8 @@ function OpeningShape({
         ))}
       </>
     );
-  } else if (o.kind === "sliding") {
+  }
+  if (o.kind === "sliding") {
     // 두 짝 - 바깥쪽 고정짝, 안쪽 움직짝
     const leaf = (from: number, to: number, k: number, stroke: string) => {
       const a = add(add(left, u, o.width * from), n, -wall * k);
@@ -281,17 +288,38 @@ function OpeningShape({
         />
       );
     };
-    inWall = (
+    return (
       <>
         <polygon points={points(gap)} fill="var(--color-canvas)" />
         {leaf(0, 0.55, 0.7, "var(--color-scene-wall)")}
         {leaf(0.45, 1, 0.3, "var(--color-ink-muted)")}
       </>
     );
-  } else {
-    inWall = <polygon points={points(gap)} fill="var(--color-canvas)" />;
   }
+  return <polygon points={points(gap)} fill="var(--color-canvas)" />;
+}
 
+function OpeningShape({
+  room,
+  opening: o,
+  scale,
+  selected,
+}: {
+  room: Room;
+  opening: Opening;
+  scale: number;
+  selected: boolean;
+}) {
+  const frame = openingFrame(room, o);
+  const { n, left, right } = frame;
+  const wall = WALL_PX / scale;
+  // 벽 띠 - 방 바깥쪽으로 wall 두께, 이음새 가리게 조금 넓힘
+  const gap = [
+    left,
+    right,
+    add(right, n, -wall - 0.5),
+    add(left, n, -wall - 0.5),
+  ];
   // 끌기 대상 - 벽 따라 화면 40px 띠
   const reach = 20 / scale;
   const hit = [
@@ -302,8 +330,13 @@ function OpeningShape({
   ];
   return (
     <g>
-      {inside}
-      {inWall}
+      <OpeningInside
+        room={room}
+        opening={o}
+        frame={frame}
+        selected={selected}
+      />
+      <OpeningInWall opening={o} frame={frame} wall={wall} gap={gap} />
       {selected && (
         <polygon
           points={points(gap)}
