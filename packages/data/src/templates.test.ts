@@ -15,6 +15,7 @@ describe("방 템플릿", () => {
         presetId: "bed-super-single",
         position: { x: room.width / 2, y: 110 },
         rotation: 0,
+        size: FURNITURE_PRESETS["bed-super-single"].size,
         color: "beige-fabric",
       });
       expect(checkRoom(room, FURNITURE_PRESETS)).toEqual([]);
