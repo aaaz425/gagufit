@@ -1,8 +1,12 @@
 "use client";
 
 import {
+  FURNITURE_SIZE_LIMITS,
+  OPENING_MIN_WIDTH,
+  resizeFurniture,
+  setOpeningKind,
   setOpeningWidth,
-  snapRotation,
+  wallFrame,
   type Opening,
   type PlacedFurniture,
   type Room,
@@ -12,12 +16,12 @@ import { RotateCw, TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import {
   deleteSelected,
+  displayAngle,
   duplicateSelected,
   rotateSelected90,
-  setDoorKind,
+  rotationFromDisplay,
   updateFurniture,
   updateOpening,
-  wallLength,
 } from "../actions";
 import {
   CATEGORY_LABELS,
@@ -77,8 +81,8 @@ function Header({
   return (
     <div className="flex items-center gap-3">
       {icon}
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <h2 className="truncate text-[17px] font-bold text-ink">{title}</h2>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <h2 className="truncate text-base font-bold text-ink">{title}</h2>
         <p className="text-xs text-ink-muted">{subtitle}</p>
       </div>
       {action}
@@ -90,7 +94,7 @@ function Warnings({ texts }: { texts: string[] }) {
   return texts.map((text) => (
     <p
       key={text}
-      className="flex items-center gap-2.5 rounded-sm bg-danger-soft p-3 text-[13px] font-medium text-danger"
+      className="flex items-center gap-2 rounded-sm bg-danger-soft p-3 text-sm font-medium text-danger"
     >
       <TriangleAlert size={16} className="shrink-0" aria-hidden />
       {text}
@@ -100,7 +104,7 @@ function Warnings({ texts }: { texts: string[] }) {
 
 function Actions({ furniture }: { furniture: boolean }) {
   return (
-    <div className="flex gap-2.5">
+    <div className="flex gap-2">
       {furniture && (
         <button
           type="button"
@@ -134,7 +138,8 @@ function FurnitureProps({
 }) {
   const update = useEditor((s) => s.update);
   const preset = FURNITURE_PRESETS[f.presetId];
-  if (!preset) return null;
+  const size = (key: "width" | "depth" | "height") => (value: number) =>
+    update(resizeFurniture(room, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
   const warnings = warningsOf(room)
@@ -146,20 +151,37 @@ function FurnitureProps({
     .map((w) => warningText(room, w, f.id));
 
   return (
-    <div className="flex flex-col gap-4.5">
+    <div className="flex flex-col gap-4">
       <Header
-        icon={<FurnitureThumb preset={preset} size={44} />}
-        title={preset.name}
-        subtitle={`${CATEGORY_LABELS[preset.category]} · 표준 규격`}
+        icon={
+          <FurnitureThumb category={preset?.category} size={f.size} px={44} />
+        }
+        title={preset?.name ?? "가구"}
+        subtitle={preset ? CATEGORY_LABELS[preset.category] : "기타"}
         action={headerAction}
       />
       <SectionTitle>크기</SectionTitle>
-      <p className="-mt-2.5 text-sm text-ink tabular-nums">
-        {preset.size.width} × {preset.size.depth} cm · 높이 {preset.size.height}{" "}
-        cm
-      </p>
+      <div className="flex gap-2">
+        {(
+          [
+            ["width", "가로"],
+            ["depth", "세로"],
+            ["height", "높이"],
+          ] as const
+        ).map(([key, label]) => (
+          <NumberField
+            key={key}
+            label={label}
+            unit="cm"
+            min={FURNITURE_SIZE_LIMITS.min}
+            max={FURNITURE_SIZE_LIMITS.max}
+            value={f.size[key]}
+            onCommit={size(key)}
+          />
+        ))}
+      </div>
       <SectionTitle>위치</SectionTitle>
-      <div className="flex gap-2.5">
+      <div className="flex gap-2">
         <NumberField
           label="X"
           unit="cm"
@@ -176,18 +198,18 @@ function FurnitureProps({
         />
       </div>
       <SectionTitle>회전</SectionTitle>
-      <div className="flex items-end gap-2.5">
+      <div className="flex items-end gap-2">
         <NumberField
           label="각도"
           unit="°"
           min={-10000}
-          value={f.rotation}
-          onCommit={(deg) => set({ rotation: snapRotation(deg, 0) })}
+          value={displayAngle(f.rotation)}
+          onCommit={(deg) => set({ rotation: rotationFromDisplay(deg) })}
         />
         <button
           type="button"
           onClick={rotateSelected90}
-          className="flex h-11 items-center gap-1.5 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary"
+          className="flex h-11 items-center gap-2 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary"
         >
           <RotateCw size={16} aria-hidden />
           90°
@@ -209,7 +231,7 @@ function FurnitureProps({
               aria-checked={on}
               aria-label={c.name}
               title={c.name}
-              onClick={() => set({ color: c.id })}
+              onClick={() => !on && set({ color: c.id })}
               className="flex size-11 items-center justify-center"
             >
               <span
@@ -245,13 +267,13 @@ function OpeningProps({
   const update = useEditor((s) => s.update);
   const set = (fn: (o: Opening) => Opening) =>
     update(updateOpening(room, o.id, fn));
-  const length = wallLength(room, o.wall);
+  const { length } = wallFrame(room, o.wall);
   const blockers = warningsOf(room)
     .filter((w) => w.type === "doorBlocked" && w.openingId === o.id)
     .map((w) => warningText(room, w, ""));
 
   return (
-    <div className="flex flex-col gap-4.5">
+    <div className="flex flex-col gap-4">
       <Header
         icon={
           <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary">
@@ -273,16 +295,16 @@ function OpeningProps({
               { value: "hinged", label: "여닫이" },
               { value: "sliding", label: "미닫이" },
             ]}
-            onChange={(kind) => set((item) => setDoorKind(item, kind))}
+            onChange={(kind) => update(setOpeningKind(room, o.id, kind))}
           />
         </>
       )}
       <SectionTitle>크기</SectionTitle>
-      <div className="flex gap-2.5">
+      <div className="flex gap-2">
         <NumberField
           label="폭"
           unit="cm"
-          min={1}
+          min={OPENING_MIN_WIDTH}
           max={length}
           value={o.width}
           onCommit={(width) => update(setOpeningWidth(room, o.id, width))}
@@ -296,7 +318,7 @@ function OpeningProps({
         />
       </div>
       <SectionTitle>위치</SectionTitle>
-      <div className="flex gap-2.5">
+      <div className="flex gap-2">
         <NumberField
           label="벽 왼쪽 끝에서"
           unit="cm"

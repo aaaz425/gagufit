@@ -1,6 +1,6 @@
 "use client";
 
-import { resizeRoom, type Opening } from "@gagufit/core";
+import { resizeRoom, ROOM_LIMITS, type Opening } from "@gagufit/core";
 import { FLOOR_MATERIALS, WALL_MATERIALS } from "@gagufit/data";
 import { AppWindow, ChevronRight, DoorOpen, PanelLeftOpen } from "lucide-react";
 import { addOpeningToRoom } from "../actions";
@@ -34,31 +34,31 @@ export function RoomPanel({ onPick }: { onPick?: () => void }) {
     update(resizeRoom(room, { [key]: value }));
 
   return (
-    <div className="flex flex-col gap-3.5">
+    <div className="flex flex-col gap-4">
       <SectionTitle>방 크기</SectionTitle>
       <div className="flex gap-2">
-        <NumberField
-          label="가로"
-          unit="cm"
-          min={1}
-          value={room.width}
-          onCommit={resize("width")}
-        />
-        <NumberField
-          label="세로"
-          unit="cm"
-          min={1}
-          value={room.depth}
-          onCommit={resize("depth")}
-        />
-        <NumberField
-          label="층고"
-          unit="cm"
-          min={1}
-          value={room.height}
-          onCommit={resize("height")}
-        />
+        {(
+          [
+            ["width", "가로"],
+            ["depth", "세로"],
+            ["height", "층고"],
+          ] as const
+        ).map(([key, label]) => (
+          <NumberField
+            key={key}
+            label={label}
+            unit="cm"
+            min={ROOM_LIMITS[key].min}
+            max={ROOM_LIMITS[key].max}
+            value={room[key]}
+            onCommit={resize(key)}
+          />
+        ))}
       </div>
+      <p className="text-xs text-ink-muted">
+        가로·세로 {ROOM_LIMITS.width.min}~{ROOM_LIMITS.width.max} cm, 층고{" "}
+        {ROOM_LIMITS.height.min}~{ROOM_LIMITS.height.max} cm
+      </p>
 
       <hr className="border-border" />
       <SectionTitle>문·창문</SectionTitle>
@@ -74,7 +74,7 @@ export function RoomPanel({ onPick }: { onPick?: () => void }) {
                   select({ kind: "opening", id: o.id });
                   onPick?.();
                 }}
-                className={`flex w-full items-center gap-3 rounded-sm p-2.5 text-left ${
+                className={`flex w-full items-center gap-3 rounded-sm p-3 text-left ${
                   on
                     ? "border-[1.5px] border-primary bg-primary-soft"
                     : "border border-border bg-canvas hover:bg-surface"
@@ -87,7 +87,7 @@ export function RoomPanel({ onPick }: { onPick?: () => void }) {
                 >
                   <OpeningIcon opening={o} size={18} />
                 </span>
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
                   <span
                     className={`text-sm font-semibold ${on ? "text-primary" : "text-ink"}`}
                   >
@@ -168,8 +168,8 @@ function Swatches<T extends string>({
             key={m.id}
             type="button"
             aria-pressed={on}
-            onClick={() => onChange(m.id)}
-            className="flex w-16 flex-col items-center gap-1.5"
+            onClick={() => !on && onChange(m.id)}
+            className="flex w-16 flex-col items-center gap-2"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- 56px 견본, 최적화 불필요 */}
             <img
@@ -185,7 +185,7 @@ function Swatches<T extends string>({
               }`}
             />
             <span
-              className={`text-[11px] ${on ? "font-bold text-primary" : "font-medium text-ink-muted"}`}
+              className={`text-xs ${on ? "font-bold text-primary" : "font-medium text-ink-muted"}`}
             >
               {m.name}
             </span>
