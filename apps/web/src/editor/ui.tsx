@@ -65,7 +65,7 @@ export function NumberField({
   };
 
   return (
-    <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+    <label className="flex min-w-0 flex-1 flex-col gap-2">
       <span className="text-xs font-semibold text-ink-muted">{label}</span>
       <span className="flex h-11 items-center rounded-sm border border-border bg-canvas px-3 focus-within:border-primary focus-within:outline focus-within:outline-1 focus-within:outline-primary">
         <input
@@ -81,9 +81,10 @@ export function NumberField({
           onKeyDown={(e) => {
             if (e.key === "Enter") e.currentTarget.blur();
             if (e.key === "Escape") {
+              const el = e.currentTarget;
               setDraft(null);
-              // blur 때 finish가 draft null을 보고 무시
-              requestAnimationFrame(() => e.currentTarget?.blur());
+              // 다시 그린 뒤 blur - finish가 draft null을 보고 무시
+              requestAnimationFrame(() => el.blur());
             }
           }}
         />
@@ -92,6 +93,10 @@ export function NumberField({
     </label>
   );
 }
+
+/** 32px 높이 버튼의 누르는 영역을 위아래로 넓혀 44px - 부모에 겹치지 않을 여유 필요 */
+export const TOUCH_44 =
+  "relative after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']";
 
 /** 2D·3D, 문 종류 같은 둘 중 하나 고르기 */
 export function Segment<T extends string>({
@@ -112,7 +117,7 @@ export function Segment<T extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={`flex rounded-full bg-surface p-[3px] ${full ? "w-full" : ""}`}
+      className={`flex rounded-full bg-surface p-1 ${full ? "w-full" : ""}`}
     >
       {options.map((o) => {
         const on = o.value === value;
@@ -123,9 +128,9 @@ export function Segment<T extends string>({
             role="radio"
             aria-checked={on}
             aria-disabled={o.unavailable || undefined}
-            onClick={() => onChange(o.value)}
-            className={`flex items-center justify-center rounded-full px-4 text-[13px] ${
-              full ? "min-h-10 flex-1" : "min-h-8"
+            onClick={() => !on && onChange(o.value)}
+            className={`flex items-center justify-center rounded-full px-4 text-sm ${
+              full ? "min-h-11 flex-1" : `min-h-8 ${TOUCH_44}`
             } ${
               on
                 ? "bg-canvas font-bold text-ink shadow-raised"
@@ -141,5 +146,5 @@ export function Segment<T extends string>({
 }
 
 export function SectionTitle({ children }: { children: ReactNode }) {
-  return <h3 className="text-[13px] font-bold text-ink">{children}</h3>;
+  return <h3 className="text-sm font-bold text-ink">{children}</h3>;
 }

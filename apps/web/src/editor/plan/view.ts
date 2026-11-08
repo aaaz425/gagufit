@@ -46,21 +46,20 @@ export function zoomAt(
   };
 }
 
-/** 방 전체가 보이게 가운데 맞춤 - pad는 바깥 여백 px */
+/** 방 전체가 보이게 가운데 맞춤 - pad는 위·양옆, padBottom은 아래 여백 px */
 export function fitView(
   room: { width: number; depth: number },
   size: { width: number; height: number },
   pad: number,
+  padBottom = pad,
 ): View {
+  const height = size.height - pad - padBottom;
   const scale = clampScale(
-    Math.min(
-      (size.width - pad * 2) / room.width,
-      (size.height - pad * 2) / room.depth,
-    ),
+    Math.min((size.width - pad * 2) / room.width, height / room.depth),
   );
   return {
     x: (size.width - room.width * scale) / 2,
-    y: (size.height - room.depth * scale) / 2,
+    y: pad + (height - room.depth * scale) / 2,
     scale,
     angle: 0,
   };

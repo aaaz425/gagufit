@@ -3,7 +3,6 @@ import {
   addOpening,
   duplicateFurniture,
   snapRotation,
-  wallSegment,
   type FurniturePreset,
   type Opening,
   type OpeningKind,
@@ -12,17 +11,30 @@ import {
 } from "@gagufit/core";
 import { useEditor } from "./store";
 
-// 가구 이동·회전·색·삭제, 문 속성 변경은 core 함수 없이 여기서
+// 가구 이동·회전·색·삭제, 문 경첩·방향 변경은 core 함수 없이 여기서
+// core 편집 함수처럼 바뀐 게 없으면 같은 room을 돌려줌
+
+function samePatch<T extends object>(target: T, patch: Partial<T>): boolean {
+  return Object.entries(patch).every(([key, value]) => {
+    const current = target[key as keyof T];
+    if (typeof value === "object" && value !== null) {
+      return JSON.stringify(current) === JSON.stringify(value);
+    }
+    return Object.is(current, value);
+  });
+}
 
 export function updateFurniture(
   room: Room,
   id: string,
   patch: Partial<Omit<PlacedFurniture, "id">>,
 ): Room {
+  const source = room.furniture.find((f) => f.id === id);
+  if (!source || samePatch(source, patch)) return room;
   return {
     ...room,
     furniture: room.furniture.map((f) =>
-      f.id === id ? { ...f, ...patch } : f,
+      f === source ? { ...f, ...patch } : f,
     ),
   };
 }
@@ -32,26 +44,21 @@ export function updateOpening(
   id: string,
   update: (o: Opening) => Opening,
 ): Room {
+  const source = room.openings.find((o) => o.id === id);
+  if (!source) return room;
+  const next = update(source);
+  if (samePatch(source, next) && samePatch(next, source)) return room;
   return {
     ...room,
-    openings: room.openings.map((o) => (o.id === id ? update(o) : o)),
+    openings: room.openings.map((o) => (o === source ? next : o)),
   };
 }
 
-export function wallLength(room: Room, wall: number): number {
-  const { start, end } = wallSegment(room, wall);
-  return Math.hypot(end.x - start.x, end.y - start.y);
-}
+/** 화면 각도 - 시계 방향, 저장 값 rotation은 반시계 */
+export const displayAngle = (rotation: number) => (360 - rotation) % 360;
 
-/** 여닫이 ↔ 미닫이 - 창문은 그대로 */
-export function setDoorKind(o: Opening, kind: "hinged" | "sliding"): Opening {
-  if (o.kind === kind || o.kind === "window") return o;
-  const { id, wall, offset, width, height, sill } = o;
-  const base = { id, wall, offset, width, height, sill };
-  return kind === "hinged"
-    ? { ...base, kind, hinge: "left", swing: "in" }
-    : { ...base, kind };
-}
+/** 화면 각도 입력을 저장 값으로 - 0~359 정수 */
+export const rotationFromDisplay = (deg: number) => snapRotation(-deg, 0);
 
 const editor = () => useEditor.getState();
 const room = () => editor().history.present;
@@ -73,15 +80,15 @@ export function addOpeningToRoom(kind: OpeningKind) {
   editor().select({ kind: "opening", id });
 }
 
+/** 화면에서 시계 방향 90° */
 export function rotateSelected90() {
   const sel = editor().selection;
   if (sel?.kind !== "furniture") return;
   const f = room().furniture.find((item) => item.id === sel.id);
   if (!f) return;
-  // 화면 기준 시계 방향 - rotation은 반시계
   editor().update(
     updateFurniture(room(), f.id, {
-      rotation: snapRotation(f.rotation - 90, 0),
+      rotation: rotationFromDisplay(displayAngle(f.rotation) + 90),
     }),
   );
 }

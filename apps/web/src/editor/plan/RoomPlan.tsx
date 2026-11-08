@@ -1,7 +1,7 @@
 import {
   doorPassageCorners,
   furnitureCorners,
-  wallSegment,
+  wallFrame,
   type Opening,
   type PlacedFurniture,
   type Room,
@@ -30,15 +30,12 @@ const add = (a: Vec2, b: Vec2, k = 1): Vec2 => ({
   y: a.y + b.y * k,
 });
 
-/** 벽 방향 u, 방 안쪽 n, 왼쪽·오른쪽 끝 */
+/** 벽 좌표계에 문·창문 왼쪽·오른쪽 끝 */
 export function openingFrame(room: Room, o: Opening) {
-  const { start, end } = wallSegment(room, o.wall);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
-  const n = { x: -u.y, y: u.x };
-  const left = add(start, u, o.offset);
-  const right = add(left, u, o.width);
-  return { start, len, u, n, left, right };
+  const frame = wallFrame(room, o.wall);
+  const left = add(frame.start, frame.u, o.offset);
+  const right = add(left, frame.u, o.width);
+  return { ...frame, n: frame.inward, left, right };
 }
 
 function furnitureTransform(f: PlacedFurniture, w: number, d: number) {
@@ -65,15 +62,18 @@ export function RoomPlan({
     { length: Math.ceil(room.depth / GRID) - 1 },
     (_, i) => (i + 1) * GRID,
   );
-  // 러그는 다른 가구 아래
-  const ordered = [
-    ...room.furniture.filter(
-      (f) => FURNITURE_PRESETS[f.presetId]?.layer === "floor",
-    ),
-    ...room.furniture.filter(
-      (f) => FURNITURE_PRESETS[f.presetId]?.layer !== "floor",
-    ),
-  ];
+  // 러그 - 문 열림 영역 - 다른 가구 순서
+  const isRug = (f: PlacedFurniture) =>
+    FURNITURE_PRESETS[f.presetId]?.layer === "floor";
+  const shape = (f: PlacedFurniture) => (
+    <FurnitureShape
+      key={f.id}
+      furniture={f}
+      warned={warned.has(f.id)}
+      selected={selection?.kind === "furniture" && selection.id === f.id}
+      scale={scale}
+    />
+  );
   const selectedOpening =
     selection?.kind === "opening" ? selection.id : undefined;
 
@@ -102,6 +102,7 @@ export function RoomPlan({
         strokeWidth={WALL_PX}
         {...px}
       />
+      {room.furniture.filter(isRug).map(shape)}
       {room.openings.map((o) => (
         <OpeningShape
           key={o.id}
@@ -111,15 +112,7 @@ export function RoomPlan({
           selected={o.id === selectedOpening}
         />
       ))}
-      {ordered.map((f) => (
-        <FurnitureShape
-          key={f.id}
-          furniture={f}
-          warned={warned.has(f.id)}
-          selected={selection?.kind === "furniture" && selection.id === f.id}
-          scale={scale}
-        />
-      ))}
+      {room.furniture.filter((f) => !isRug(f)).map(shape)}
     </>
   );
 }
@@ -136,13 +129,12 @@ function FurnitureShape({
   scale: number;
 }) {
   const preset = FURNITURE_PRESETS[f.presetId];
-  if (!preset) return null;
-  const { width: w, depth: d } = preset.size;
+  const { width: w, depth: d } = f.size;
   const outline = warned ? "danger" : "primary";
   return (
     <g transform={furnitureTransform(f, w, d)}>
       <g data-hit="furniture" data-id={f.id} className="cursor-move">
-        <FurnitureSymbol preset={preset} />
+        <FurnitureSymbol category={preset?.category} size={f.size} />
         {warned && (
           <rect
             width={w}
@@ -390,7 +382,7 @@ export function Label({
   angle: number;
   anchor?: "start" | "middle";
 }) {
-  const w = text.length * 6.5 + 12;
+  const w = text.length * 7 + 12;
   return (
     <g
       transform={`translate(${at.x} ${at.y}) scale(${1 / scale}) rotate(${-angle})`}
@@ -408,7 +400,7 @@ export function Label({
         x={anchor === "middle" ? 0 : 6}
         y={4}
         textAnchor={anchor}
-        fontSize={11}
+        fontSize={12}
         fontWeight={600}
         fill="var(--color-ink-muted)"
         className="tabular-nums"
@@ -466,9 +458,7 @@ export function FurnitureGuides({
   scale: number;
   angle: number;
 }) {
-  const preset = FURNITURE_PRESETS[furniture.presetId];
-  if (!preset) return null;
-  const cs = furnitureCorners(furniture, preset.size);
+  const cs = furnitureCorners(furniture);
   const minX = Math.min(...cs.map((c) => c.x));
   const maxX = Math.max(...cs.map((c) => c.x));
   const minY = Math.min(...cs.map((c) => c.y));

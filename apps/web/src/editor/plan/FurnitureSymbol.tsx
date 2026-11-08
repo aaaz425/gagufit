@@ -1,4 +1,4 @@
-import type { FurnitureCategory, FurniturePreset } from "@gagufit/core";
+import type { FurnitureCategory, Size } from "@gagufit/core";
 import type { ReactNode } from "react";
 
 // 가구 평면 기호 - (0,0)~(w,d) cm, 위쪽이 등·벽 쪽, 선 굵기는 화면 px
@@ -233,32 +233,41 @@ const DECOR: Record<FurnitureCategory, (b: Box) => ReactNode> = {
   etc: body,
 };
 
-export function FurnitureSymbol({ preset }: { preset: FurniturePreset }) {
-  return DECOR[preset.category]({ w: preset.size.width, d: preset.size.depth });
+/** 프리셋이 없으면 기타 모양 */
+export function FurnitureSymbol({
+  category = "etc",
+  size,
+}: {
+  category?: FurnitureCategory;
+  size: Pick<Size, "width" | "depth">;
+}) {
+  return DECOR[category]({ w: size.width, d: size.depth });
 }
 
 /** 목록 썸네일 - 회전 0 */
 export function FurnitureThumb({
-  preset,
-  size = 48,
+  category,
+  size,
+  px = 48,
 }: {
-  preset: FurniturePreset;
-  size?: number;
+  category?: FurnitureCategory;
+  size: Pick<Size, "width" | "depth">;
+  px?: number;
 }) {
-  const { width, depth } = preset.size;
+  const { width, depth } = size;
   const pad = Math.max(width, depth) * 0.12;
   return (
     <span
       className="flex shrink-0 items-center justify-center rounded-md bg-scene-floor"
-      style={{ width: size, height: size }}
+      style={{ width: px, height: px }}
     >
       <svg
         viewBox={`${-pad} ${-pad} ${width + pad * 2} ${depth + pad * 2}`}
-        width={size}
-        height={size}
+        width={px}
+        height={px}
         aria-hidden
       >
-        <FurnitureSymbol preset={preset} />
+        <FurnitureSymbol category={category} size={size} />
       </svg>
     </span>
   );
