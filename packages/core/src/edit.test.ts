@@ -8,6 +8,7 @@ import {
   moveOpening,
   resizeFurniture,
   resizeRoom,
+  ROOM_LIMITS,
   setOpeningWidth,
   snapRotation,
 } from "./edit";
@@ -167,8 +168,14 @@ describe("resizeRoom", () => {
     expect(next.openings[0]).toMatchObject({ offset: 0, width: 120 });
   });
 
-  it("양의 정수가 아니면 throw", () => {
-    expect(() => resizeRoom(box, { depth: 0 })).toThrow(RangeError);
+  it("정수로 반올림하고 범위로 자름", () => {
+    const next = resizeRoom(box, { depth: 0, height: 250.4 });
+    expect(next.depth).toBe(ROOM_LIMITS.depth.min);
+    expect(next.height).toBe(250);
+  });
+
+  it("바뀐 게 없으면 같은 room", () => {
+    expect(resizeRoom(box, { width: 400 })).toBe(box);
   });
 });
 

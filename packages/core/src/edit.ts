@@ -209,17 +209,25 @@ export function setOpeningWidth(
   );
 }
 
-/** 벽보다 길어진 문·창문은 벽에 맞춰 줄임 */
-export function resizeRoom(
-  room: Room,
-  size: Partial<Pick<Room, "width" | "depth" | "height">>,
-): Room {
-  for (const [key, value] of Object.entries(size)) {
-    if (!Number.isInteger(value) || value < 1) {
-      throw new RangeError(`${key}는 1 이상 정수: ${value}`);
-    }
+type RoomSize = Pick<Room, "width" | "depth" | "height">;
+
+export const ROOM_LIMITS: Readonly<
+  Record<keyof RoomSize, { min: number; max: number }>
+> = {
+  width: { min: 100, max: 2000 },
+  depth: { min: 100, max: 2000 },
+  height: { min: 200, max: 400 },
+};
+
+/** 정수로 반올림, ROOM_LIMITS로 자름 - 벽보다 길어진 문·창문은 벽에 맞춰 줄임 */
+export function resizeRoom(room: Room, size: Partial<RoomSize>): Room {
+  const next = { ...room };
+  for (const key of ["width", "depth", "height"] as const) {
+    const value = size[key];
+    if (value === undefined) continue;
+    next[key] = clampInt(value, ROOM_LIMITS[key].min, ROOM_LIMITS[key].max);
   }
-  const next = { ...room, ...size };
+  if (sameValues(next, room)) return room;
   return {
     ...next,
     openings: next.openings.map((o) =>

@@ -9,6 +9,7 @@ export {
   moveOpening,
   resizeFurniture,
   resizeRoom,
+  ROOM_LIMITS,
   ROTATION_SNAP_THRESHOLD,
   roundVec2,
   setOpeningWidth,
