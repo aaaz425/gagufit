@@ -17,13 +17,13 @@ import { usePlanGestures } from "./usePlanGestures";
 import { fitView, toScreen, transformOf, zoomAt, type View } from "./view";
 import { ZoomControls } from "./ZoomControls";
 
-/** 지금 열린 패널 기준 - 렌더 밖(맞춤 시점)에서도 쓰려고 store에서 바로 읽음 */
+/** 맞춤 기준 - 선택 시 열리는 패널·요약 바 자리까지 비움 */
 function currentInsets(desktop: boolean) {
   const s = useEditor.getState();
   return canvasInsets({
     desktop,
     leftOpen: s.leftOpen,
-    selected: s.selection !== null,
+    selected: true,
   });
 }
 
