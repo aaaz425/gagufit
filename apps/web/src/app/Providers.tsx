@@ -13,14 +13,10 @@ export function Providers({ children }: { children: ReactNode }) {
     SUPABASE_URL && KEY ? createApiClient(SUPABASE_URL, KEY) : null,
   );
 
-  if (!client) {
+  if (!client)
     return (
-      <p className="p-6 text-sm text-danger">
-        NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 설정이
-        필요해요
-      </p>
+      <p className="p-6 text-sm text-ink-muted">Supabase 설정이 필요해요</p>
     );
-  }
   return (
     <QueryClientProvider client={queryClient}>
       <ApiProvider client={client}>{children}</ApiProvider>
