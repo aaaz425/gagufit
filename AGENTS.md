@@ -30,6 +30,7 @@ supabase/        마이그레이션 SQL
 - Supabase 호출은 api에서만
 - DB 변경은 `supabase/migrations` SQL로만
 - 저장 구조 변경 시 `schemaVersion` 올리고 마이그레이션 추가
+  - 3단계 저장 시작 전까지는 1 안에서 변경
 - Vercel 전용 기능·Edge 런타임 금지
 - 길이 cm 정수, 렌더링 시에만 m 변환
 - 평면 `Vec2 {x, y}` = three.js `(x, 0, y)`, `rotation` = `rotation.y`
