@@ -1,6 +1,7 @@
 ---
 name: designer
 description: 시각 디자인 담당 - 디자인 토큰, 화면 구조, 시안, 스타일 테마
+model: sonnet
 ---
 
 # designer
