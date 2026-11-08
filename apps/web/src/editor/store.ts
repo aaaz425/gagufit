@@ -26,6 +26,8 @@ type EditorState = {
   selection: Selection;
   view: "2d" | "3d";
   panel: PanelTab;
+  /** 데스크톱 왼쪽 패널 펼침 */
+  leftOpen: boolean;
   sheet: Sheet;
   toast: Toast | null;
   /** 도면에서 끄는 중 - 실행 취소 막음 */
@@ -43,6 +45,7 @@ type EditorState = {
   select: (selection: Selection) => void;
   setView: (view: "2d" | "3d") => void;
   setPanel: (panel: PanelTab) => void;
+  setLeftOpen: (open: boolean) => void;
   setSheet: (sheet: Sheet) => void;
   showToast: (toast: Toast | null) => void;
   setDragging: (dragging: boolean) => void;
@@ -53,6 +56,7 @@ export const useEditor = create<EditorState>()((set) => ({
   selection: null,
   view: "2d",
   panel: "furniture",
+  leftOpen: true,
   sheet: null,
   toast: null,
   dragging: false,
@@ -106,6 +110,7 @@ export const useEditor = create<EditorState>()((set) => ({
     })),
   setView: (view) => set({ view }),
   setPanel: (panel) => set({ panel }),
+  setLeftOpen: (leftOpen) => set({ leftOpen }),
   setSheet: (sheet) => set({ sheet }),
   showToast: (toast) => set({ toast }),
   setDragging: (dragging) => set({ dragging }),

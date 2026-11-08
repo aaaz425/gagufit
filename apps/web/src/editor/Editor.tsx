@@ -28,6 +28,7 @@ import { FurnitureThumb } from "./plan/FurnitureSymbol";
 import { PlanCanvas } from "./plan/PlanCanvas";
 import { useEditor, useRoom, type PanelTab } from "./store";
 import { Toast } from "./Toast";
+import { canvasInsets, COLLAPSED_PANEL_WIDTH, PANEL_WIDTH } from "./layout";
 import { TopBar, ViewSwitch } from "./TopBar";
 import { IconButton } from "./ui";
 import { View3D } from "./View3D";
@@ -103,7 +104,8 @@ function useShortcuts() {
         e.preventDefault();
         redo();
       } else if (e.key === "Delete" || e.key === "Backspace") {
-        if (!useEditor.getState().selection) return;
+        const s = useEditor.getState();
+        if (!s.selection || s.dragging) return;
         e.preventDefault();
         deleteSelected();
       } else if (e.key === "Escape") {
@@ -118,34 +120,34 @@ function useShortcuts() {
 function EditorScreen() {
   const desktop = useIsDesktop();
   const view = useEditor((s) => s.view);
+  const selected = useEditor((s) => s.selection !== null);
   useShortcuts();
 
   const canvas = view === "2d" ? <PlanCanvas compact={!desktop} /> : <View3D />;
 
+  // 캔버스는 main 전체, 패널은 그 위에 겹쳐 띄움 - layout.ts
   if (desktop) {
     return (
       <div className="flex h-dvh flex-col bg-canvas">
         <TopBar compact={false} />
-        <div className="flex min-h-0 flex-1">
+        <main className="relative min-h-0 flex-1">
+          {canvas}
           <LeftPanel />
-          <main className="relative min-w-0 flex-1">
-            {canvas}
-            <Toast bottom={24} />
-          </main>
-          {/* 3D는 캔버스 폭이 바뀌면 방이 움직여 선택이 빗나가므로 자리를 늘 둠 */}
-          <RightPanel keep={view === "3d"} />
-        </div>
+          <RightPanel />
+          <Toast bottom={24} />
+        </main>
       </div>
     );
   }
+  const insets = canvasInsets({ desktop: false, leftOpen: false, selected });
   return (
     <div className="flex h-dvh flex-col bg-canvas">
       <TopBar compact />
       <main className="relative min-h-0 flex-1">
         {canvas}
-        <Toast bottom={16} />
+        <MobileBottom />
+        <Toast bottom={insets.bottom + 16} />
       </main>
-      <MobileBottom />
       <MobileSheet />
     </div>
   );
@@ -182,10 +184,14 @@ function PanelTabs() {
 
 function LeftPanel() {
   const panel = useEditor((s) => s.panel);
-  const [open, setOpen] = useState(true);
+  const open = useEditor((s) => s.leftOpen);
+  const setOpen = useEditor((s) => s.setLeftOpen);
   if (!open) {
     return (
-      <aside className="flex shrink-0 flex-col items-center border-r border-border p-2">
+      <aside
+        className="absolute inset-y-0 left-0 z-10 flex flex-col items-center border-r border-border bg-canvas p-2"
+        style={{ width: COLLAPSED_PANEL_WIDTH }}
+      >
         <IconButton label="패널 펼치기" onClick={() => setOpen(true)}>
           <PanelLeftOpen size={20} />
         </IconButton>
@@ -193,7 +199,10 @@ function LeftPanel() {
     );
   }
   return (
-    <aside className="flex w-[300px] shrink-0 flex-col gap-4 border-r border-border p-4">
+    <aside
+      className="absolute inset-y-0 left-0 z-10 flex flex-col gap-4 border-r border-border bg-canvas p-4"
+      style={{ width: PANEL_WIDTH }}
+    >
       <div className="flex items-center gap-2">
         <PanelTabs />
         <IconButton label="패널 접기" onClick={() => setOpen(false)}>
@@ -211,22 +220,18 @@ function LeftPanel() {
   );
 }
 
-/** keep - 선택이 없어도 자리 유지 */
-function RightPanel({ keep }: { keep: boolean }) {
-  const hasSelection = useEditor((s) => s.selection !== null);
-  if (!hasSelection && !keep) return null;
+function RightPanel() {
+  const selection = useEditor((s) => s.selection);
+  if (!selection) return null;
   return (
     <aside
+      // 대상이 바뀌면 새로 그려 스크롤을 맨 위로
+      key={selection.id}
       aria-label="속성"
-      className="w-[300px] shrink-0 overflow-y-auto border-l border-border p-6"
+      className="absolute inset-y-0 right-0 z-10 overflow-y-auto border-l border-border bg-canvas p-4"
+      style={{ width: PANEL_WIDTH }}
     >
-      {hasSelection ? (
-        <PropertiesPanel />
-      ) : (
-        <p className="pt-8 text-center text-sm text-ink-muted">
-          가구를 누르면 속성이 보여요
-        </p>
-      )}
+      <PropertiesPanel />
     </aside>
   );
 }
@@ -266,7 +271,7 @@ function MobileBottom() {
     return (
       <section
         aria-label="선택한 대상"
-        className="z-10 flex flex-col gap-2 rounded-t-lg bg-canvas px-4 pb-[max(16px,env(safe-area-inset-bottom))] shadow-floating"
+        className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-2 rounded-t-lg bg-canvas px-4 pb-[max(16px,env(safe-area-inset-bottom))] shadow-floating"
       >
         <SheetHandle onOpen={() => setSheet("props")} />
         <div className="flex items-center gap-3">
@@ -295,7 +300,7 @@ function MobileBottom() {
   return (
     <nav
       aria-label="편집 메뉴"
-      className="flex items-center gap-1 border-t border-border bg-canvas px-2 pt-1 pb-[max(4px,env(safe-area-inset-bottom))]"
+      className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-1 border-t border-border bg-canvas px-2 pt-1 pb-[max(4px,env(safe-area-inset-bottom))]"
     >
       <TabButton
         icon={<Sofa size={20} aria-hidden />}
@@ -417,7 +422,7 @@ function MobileSheet() {
     <div className="fixed inset-0 z-20 flex flex-col justify-end">
       <button
         type="button"
-        aria-label="닫기"
+        aria-label={sheet === "props" ? "접기" : "닫기"}
         className="absolute inset-0 bg-ink/30"
         onClick={close}
       />

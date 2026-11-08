@@ -16,7 +16,7 @@ import { FurnitureSymbol } from "./FurnitureSymbol";
 // 방 cm 좌표에서 그림 - 선 굵기·핸들 크기는 화면 px라 scale로 나눔
 
 /** 벽 두께 px - 방 바깥쪽으로 */
-const WALL_PX = 8;
+export const WALL_PX = 8;
 /** 격자 간격 */
 const GRID = 50;
 
