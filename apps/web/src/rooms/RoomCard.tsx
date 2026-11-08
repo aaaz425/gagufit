@@ -99,17 +99,19 @@ export function RoomCard({
   );
 }
 
-export function NewRoomCard({ onClick }: { onClick: () => void }) {
+// 새 방 모달은 이 경로 - 내비의 방 만들기와 같음
+export const NEW_ROOM_HREF = "/rooms?new=1";
+
+export function NewRoomCard() {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <Link
+      href={NEW_ROOM_HREF}
       className="col-span-full flex min-h-16 items-center justify-center gap-3 rounded-md border-[1.5px] border-primary bg-canvas p-3 text-primary hover:bg-primary-soft sm:col-span-1 sm:min-h-52 sm:flex-col"
     >
       <span className="flex size-10 items-center justify-center rounded-full bg-primary-soft sm:size-14">
         <Plus size={22} aria-hidden />
       </span>
       <span className="text-base font-bold">새 방 만들기</span>
-    </button>
+    </Link>
   );
 }
