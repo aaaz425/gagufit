@@ -18,32 +18,33 @@ export const FLOOR_MATERIALS = withIds<
 >({
   "floor-light-oak": {
     name: "밝은 마루",
-    color2d: "#D8BA91",
+    color2d: "#B8A081",
     image: image("floor-light-oak"),
   },
   "floor-dark-walnut": {
     name: "진한 마루",
-    color2d: "#C0A08B",
+    // 명도만 올리면 채도가 짙어져 분홍빛 - 채도를 낮춰 견본 채도감 유지
+    color2d: "#B79F8F",
     image: image("floor-dark-walnut"),
   },
   "floor-grey-tile": {
     name: "회색 타일",
-    color2d: "#A7A7A4",
+    color2d: "#A3A49F",
     image: image("floor-grey-tile"),
   },
   "floor-white-tile": {
     name: "흰 타일",
-    color2d: "#E1E1E1",
+    color2d: "#D1DDE0",
     image: image("floor-white-tile"),
   },
   "floor-vinyl": {
     name: "장판",
-    color2d: "#D6C8B3",
+    color2d: "#E3B572",
     image: image("floor-vinyl"),
   },
   "floor-carpet": {
     name: "카펫",
-    color2d: "#CAB9A3",
+    color2d: "#BCB094",
     image: image("floor-carpet"),
   },
 });
