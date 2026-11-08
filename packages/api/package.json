@@ -5,15 +5,24 @@
   "exports": "./src/index.ts",
   "scripts": {
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@gagufit/core": "workspace:*"
+    "@gagufit/core": "workspace:*",
+    "@supabase/supabase-js": "^2.119.0",
+    "@tanstack/react-query": "^5.107.1"
   },
   "devDependencies": {
     "@gagufit/config": "workspace:*",
+    "@types/react": "^19.3.0",
     "eslint": "^9.39.5",
+    "react": "19.3.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  },
+  "peerDependencies": {
+    "react": "^19"
   }
 }

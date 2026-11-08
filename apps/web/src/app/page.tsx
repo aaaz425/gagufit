@@ -1,7 +1,6 @@
+import { redirect } from "next/navigation";
+
+// 랜딩 전까지 목록으로
 export default function Home() {
-  return (
-    <main>
-      <h1>gagufit</h1>
-    </main>
-  );
+  redirect("/rooms");
 }

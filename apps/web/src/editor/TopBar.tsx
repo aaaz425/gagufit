@@ -12,7 +12,13 @@ import Link from "next/link";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { warningBadgeLabel } from "./labels";
 import { SettingsPopover } from "./SettingsPopover";
-import { currentRoom, useEditor, useRoom, warningsOf } from "./store";
+import {
+  currentRoom,
+  useEditor,
+  useRoom,
+  warningsOf,
+  type SaveStatus,
+} from "./store";
 import { isWebGLAvailable } from "./webgl";
 import { IconButton, Segment } from "./ui";
 
@@ -41,8 +47,7 @@ export function TopBar({ compact }: { compact: boolean }) {
         <ChevronLeft size={compact ? 22 : 20} />
       </Link>
       <RoomName />
-      {/* 저장 상태 자리 - 3단계 */}
-      <span className="min-w-0 flex-1" />
+      <SaveState compact={compact} />
       <div className="flex items-center">
         <IconButton
           label="실행 취소"
@@ -79,6 +84,29 @@ export function TopBar({ compact }: { compact: boolean }) {
       {!compact && <ViewSwitch />}
       <SettingsButton compact={compact} />
     </header>
+  );
+}
+
+const SAVE_LABELS: Record<SaveStatus, string> = {
+  saved: "저장됨",
+  unsaved: "저장 중…",
+  saving: "저장 중…",
+  failed: "저장 실패",
+};
+
+function SaveState({ compact }: { compact: boolean }) {
+  const status = useEditor((s) => s.saveStatus);
+  return (
+    <span
+      role="status"
+      className={`min-w-0 flex-1 truncate text-xs ${
+        status === "failed" ? "font-semibold text-danger" : "text-ink-muted"
+      }`}
+    >
+      {status === "failed" && !compact
+        ? "저장 실패 - 다시 시도 중"
+        : SAVE_LABELS[status]}
+    </span>
   );
 }
 
