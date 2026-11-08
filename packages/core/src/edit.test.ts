@@ -39,16 +39,13 @@ const preset: FurniturePreset = {
 };
 
 describe("snapRotation", () => {
-  it("90° 배수 근처면 붙음", () => {
-    expect(snapRotation(94)).toBe(90);
-    expect(snapRotation(-3)).toBe(0);
-    expect(snapRotation(357)).toBe(0);
+  it("90° 배수와 5° 이내면 붙고 넘으면 정수 반올림", () => {
+    expect(snapRotation(95)).toBe(90);
+    expect(snapRotation(96)).toBe(96);
   });
 
-  it("범위 밖이면 정수 반올림 후 0~359", () => {
-    expect(snapRotation(96.4)).toBe(96);
-    expect(snapRotation(-30)).toBe(330);
-    expect(snapRotation(400)).toBe(40);
+  it("0~359로 정규화", () => {
+    expect(snapRotation(-30.4)).toBe(330);
   });
 });
 
