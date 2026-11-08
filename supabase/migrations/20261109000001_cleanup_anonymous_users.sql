@@ -2,7 +2,6 @@
 -- 활동 기준: 세션 갱신(auth.sessions)과 last_sign_in_at 중 최근 값, 둘 다 없으면 created_at
 create function public.delete_stale_anonymous_users() returns integer
 language plpgsql
-security definer
 set search_path = ''
 as $$
 declare
