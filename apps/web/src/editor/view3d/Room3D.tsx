@@ -180,6 +180,8 @@ export default function Room3D({
           ))}
         </group>
         <OrbitControls
+          // 초기화 때 새로 만들어 끌기 뒤 남은 damping 회전을 버림
+          key={resetKey}
           ref={controls}
           makeDefault
           maxPolarAngle={Math.PI / 2 - 0.05}
