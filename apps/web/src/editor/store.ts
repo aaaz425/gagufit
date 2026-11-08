@@ -95,13 +95,21 @@ export const useEditor = create<EditorState>()((set) => ({
     set((s) => {
       if (s.dragging) return {};
       const next = history.undo(s.history);
-      return { history: next, selection: keepSelection(next.present, s) };
+      return {
+        history: next,
+        selection: keepSelection(next.present, s),
+        toast: null,
+      };
     }),
   redo: () =>
     set((s) => {
       if (s.dragging) return {};
       const next = history.redo(s.history);
-      return { history: next, selection: keepSelection(next.present, s) };
+      return {
+        history: next,
+        selection: keepSelection(next.present, s),
+        toast: null,
+      };
     }),
   select: (selection) =>
     set((s) => ({
@@ -136,6 +144,9 @@ function emptyRoom(): Room {
     furniture: [],
   };
 }
+
+/** 렌더 밖(이벤트·액션)에서 현재 방 읽기 */
+export const currentRoom = () => useEditor.getState().history.present;
 
 export const useRoom = () => useEditor((s) => s.history.present);
 

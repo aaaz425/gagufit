@@ -16,10 +16,10 @@ export const COLLAPSED_PANEL_WIDTH = 60;
 const MOBILE_TABS_HEIGHT = 60;
 const MOBILE_SUMMARY_HEIGHT = 108;
 
-/** 보이는 영역 안쪽 여백 - 아래는 방 치수 표기·확대 버튼 자리 */
+/** 보이는 영역 안쪽 여백 - 아래는 방 치수 표기·확대 버튼, 모바일은 아래 벽 문 툴바 자리 */
 const FIT_MARGIN = {
   desktop: { side: 48, bottom: 96 },
-  mobile: { side: 32, bottom: 48 },
+  mobile: { side: 32, bottom: 80 },
 };
 
 export function canvasInsets({

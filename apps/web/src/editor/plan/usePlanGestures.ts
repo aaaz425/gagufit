@@ -13,7 +13,7 @@ import {
   type RefObject,
 } from "react";
 import { updateFurniture } from "../actions";
-import { useEditor } from "../store";
+import { currentRoom, useEditor } from "../store";
 import { openingFrame } from "./RoomPlan";
 import { toRoom, zoomAt, type View } from "./view";
 
@@ -43,8 +43,6 @@ type Gesture =
       dist0: number;
       angle0: number;
     };
-
-const present = () => useEditor.getState().history.present;
 
 function hitOf(target: EventTarget | null): Hit {
   const el = (target as Element | null)?.closest?.("[data-hit]");
@@ -90,7 +88,7 @@ export function usePlanGestures({
 
   const startDrag = (hit: NonNullable<Hit>, at: Vec2): Gesture | null => {
     const v = viewRef.current!;
-    const r = present();
+    const r = currentRoom();
     const p = toRoom(v, at);
     if (hit.kind === "furniture") {
       const f = r.furniture.find((item) => item.id === hit.id);
@@ -144,7 +142,7 @@ export function usePlanGestures({
     if (pointers.current.size > 2) return;
 
     const hit = hitOf(e.target);
-    const r = present();
+    const r = currentRoom();
     if (hit?.kind === "rotate") {
       gesture.current = { type: "rotate", id: hit.id, before: r };
       setDragging(true);
@@ -234,7 +232,7 @@ export function usePlanGestures({
       }
     }
 
-    const r = present();
+    const r = currentRoom();
     const p = toRoom(v, at);
     if (g.type === "furniture") {
       const position = roundVec2({ x: p.x + g.offset.x, y: p.y + g.offset.y });

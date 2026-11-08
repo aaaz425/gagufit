@@ -7,6 +7,7 @@ import { useEditor } from "../store";
 /** 빈 방 안내 - at은 화면 px 가운데 */
 export function EmptyHint({ at, compact }: { at: Vec2; compact: boolean }) {
   const setPanel = useEditor((s) => s.setPanel);
+  const setLeftOpen = useEditor((s) => s.setLeftOpen);
   const setSheet = useEditor((s) => s.setSheet);
   return (
     <div
@@ -22,6 +23,7 @@ export function EmptyHint({ at, compact }: { at: Vec2; compact: boolean }) {
         onClick={() => {
           setPanel("furniture");
           if (compact) setSheet("furniture");
+          else setLeftOpen(true);
         }}
       >
         가구 추가
