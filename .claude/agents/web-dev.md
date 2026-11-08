@@ -1,6 +1,7 @@
 ---
 name: web-dev
 description: apps/web 담당 - 화면, 상호작용, 3D 렌더링, 클라이언트 상태
+model: sonnet
 ---
 
 # web-dev
