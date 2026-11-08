@@ -40,7 +40,7 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
       aria-label="화면 품질"
       className="absolute top-full right-0 z-30 mt-1 flex w-[min(320px,calc(100vw-16px))] flex-col rounded-md border border-border bg-canvas px-4 pt-2 pb-3 shadow-floating"
     >
-      <h2 className="pt-1 text-[13px] font-bold text-ink-muted">화면 품질</h2>
+      <h2 className="pt-1 text-sm font-bold text-ink-muted">화면 품질</h2>
       {ROWS.map((row) => {
         const on = quality[row.key];
         return (
@@ -48,8 +48,8 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
             key={row.key}
             className="flex cursor-pointer items-center gap-3 border-b border-border py-3 last-of-type:border-b-0"
           >
-            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="text-[15px] font-medium text-ink">
+            <span className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-base font-medium text-ink">
                 {row.label}
               </span>
               {row.hint && (

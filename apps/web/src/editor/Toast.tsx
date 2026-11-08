@@ -20,7 +20,7 @@ export function Toast({ bottom }: { bottom: number }) {
   return (
     <div
       role="status"
-      className="pointer-events-auto absolute left-1/2 z-30 flex w-[min(360px,calc(100%-32px))] -translate-x-1/2 items-center gap-2.5 rounded-md bg-ink py-3 pr-2 pl-3.5 text-sm font-medium text-white shadow-floating"
+      className="pointer-events-auto absolute left-1/2 z-30 flex w-[min(360px,calc(100%-32px))] -translate-x-1/2 items-center gap-3 rounded-md bg-ink py-3 pr-2 pl-4 text-sm font-medium text-white shadow-floating"
       style={{ bottom }}
     >
       <span className="flex-1">{toast.message}</span>
@@ -31,7 +31,7 @@ export function Toast({ bottom }: { bottom: number }) {
             undo();
             showToast(null);
           }}
-          className="h-9 rounded-sm px-2 font-bold text-primary-inverse"
+          className="h-11 rounded-sm px-2 font-bold text-primary-inverse"
         >
           실행 취소
         </button>

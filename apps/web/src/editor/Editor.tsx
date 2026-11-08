@@ -3,6 +3,8 @@
 import { FURNITURE_PRESETS } from "@gagufit/data";
 import {
   ChevronDown,
+  PanelLeftClose,
+  PanelLeftOpen,
   Ruler,
   SearchX,
   SlidersHorizontal,
@@ -16,7 +18,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { deleteSelected } from "./actions";
+import { deleteSelected, displayAngle } from "./actions";
 import { OPENING_LABELS, wallLabel } from "./labels";
 import { loadRoom } from "./load-room";
 import { FurniturePanel } from "./panels/FurniturePanel";
@@ -27,6 +29,7 @@ import { PlanCanvas } from "./plan/PlanCanvas";
 import { useEditor, useRoom, type PanelTab } from "./store";
 import { Toast } from "./Toast";
 import { TopBar, ViewSwitch } from "./TopBar";
+import { IconButton } from "./ui";
 import { View3D } from "./View3D";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
@@ -68,7 +71,7 @@ function NotFound() {
         <SearchX size={28} aria-hidden />
       </span>
       <h1 className="text-lg font-bold text-ink">방을 찾을 수 없어요</h1>
-      <p className="max-w-[300px] text-[13px] text-ink-muted">
+      <p className="max-w-[300px] text-sm text-ink-muted">
         지워졌거나 다른 브라우저에서 만든 방일 수 있어요
       </p>
       <Link
@@ -128,10 +131,9 @@ function EditorScreen() {
           <main className="relative min-w-0 flex-1">
             {canvas}
             <Toast bottom={24} />
-            {/* 3D는 캔버스 크기가 바뀌면 방이 움직여 패널을 위에 띄움 */}
-            {view === "3d" && <RightPanel overlay />}
           </main>
-          {view === "2d" && <RightPanel />}
+          {/* 3D는 캔버스 폭이 바뀌면 방이 움직여 선택이 빗나가므로 자리를 늘 둠 */}
+          <RightPanel keep={view === "3d"} />
         </div>
       </div>
     );
@@ -157,7 +159,7 @@ function PanelTabs() {
     { value: "room", label: "방" },
   ];
   return (
-    <div role="tablist" className="flex rounded-sm bg-surface p-[3px]">
+    <div role="tablist" className="flex flex-1 rounded-sm bg-surface p-1">
       {tabs.map((t) => (
         <button
           key={t.value}
@@ -165,7 +167,7 @@ function PanelTabs() {
           role="tab"
           aria-selected={panel === t.value}
           onClick={() => setPanel(t.value)}
-          className={`h-9 flex-1 rounded-sm text-[13px] ${
+          className={`h-9 flex-1 rounded-sm text-sm ${
             panel === t.value
               ? "bg-canvas font-bold text-ink shadow-raised"
               : "font-medium text-ink-muted"
@@ -180,25 +182,51 @@ function PanelTabs() {
 
 function LeftPanel() {
   const panel = useEditor((s) => s.panel);
+  const [open, setOpen] = useState(true);
+  if (!open) {
+    return (
+      <aside className="flex shrink-0 flex-col items-center border-r border-border p-2">
+        <IconButton label="패널 펼치기" onClick={() => setOpen(true)}>
+          <PanelLeftOpen size={20} />
+        </IconButton>
+      </aside>
+    );
+  }
   return (
-    <aside className="flex w-[300px] shrink-0 flex-col gap-3.5 overflow-y-auto border-r border-border p-4">
-      <PanelTabs />
-      {panel === "furniture" ? <FurniturePanel /> : <RoomPanel />}
+    <aside className="flex w-[300px] shrink-0 flex-col gap-4 border-r border-border p-4">
+      <div className="flex items-center gap-2">
+        <PanelTabs />
+        <IconButton label="패널 접기" onClick={() => setOpen(false)}>
+          <PanelLeftClose size={20} />
+        </IconButton>
+      </div>
+      {panel === "furniture" ? (
+        <FurniturePanel />
+      ) : (
+        <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4">
+          <RoomPanel />
+        </div>
+      )}
     </aside>
   );
 }
 
-function RightPanel({ overlay }: { overlay?: boolean }) {
+/** keep - 선택이 없어도 자리 유지 */
+function RightPanel({ keep }: { keep: boolean }) {
   const hasSelection = useEditor((s) => s.selection !== null);
-  if (!hasSelection) return null;
+  if (!hasSelection && !keep) return null;
   return (
     <aside
       aria-label="속성"
-      className={`w-[300px] shrink-0 overflow-y-auto border-l border-border bg-canvas p-5 ${
-        overlay ? "absolute inset-y-0 right-0 z-10" : ""
-      }`}
+      className="w-[300px] shrink-0 overflow-y-auto border-l border-border p-6"
     >
-      <PropertiesPanel />
+      {hasSelection ? (
+        <PropertiesPanel />
+      ) : (
+        <p className="pt-8 text-center text-sm text-ink-muted">
+          가구를 누르면 속성이 보여요
+        </p>
+      )}
     </aside>
   );
 }
@@ -216,10 +244,12 @@ function MobileBottom() {
     if (selection.kind === "furniture") {
       const f = room.furniture.find((item) => item.id === selection.id);
       const preset = f && FURNITURE_PRESETS[f.presetId];
-      if (f && preset) {
-        icon = <FurnitureThumb preset={preset} size={44} />;
-        title = preset.name;
-        detail = `${preset.size.width} × ${preset.size.depth} cm · ${f.rotation}°`;
+      if (f) {
+        icon = (
+          <FurnitureThumb category={preset?.category} size={f.size} px={44} />
+        );
+        title = preset?.name ?? "가구";
+        detail = `${f.size.width} × ${f.size.depth} cm · ${displayAngle(f.rotation)}°`;
       }
     } else {
       const o = room.openings.find((item) => item.id === selection.id);
@@ -236,19 +266,19 @@ function MobileBottom() {
     return (
       <section
         aria-label="선택한 대상"
-        className="z-10 flex flex-col gap-3.5 rounded-t-lg bg-canvas px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] shadow-floating"
+        className="z-10 flex flex-col gap-2 rounded-t-lg bg-canvas px-4 pb-[max(16px,env(safe-area-inset-bottom))] shadow-floating"
       >
         <SheetHandle onOpen={() => setSheet("props")} />
         <div className="flex items-center gap-3">
           {icon}
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <p className="truncate text-base font-bold text-ink">{title}</p>
-            <p className="text-[13px] text-ink-muted tabular-nums">{detail}</p>
+            <p className="text-sm text-ink-muted tabular-nums">{detail}</p>
           </div>
           <button
             type="button"
             onClick={() => setSheet("props")}
-            className="flex h-11 items-center gap-1.5 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary"
+            className="flex h-11 items-center gap-2 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary"
           >
             <SlidersHorizontal size={16} aria-hidden />
             치수
@@ -298,7 +328,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex h-12 min-w-16 flex-col items-center justify-center gap-0.5 rounded-sm px-3 text-xs font-semibold text-ink"
+      className="flex h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-sm px-3 text-xs font-semibold text-ink"
     >
       {icon}
       {children}
@@ -320,7 +350,7 @@ function SheetHandle({
       role="button"
       tabIndex={0}
       aria-label={onOpen ? "펼치기" : "접기"}
-      className="flex h-4 shrink-0 cursor-grab touch-none items-center justify-center"
+      className="-mb-2 flex h-11 shrink-0 cursor-grab touch-none items-center justify-center"
       onPointerDown={(e) => {
         startY.current = e.clientY;
         e.currentTarget.setPointerCapture(e.pointerId);
@@ -352,32 +382,34 @@ function MobileSheet() {
   if (sheet === "furniture") {
     body = (
       <>
-        <h2 className="text-lg font-bold text-ink">가구 추가</h2>
+        <h2 className="text-xl font-bold text-ink">가구 추가</h2>
         <FurniturePanel onAdded={close} />
       </>
     );
   } else if (sheet === "room") {
     body = (
-      <>
-        <h2 className="text-lg font-bold text-ink">방</h2>
+      <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4">
+        <h2 className="mb-4 text-xl font-bold text-ink">방</h2>
         <RoomPanel onPick={close} />
-      </>
+      </div>
     );
   } else {
     body = (
-      <PropertiesPanel
-        showActions
-        headerAction={
-          <button
-            type="button"
-            aria-label="접기"
-            onClick={close}
-            className="flex size-11 items-center justify-center rounded-sm text-ink"
-          >
-            <ChevronDown size={22} />
-          </button>
-        }
-      />
+      <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 pb-1">
+        <PropertiesPanel
+          showActions
+          headerAction={
+            <button
+              type="button"
+              aria-label="접기"
+              onClick={close}
+              className="flex size-11 items-center justify-center rounded-sm text-ink"
+            >
+              <ChevronDown size={22} />
+            </button>
+          }
+        />
+      </div>
     );
   }
 
@@ -392,7 +424,10 @@ function MobileSheet() {
       <section
         role="dialog"
         aria-modal
-        className="relative flex max-h-[72dvh] flex-col gap-3.5 overflow-y-auto rounded-t-lg bg-canvas px-4 pt-2 pb-[max(28px,env(safe-area-inset-bottom))]"
+        className={`relative flex max-h-[72dvh] flex-col gap-4 rounded-t-lg bg-canvas px-4 pb-[max(24px,env(safe-area-inset-bottom))] ${
+          // 검색 결과 수에 따라 시트 높이가 흔들리지 않게
+          sheet === "furniture" ? "h-[64dvh]" : ""
+        }`}
       >
         <SheetHandle onClose={close} />
         {body}
