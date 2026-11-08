@@ -44,7 +44,7 @@ export function SelectionToolbar({
     <div
       role="toolbar"
       aria-label="선택한 대상"
-      className="absolute flex items-center rounded-full bg-canvas px-1 py-0.5 shadow-floating"
+      className="absolute flex items-center rounded-full bg-canvas px-1 py-1 shadow-floating"
       style={{ left, top }}
     >
       {kind === "furniture" && (

@@ -9,7 +9,7 @@ import {
   Undo2,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { warningBadgeLabel } from "./labels";
 import { SettingsPopover } from "./SettingsPopover";
 import { useEditor, useRoom, warningsOf } from "./store";
@@ -29,7 +29,7 @@ export function TopBar({ compact }: { compact: boolean }) {
   return (
     <header
       className={`flex shrink-0 items-center border-b border-border bg-canvas ${
-        compact ? "h-[52px] gap-1.5 px-2" : "h-[60px] gap-3.5 px-4"
+        compact ? "h-13 gap-1 px-2" : "h-15 gap-3 px-4"
       }`}
     >
       <Link
@@ -61,16 +61,21 @@ export function TopBar({ compact }: { compact: boolean }) {
           <Redo2 size={20} />
         </IconButton>
       </div>
-      {warnings.length > 0 && (
-        <span
-          role="status"
-          aria-label={warningBadgeLabel(warnings)}
-          className="flex shrink-0 items-center gap-1.5 rounded-full bg-danger-soft px-2.5 py-[5px] text-xs font-bold text-danger tabular-nums"
-        >
-          <TriangleAlert size={14} aria-hidden />
-          {compact ? warnings.length : warningBadgeLabel(warnings)}
-        </span>
-      )}
+      {/* 배지가 생기고 없어져도 옆 버튼이 밀리지 않게 자리 고정 */}
+      <span
+        role="status"
+        className={`flex shrink-0 ${compact ? "w-14" : "w-26"}`}
+      >
+        {warnings.length > 0 && (
+          <span
+            aria-label={warningBadgeLabel(warnings)}
+            className="flex items-center gap-1 rounded-full bg-danger-soft px-3 py-1 text-xs font-bold whitespace-nowrap text-danger tabular-nums"
+          >
+            <TriangleAlert size={14} aria-hidden />
+            {compact ? warnings.length : warningBadgeLabel(warnings)}
+          </span>
+        )}
+      </span>
       {!compact && <ViewSwitch />}
       <SettingsButton compact={compact} />
     </header>
@@ -131,6 +136,7 @@ function RoomName() {
   const room = useRoom();
   const update = useEditor((s) => s.update);
   const [draft, setDraft] = useState<string | null>(null);
+  const cancelled = useRef(false);
 
   const save = () => {
     if (draft === null) return;
@@ -146,7 +152,7 @@ function RoomName() {
         type="button"
         onClick={() => setDraft(room.name)}
         title="방 이름 바꾸기"
-        className="min-w-0 truncate rounded-sm px-1 py-1 text-left text-base font-bold text-ink hover:bg-surface"
+        className="h-11 min-w-0 truncate rounded-sm px-1 text-left text-base font-bold text-ink hover:bg-surface"
       >
         {room.name}
       </button>
@@ -160,10 +166,18 @@ function RoomName() {
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onFocus={(e) => e.currentTarget.select()}
-      onBlur={save}
+      onBlur={() => {
+        if (cancelled.current) cancelled.current = false;
+        else save();
+      }}
       onKeyDown={(e) => {
-        if (e.key === "Enter") save();
-        if (e.key === "Escape") setDraft(null);
+        // 저장은 blur 한 곳에서만
+        if (e.key === "Enter") e.currentTarget.blur();
+        if (e.key === "Escape") {
+          cancelled.current = true;
+          e.currentTarget.blur();
+          setDraft(null);
+        }
       }}
       className="h-10 w-full max-w-60 min-w-0 rounded-sm border-2 border-primary bg-canvas px-2 text-base font-bold text-ink outline-none"
     />

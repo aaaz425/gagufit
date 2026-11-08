@@ -10,7 +10,7 @@ const Room3D = dynamic(() => import("./view3d/Room3D"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full items-center justify-center bg-surface">
-      <span className="flex items-center gap-2 rounded-full bg-canvas px-3.5 py-2 text-[13px] font-medium text-ink-muted shadow-raised">
+      <span className="flex items-center gap-2 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink-muted shadow-raised">
         <LoaderCircle size={16} className="animate-spin text-primary" />
         3D를 준비하는 중
       </span>

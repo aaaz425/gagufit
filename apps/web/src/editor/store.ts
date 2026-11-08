@@ -28,6 +28,8 @@ type EditorState = {
   panel: PanelTab;
   sheet: Sheet;
   toast: Toast | null;
+  /** 도면에서 끄는 중 - 실행 취소 막음 */
+  dragging: boolean;
 
   load: (room: Room) => void;
   /** 기록 한 단계 */
@@ -43,6 +45,7 @@ type EditorState = {
   setPanel: (panel: PanelTab) => void;
   setSheet: (sheet: Sheet) => void;
   showToast: (toast: Toast | null) => void;
+  setDragging: (dragging: boolean) => void;
 };
 
 export const useEditor = create<EditorState>()((set) => ({
@@ -52,6 +55,7 @@ export const useEditor = create<EditorState>()((set) => ({
   panel: "furniture",
   sheet: null,
   toast: null,
+  dragging: false,
 
   load: (room) =>
     set({
@@ -61,19 +65,37 @@ export const useEditor = create<EditorState>()((set) => ({
       panel: "furniture",
       sheet: null,
       toast: null,
+      dragging: false,
     }),
-  update: (next) => set((s) => ({ history: history.push(s.history, next) })),
+  // 바뀐 게 없으면 기록 안 함 - 편집 함수가 같은 room을 돌려줌
+  // 새 편집이 생기면 삭제 토스트의 실행 취소 대상이 달라져 닫음
+  update: (next) =>
+    set((s) =>
+      next === s.history.present
+        ? {}
+        : { history: history.push(s.history, next), toast: null },
+    ),
   preview: (next) =>
-    set((s) => ({ history: history.replace(s.history, next) })),
+    set((s) =>
+      next === s.history.present
+        ? {}
+        : { history: history.replace(s.history, next) },
+    ),
   commit: (before) =>
-    set((s) => ({ history: history.commit(s.history, before) })),
+    set((s) =>
+      before === s.history.present
+        ? {}
+        : { history: history.commit(s.history, before), toast: null },
+    ),
   undo: () =>
     set((s) => {
+      if (s.dragging) return {};
       const next = history.undo(s.history);
       return { history: next, selection: keepSelection(next.present, s) };
     }),
   redo: () =>
     set((s) => {
+      if (s.dragging) return {};
       const next = history.redo(s.history);
       return { history: next, selection: keepSelection(next.present, s) };
     }),
@@ -86,6 +108,7 @@ export const useEditor = create<EditorState>()((set) => ({
   setPanel: (panel) => set({ panel }),
   setSheet: (sheet) => set({ sheet }),
   showToast: (toast) => set({ toast }),
+  setDragging: (dragging) => set({ dragging }),
 }));
 
 /** 되돌린 뒤 없는 대상이면 선택 해제 */

@@ -4,12 +4,11 @@ import {
   furnitureCorners,
   moveOpening,
   roundVec2,
-  setOpeningWidth,
+  setOpeningEdge,
   snapRotation,
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FURNITURE_PRESETS } from "@gagufit/data";
 import { Maximize, Minus, Plus, Sofa } from "lucide-react";
 import {
   useEffect,
@@ -18,7 +17,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
-import { updateFurniture, updateOpening } from "../actions";
+import { updateFurniture } from "../actions";
 import { useEditor, useRoom, warnedFurnitureIds } from "../store";
 import { SelectionToolbar, type ScreenBox } from "../SelectionToolbar";
 import {
@@ -43,6 +42,8 @@ const LONG_PRESS_MS = 400;
 /** 이만큼 움직이면 누르기가 아닌 끌기 */
 const MOVE_SLOP = 8;
 const FIT_PAD = 48;
+/** 아래 여백 - 방 치수 표기와 확대 버튼 자리 */
+const FIT_PAD_BOTTOM = 96;
 
 type Hit = { kind: string; id: string } | null;
 
@@ -82,6 +83,9 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const commit = useEditor((s) => s.commit);
   const setPanel = useEditor((s) => s.setPanel);
   const setSheet = useEditor((s) => s.setSheet);
+  const sheet = useEditor((s) => s.sheet);
+  const dragging = useEditor((s) => s.dragging);
+  const setDragging = useEditor((s) => s.setDragging);
 
   const boxRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -90,7 +94,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   );
   const [view, setViewState] = useState<View | null>(null);
   const viewRef = useRef<View | null>(null);
-  const [dragging, setDragging] = useState(false);
+  const sizeRef = useRef<{ width: number; height: number } | null>(null);
   const gesture = useRef<Gesture | null>(null);
   const pointers = useRef(new Map<number, Vec2>());
 
@@ -99,8 +103,11 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     setViewState(next);
   };
 
+  const padding = compact
+    ? { side: 32, bottom: 48 }
+    : { side: FIT_PAD, bottom: FIT_PAD_BOTTOM };
   const fit = () => {
-    if (size) setView(fitView(present(), size, compact ? 32 : FIT_PAD));
+    if (size) setView(fitView(present(), size, padding.side, padding.bottom));
   };
 
   useEffect(() => {
@@ -108,14 +115,23 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     if (!box) return;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
+      // 처음 한 번만 맞춤 - 이후엔 크기 변화만큼 옮겨 가운데 유지
+      const prev = sizeRef.current;
+      sizeRef.current = { width, height };
       setSize({ width, height });
-      // 처음 한 번만 맞춤 - 이후엔 사용자가 옮긴 화면 유지
-      if (!viewRef.current && width > 0 && height > 0) {
-        const next = fitView(
-          present(),
-          { width, height },
-          compact ? 32 : FIT_PAD,
-        );
+      const v = viewRef.current;
+      if (v && prev) {
+        const next = {
+          ...v,
+          x: v.x + (width - prev.width) / 2,
+          y: v.y + (height - prev.height) / 2,
+        };
+        viewRef.current = next;
+        setViewState(next);
+      } else if (!v && width > 0 && height > 0) {
+        const next = compact
+          ? fitView(present(), { width, height }, 32, 48)
+          : fitView(present(), { width, height }, FIT_PAD, FIT_PAD_BOTTOM);
         viewRef.current = next;
         setViewState(next);
       }
@@ -256,6 +272,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
 
     switch (g.type) {
       case "pinch": {
+        if (pointers.current.size < 2) return;
         const [a, b] = [...pointers.current.values()];
         const center = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
         const dist = Math.hypot(b.x - a.x, b.y - a.y);
@@ -296,10 +313,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     const r = present();
     const p = toRoom(v, at);
     if (g.type === "furniture") {
-      const f = r.furniture.find((item) => item.id === g.id);
       const position = roundVec2({ x: p.x + g.offset.x, y: p.y + g.offset.y });
-      if (!f || (f.position.x === position.x && f.position.y === position.y))
-        return;
       preview(updateFurniture(r, g.id, { position }));
     } else if (g.type === "rotate") {
       const f = r.furniture.find((item) => item.id === g.id);
@@ -309,36 +323,17 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       const dy = p.y - f.position.y;
       if (Math.hypot(dx, dy) < 1) return;
       const rotation = snapRotation((Math.atan2(-dx, -dy) * 180) / Math.PI);
-      if (rotation !== f.rotation)
-        preview(updateFurniture(r, g.id, { rotation }));
+      preview(updateFurniture(r, g.id, { rotation }));
     } else if (g.type === "opening") {
-      const next = moveOpening(r, g.id, {
-        x: p.x + g.offset.x,
-        y: p.y + g.offset.y,
-      });
-      const a = r.openings.find((o) => o.id === g.id);
-      const b = next.openings.find((o) => o.id === g.id);
-      if (a && b && (a.wall !== b.wall || a.offset !== b.offset)) preview(next);
+      preview(
+        moveOpening(r, g.id, { x: p.x + g.offset.x, y: p.y + g.offset.y }),
+      );
     } else if (g.type === "width") {
-      const o0 = g.before.openings.find((o) => o.id === g.id);
       const o = r.openings.find((item) => item.id === g.id);
-      if (!o0 || !o) return;
-      const { start, u } = openingFrame(r, o0);
+      if (!o) return;
+      const { start, u } = openingFrame(r, o);
       const along = (p.x - start.x) * u.x + (p.y - start.y) * u.y;
-      let next: Room;
-      if (g.side === "right") {
-        next = setOpeningWidth(r, g.id, along - o0.offset);
-      } else {
-        const right = o0.offset + o0.width;
-        const offset = Math.min(Math.max(Math.round(along), 0), right - 1);
-        next = updateOpening(r, g.id, (item) => ({
-          ...item,
-          offset,
-          width: right - offset,
-        }));
-      }
-      const b = next.openings.find((item) => item.id === g.id)!;
-      if (b.offset !== o.offset || b.width !== o.width) preview(next);
+      preview(setOpeningEdge(r, g.id, g.side, along));
     }
   };
 
@@ -356,7 +351,11 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     if (!pointers.current.delete(e.pointerId)) return;
     const g = gesture.current;
     if (g?.type === "pinch") {
-      if (pointers.current.size === 0) gesture.current = null;
+      // 한 손가락이 남으면 그 손가락으로 화면 이동 이어감
+      const rest = [...pointers.current.values()][0];
+      gesture.current = rest
+        ? { type: "pan", start: rest, view0: viewRef.current!, moved: true }
+        : null;
       return;
     }
     if (pointers.current.size > 0) return;
@@ -390,8 +389,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   if (view && (selectedFurniture || selectedOpening)) {
     let pts: Vec2[] = [];
     if (selectedFurniture) {
-      const preset = FURNITURE_PRESETS[selectedFurniture.presetId];
-      if (preset) pts = furnitureCorners(selectedFurniture, preset.size);
+      pts = furnitureCorners(selectedFurniture);
     } else if (selectedOpening) {
       const { left, right } = openingFrame(room, selectedOpening);
       pts = [left, right];
@@ -469,7 +467,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
         )}
       </svg>
 
-      {box && size && !dragging && (
+      {box && size && !dragging && sheet !== "props" && (
         <SelectionToolbar
           box={box}
           bounds={size}
@@ -479,11 +477,11 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
 
       {room.furniture.length === 0 && roomCenter && !selection && (
         <div
-          className="absolute flex w-[230px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2.5 rounded-md bg-canvas p-4.5 text-center shadow-floating"
+          className="absolute flex w-60 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 rounded-md bg-canvas p-4 text-center shadow-floating"
           style={{ left: roomCenter.x, top: roomCenter.y }}
         >
           <Sofa size={28} className="text-primary" aria-hidden />
-          <p className="text-[15px] font-bold text-ink">아직 가구가 없어요</p>
+          <p className="text-base font-bold text-ink">아직 가구가 없어요</p>
           <p className="text-xs text-ink-muted">가구를 골라 방에 놓아 보세요</p>
           <button
             type="button"
@@ -499,7 +497,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       )}
 
       {!compact && (
-        <div className="absolute bottom-6 left-6 flex gap-0.5 rounded-sm bg-canvas p-1 shadow-raised">
+        <div className="absolute bottom-6 left-6 flex gap-1 rounded-sm bg-canvas p-1 shadow-raised">
           <ZoomButton label="축소" onClick={() => zoomBy(1 / 1.25)}>
             <Minus size={16} />
           </ZoomButton>
@@ -530,7 +528,7 @@ function ZoomButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="flex size-8 items-center justify-center rounded-sm text-ink hover:bg-surface"
+      className="flex size-9 items-center justify-center rounded-sm text-ink hover:bg-surface"
     >
       {children}
     </button>
