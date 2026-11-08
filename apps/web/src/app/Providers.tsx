@@ -4,13 +4,13 @@ import { ApiProvider, createApiClient } from "@gagufit/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
   const [client] = useState(() =>
-    URL && KEY ? createApiClient(URL, KEY) : null,
+    SUPABASE_URL && KEY ? createApiClient(SUPABASE_URL, KEY) : null,
   );
 
   if (!client) {

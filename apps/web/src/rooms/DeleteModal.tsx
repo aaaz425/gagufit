@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeleteRoom } from "@gagufit/api";
+import { clearBackup } from "@/editor/save-backup";
 import { BUTTON_DANGER, BUTTON_SECONDARY, Modal, ModalActions } from "./Modal";
 
 export function DeleteModal({
@@ -30,7 +31,14 @@ export function DeleteModal({
         <button
           type="button"
           disabled={del.isPending}
-          onClick={() => del.mutate(id, { onSuccess: onClose })}
+          onClick={() =>
+            del.mutate(id, {
+              onSuccess: () => {
+                clearBackup(id);
+                onClose();
+              },
+            })
+          }
           className={BUTTON_DANGER}
         >
           지우기

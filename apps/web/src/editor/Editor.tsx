@@ -1,7 +1,6 @@
 "use client";
 
-import { useRoomQuery } from "@gagufit/api";
-import type { Room } from "@gagufit/core";
+import { useRoomQuery, type RoomRecord } from "@gagufit/api";
 import { CloudOff, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -36,27 +35,27 @@ export function Editor({ roomId }: { roomId: string }) {
   const load = useEditor((s) => s.load);
   const showToast = useEditor((s) => s.showToast);
   const query = useRoomQuery(roomId);
-  // 서버에 있는 방 - 불러온 뒤 한 번만 정함
-  const [baseline, setBaseline] = useState<Room | null>(null);
+  // 서버에 있는 방 - 불러온 뒤 한 번만 정함, 이후 쿼리 상태는 무시
+  const [baseline, setBaseline] = useState<RoomRecord | null>(null);
 
   const record = query.data;
   // 캐시된 이전 값이 아니라 새로 받은 값으로 열기
   const fresh = query.isSuccess && !query.isFetching;
   useEffect(() => {
     if (baseline || !fresh || !record) return;
-    // 저장 못 한 보관본이 서버보다 새로우면 그걸로 열고 바로 저장
+    // 보관 뒤 서버가 바뀌지 않았으면 저장 못 한 보관본으로 열고 바로 저장
     const backup = readBackup(roomId);
-    const restore = backup !== null && backup.at > Date.parse(record.updatedAt);
+    const restore = backup !== null && backup.base === record.updatedAt;
     load(restore ? backup.room : record.room);
     if (restore) showToast({ message: "저장하지 못한 변경을 되살렸어요" });
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 불러온 방을 스토어에 옮긴 뒤 화면을 여는 신호
-    setBaseline(record.room);
+    setBaseline(record);
   }, [baseline, fresh, record, roomId, load, showToast]);
 
+  if (baseline) return <EditorScreen roomId={roomId} baseline={baseline} />;
   if (query.isError) return <LoadError onRetry={() => query.refetch()} />;
   if (fresh && record === null) return <NotFound />;
-  if (!baseline) return <div className="h-dvh bg-surface" />;
-  return <EditorScreen roomId={roomId} baseline={baseline} />;
+  return <div className="h-dvh bg-surface" />;
 }
 
 function LoadError({ onRetry }: { onRetry: () => void }) {
@@ -145,7 +144,7 @@ function EditorScreen({
   baseline,
 }: {
   roomId: string;
-  baseline: Room;
+  baseline: RoomRecord;
 }) {
   const desktop = useIsDesktop();
   useAutoSave(roomId, baseline);
