@@ -16,7 +16,7 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
 
   const start = () =>
     create.mutate(roomFromTemplate(ROOM_TEMPLATES[picked]), {
-      onSuccess: (id) => router.push(`/rooms/${id}`),
+      onSuccess: (id) => router.replace(`/rooms/${id}`),
     });
 
   return (

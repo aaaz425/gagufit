@@ -3,25 +3,20 @@
 import { useRooms, type RoomSummary } from "@gagufit/api";
 import { CloudOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { DeleteModal } from "./DeleteModal";
-import { NewRoomCard, RoomCard } from "./RoomCard";
+import { NEW_ROOM_HREF, NewRoomCard, RoomCard } from "./RoomCard";
 import { TemplateModal } from "./TemplateModal";
-
-// 새 방 모달은 /rooms?new=1 - 내비의 방 만들기와 같은 경로
-const NEW_URL = "/rooms?new=1";
 
 export function RoomList() {
   const rooms = useRooms();
-  const router = useRouter();
-  const newOpen = useSearchParams().has("new");
   const [deleting, setDeleting] = useState<RoomSummary | null>(null);
   const [now] = useState(() => Date.now());
   const list = rooms.data;
 
   return (
-    <div className="bg-surface">
-      <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
+    <div className="flex flex-1 flex-col bg-surface">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
         <div className="flex items-baseline justify-between">
           <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
           {list && (
@@ -48,7 +43,7 @@ export function RoomList() {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-              <NewRoomCard onClick={() => router.push(NEW_URL)} />
+              <NewRoomCard />
               {!list && (
                 <>
                   <Placeholder />
@@ -73,7 +68,9 @@ export function RoomList() {
         )}
       </main>
 
-      {newOpen && <TemplateModal onClose={() => router.replace("/rooms")} />}
+      <Suspense>
+        <NewRoomModal />
+      </Suspense>
       {deleting && (
         <DeleteModal
           id={deleting.id}
@@ -82,6 +79,18 @@ export function RoomList() {
         />
       )}
     </div>
+  );
+}
+
+// useSearchParams는 정적 렌더를 막아서 이 부분만 분리
+function NewRoomModal() {
+  const router = useRouter();
+  const open = useSearchParams().has("new");
+  if (!open) return null;
+  return (
+    <TemplateModal
+      onClose={() => router.replace("/rooms", { scroll: false })}
+    />
   );
 }
 

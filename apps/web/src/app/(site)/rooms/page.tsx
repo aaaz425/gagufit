@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { RoomList } from "@/rooms/RoomList";
 
 export const metadata: Metadata = {
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RoomsPage() {
-  return (
-    <Suspense>
-      <RoomList />
-    </Suspense>
-  );
+  return <RoomList />;
 }

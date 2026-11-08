@@ -6,7 +6,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteNav />
-      <div className="flex-1">{children}</div>
+      <div className="flex flex-1 flex-col">{children}</div>
       <SiteFooter />
     </div>
   );
