@@ -16,13 +16,14 @@ function cosSin(deg: number): [number, number] {
 
 /** 회전 0일 때 왼쪽 위부터 시계 방향 */
 export function furnitureCorners(
-  furniture: Pick<PlacedFurniture, "position" | "rotation">,
-  size: Pick<Size, "width" | "depth">,
+  furniture: Pick<PlacedFurniture, "position" | "rotation"> & {
+    size: Pick<Size, "width" | "depth">;
+  },
 ): Vec2[] {
   const [cos, sin] = cosSin(furniture.rotation);
   const { x, y } = furniture.position;
-  const hw = size.width / 2;
-  const hd = size.depth / 2;
+  const hw = furniture.size.width / 2;
+  const hd = furniture.size.depth / 2;
   return [
     [-hw, -hd],
     [hw, -hd],

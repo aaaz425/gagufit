@@ -1,5 +1,23 @@
 export type * from "./types";
 export { checkRoom } from "./check";
+export {
+  addFurniture,
+  addOpening,
+  DUPLICATE_OFFSET,
+  duplicateFurniture,
+  FURNITURE_SIZE_LIMITS,
+  moveOpening,
+  OPENING_MIN_WIDTH,
+  resizeFurniture,
+  resizeRoom,
+  ROOM_LIMITS,
+  ROTATION_SNAP_THRESHOLD,
+  roundVec2,
+  setOpeningEdge,
+  setOpeningKind,
+  setOpeningWidth,
+  snapRotation,
+} from "./edit";
 export { furnitureCorners, polygonsOverlap } from "./geometry";
 export * as history from "./history";
 export type { History } from "./history";
@@ -8,6 +26,7 @@ export {
   doorPassageCorners,
   OPENING_DEFAULTS,
   roomCorners,
-  wallSegment,
+  wallFrame,
+  type WallFrame,
 } from "./room";
 export { CURRENT_SCHEMA_VERSION, migrate, type SavedRoom } from "./schema";

@@ -1,5 +1,5 @@
 import { EPSILON, furnitureCorners, polygonsOverlap } from "./geometry";
-import { doorPassageCorners, wallSegment } from "./room";
+import { doorPassageCorners, wallFrame } from "./room";
 import type {
   FurniturePreset,
   HingedDoor,
@@ -9,23 +9,19 @@ import type {
   Warning,
 } from "./types";
 
-/** 프리셋 없는 가구는 크기를 몰라 판정 제외 */
+/** 프리셋 없는 가구는 normal 층으로 판정 */
 export function checkRoom(
   room: Room,
   presets: Readonly<Record<string, FurniturePreset>>,
 ): Warning[] {
-  const items = room.furniture.flatMap((f) => {
+  const items = room.furniture.map((f) => ({
+    id: f.id,
     // 저장 데이터의 presetId가 "toString" 같은 상속 키일 수 있음
-    if (!Object.hasOwn(presets, f.presetId)) return [];
-    const preset = presets[f.presetId];
-    return [
-      {
-        id: f.id,
-        normal: preset.layer === "normal",
-        corners: furnitureCorners(f, preset.size),
-      },
-    ];
-  });
+    normal:
+      !Object.hasOwn(presets, f.presetId) ||
+      presets[f.presetId].layer === "normal",
+    corners: furnitureCorners(f),
+  }));
   const doors = room.openings.filter(
     (o): o is HingedDoor | SlidingDoor => o.kind !== "window",
   );
@@ -80,11 +76,7 @@ function doorSwingOverlaps(
   door: HingedDoor,
   corners: readonly Vec2[],
 ): boolean {
-  const { start, end } = wallSegment(room, door.wall);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
-  // 꼭짓점이 시계 방향이라 방 안쪽은 벽 방향의 오른쪽
-  const inward = { x: -u.y, y: u.x };
+  const { start, u, inward } = wallFrame(room, door.wall);
   // 경첩점에서 닫힌 문이 놓인 방향
   const along = door.hinge === "left" ? u : { x: -u.x, y: -u.y };
   const hingeOffset =

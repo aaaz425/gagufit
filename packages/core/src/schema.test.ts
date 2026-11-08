@@ -47,6 +47,7 @@ const saved: SavedRoom = {
         presetId: "bed-single",
         position: { x: -10, y: 150 },
         rotation: 90,
+        size: { width: 110, depth: 200, height: 40 },
         color: "oak",
       },
     ],
@@ -74,6 +75,17 @@ describe("migrate", () => {
     [
       "위치 정수 아님",
       { furniture: [{ ...room.furniture[0], position: { x: 1.5, y: 0 } }] },
+    ],
+    [
+      "가구 크기 0",
+      {
+        furniture: [
+          {
+            ...room.furniture[0],
+            size: { ...room.furniture[0].size, width: 0 },
+          },
+        ],
+      },
     ],
   ])("%s이면 throw", (_, patch) => {
     expect(() =>

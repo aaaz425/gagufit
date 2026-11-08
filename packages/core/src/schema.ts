@@ -76,6 +76,10 @@ function isFurnitureV1(v: unknown): boolean {
     isInt(v.position.x) &&
     isInt(v.position.y) &&
     isInt(v.rotation, 0, 359) &&
+    isObject(v.size) &&
+    isPositiveInt(v.size.width) &&
+    isPositiveInt(v.size.depth) &&
+    isPositiveInt(v.size.height) &&
     typeof v.color === "string"
   );
 }
