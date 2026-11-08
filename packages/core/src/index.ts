@@ -20,6 +20,7 @@ export {
   doorPassageCorners,
   OPENING_DEFAULTS,
   roomCorners,
-  wallSegment,
+  wallFrame,
+  type WallFrame,
 } from "./room";
 export { CURRENT_SCHEMA_VERSION, migrate, type SavedRoom } from "./schema";

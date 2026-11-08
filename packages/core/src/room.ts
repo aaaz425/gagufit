@@ -20,15 +20,30 @@ export function roomCorners(room: Pick<Room, "width" | "depth">): Vec2[] {
   ];
 }
 
-export function wallSegment(
+export type WallFrame = {
+  start: Vec2;
+  end: Vec2;
+  length: number;
+  /** start → end 단위 벡터 */
+  u: Vec2;
+  /** 방 안쪽 단위 벡터 */
+  inward: Vec2;
+};
+
+export function wallFrame(
   room: Pick<Room, "width" | "depth">,
   wall: WallIndex,
-): { start: Vec2; end: Vec2 } {
+): WallFrame {
   const corners = roomCorners(room);
   if (!Number.isInteger(wall) || wall < 0 || wall >= corners.length) {
     throw new RangeError(`없는 벽 번호: ${wall}`);
   }
-  return { start: corners[wall], end: corners[(wall + 1) % corners.length] };
+  const start = corners[wall];
+  const end = corners[(wall + 1) % corners.length];
+  const length = Math.hypot(end.x - start.x, end.y - start.y);
+  const u = { x: (end.x - start.x) / length, y: (end.y - start.y) / length };
+  // 꼭짓점이 시계 방향이라 방 안쪽은 벽 방향의 오른쪽
+  return { start, end, length, u, inward: { x: -u.y, y: u.x } };
 }
 
 /** 문 왼쪽 끝부터 시계 방향 */
@@ -36,11 +51,11 @@ export function doorPassageCorners(
   room: Pick<Room, "width" | "depth">,
   door: Pick<Opening, "wall" | "offset" | "width">,
 ): Vec2[] {
-  const { start, end } = wallSegment(room, door.wall);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
-  // 꼭짓점이 시계 방향이라 방 안쪽은 벽 방향의 오른쪽
-  const d = { x: -u.y * DOOR_PASSAGE_DEPTH, y: u.x * DOOR_PASSAGE_DEPTH };
+  const { start, u, inward } = wallFrame(room, door.wall);
+  const d = {
+    x: inward.x * DOOR_PASSAGE_DEPTH,
+    y: inward.y * DOOR_PASSAGE_DEPTH,
+  };
   const left = {
     x: start.x + u.x * door.offset,
     y: start.y + u.y * door.offset,

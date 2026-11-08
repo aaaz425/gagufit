@@ -1,5 +1,5 @@
 import { EPSILON, furnitureCorners, polygonsOverlap } from "./geometry";
-import { doorPassageCorners, wallSegment } from "./room";
+import { doorPassageCorners, wallFrame } from "./room";
 import type {
   FurniturePreset,
   HingedDoor,
@@ -80,11 +80,7 @@ function doorSwingOverlaps(
   door: HingedDoor,
   corners: readonly Vec2[],
 ): boolean {
-  const { start, end } = wallSegment(room, door.wall);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
-  // 꼭짓점이 시계 방향이라 방 안쪽은 벽 방향의 오른쪽
-  const inward = { x: -u.y, y: u.x };
+  const { start, u, inward } = wallFrame(room, door.wall);
   // 경첩점에서 닫힌 문이 놓인 방향
   const along = door.hinge === "left" ? u : { x: -u.x, y: -u.y };
   const hingeOffset =

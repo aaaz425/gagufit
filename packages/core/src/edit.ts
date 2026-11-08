@@ -1,4 +1,4 @@
-import { OPENING_DEFAULTS, roomCorners, wallSegment } from "./room";
+import { OPENING_DEFAULTS, roomCorners, wallFrame } from "./room";
 import type {
   FurniturePreset,
   Opening,
@@ -75,11 +75,6 @@ export function duplicateFurniture(
   };
 }
 
-function wallLength(room: Pick<Room, "width" | "depth">, wall: WallIndex) {
-  const { start, end } = wallSegment(room, wall);
-  return Math.hypot(end.x - start.x, end.y - start.y);
-}
-
 /** 폭은 벽 길이까지, offset은 [0, 벽 길이 - 폭] */
 function fitToWall<T extends Opening>(opening: T, length: number): T {
   const width = Math.min(opening.width, length);
@@ -114,7 +109,10 @@ export function addOpening(
       .filter((o) => o.wall === wall)
       .sort((a, b) => a.offset - b.offset);
     let cursor = 0;
-    for (const end of [...used, { offset: wallLength(room, wall), width: 0 }]) {
+    for (const end of [
+      ...used,
+      { offset: wallFrame(room, wall).length, width: 0 },
+    ]) {
       const length = end.offset - cursor;
       if (!best || length > best.length) best = { wall, start: cursor, length };
       cursor = Math.max(cursor, end.offset + end.width);
@@ -138,17 +136,14 @@ export function addOpening(
 export function moveOpening(room: Room, openingId: string, point: Vec2): Room {
   let nearest = { wall: 0, along: 0, distance: Infinity };
   for (let wall = 0; wall < roomCorners(room).length; wall++) {
-    const { start, end } = wallSegment(room, wall);
-    const length = wallLength(room, wall);
-    const ux = (end.x - start.x) / length;
-    const uy = (end.y - start.y) / length;
+    const { start, length, u } = wallFrame(room, wall);
     const along = Math.min(
-      Math.max((point.x - start.x) * ux + (point.y - start.y) * uy, 0),
+      Math.max((point.x - start.x) * u.x + (point.y - start.y) * u.y, 0),
       length,
     );
     const distance = Math.hypot(
-      point.x - (start.x + ux * along),
-      point.y - (start.y + uy * along),
+      point.x - (start.x + u.x * along),
+      point.y - (start.y + u.y * along),
     );
     if (distance < nearest.distance) nearest = { wall, along, distance };
   }
@@ -156,7 +151,7 @@ export function moveOpening(room: Room, openingId: string, point: Vec2): Room {
   return updateOpening(room, openingId, (o) =>
     fitToWall(
       { ...o, wall, offset: Math.round(along - o.width / 2) },
-      wallLength(room, wall),
+      wallFrame(room, wall).length,
     ),
   );
 }
@@ -170,7 +165,7 @@ export function setOpeningWidth(
   return updateOpening(room, openingId, (o) =>
     fitToWall(
       { ...o, width: Math.max(Math.round(width), 1) },
-      wallLength(room, o.wall),
+      wallFrame(room, o.wall).length,
     ),
   );
 }
@@ -188,6 +183,8 @@ export function resizeRoom(
   const next = { ...room, ...size };
   return {
     ...next,
-    openings: next.openings.map((o) => fitToWall(o, wallLength(next, o.wall))),
+    openings: next.openings.map((o) =>
+      fitToWall(o, wallFrame(next, o.wall).length),
+    ),
   };
 }
