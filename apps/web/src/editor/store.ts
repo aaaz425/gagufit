@@ -21,6 +21,9 @@ export type Sheet = PanelTab | "props" | null;
 
 export type Toast = { message: string; undo?: boolean };
 
+/** unsaved - 바뀐 뒤 저장 시작 전 */
+export type SaveStatus = "saved" | "unsaved" | "saving" | "failed";
+
 type EditorState = {
   history: History<Room>;
   selection: Selection;
@@ -32,6 +35,7 @@ type EditorState = {
   toast: Toast | null;
   /** 도면에서 끄는 중 - 실행 취소 막음 */
   dragging: boolean;
+  saveStatus: SaveStatus;
 
   load: (room: Room) => void;
   /** 기록 한 단계 */
@@ -49,6 +53,7 @@ type EditorState = {
   setSheet: (sheet: Sheet) => void;
   showToast: (toast: Toast | null) => void;
   setDragging: (dragging: boolean) => void;
+  setSaveStatus: (status: SaveStatus) => void;
 };
 
 export const useEditor = create<EditorState>()((set) => ({
@@ -60,9 +65,11 @@ export const useEditor = create<EditorState>()((set) => ({
   sheet: null,
   toast: null,
   dragging: false,
+  saveStatus: "saved",
 
   load: (room) =>
     set({
+      saveStatus: "saved",
       history: history.create(room),
       selection: null,
       view: "2d",
@@ -122,6 +129,7 @@ export const useEditor = create<EditorState>()((set) => ({
   setSheet: (sheet) => set({ sheet }),
   showToast: (toast) => set({ toast }),
   setDragging: (dragging) => set({ dragging }),
+  setSaveStatus: (saveStatus) => set({ saveStatus }),
 }));
 
 /** 되돌린 뒤 없는 대상이면 선택 해제 */

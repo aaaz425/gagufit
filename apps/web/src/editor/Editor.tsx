@@ -1,18 +1,21 @@
 "use client";
 
-import { SearchX } from "lucide-react";
+import { useRoomQuery } from "@gagufit/api";
+import type { Room } from "@gagufit/core";
+import { CloudOff, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { deleteSelected } from "./actions";
 import { canvasInsets } from "./layout";
-import { loadRoom } from "./load-room";
 import { LeftPanel, RightPanel } from "./panels/DesktopPanels";
 import { MobileBottom } from "./panels/MobileBottom";
 import { MobileSheet } from "./panels/MobileSheet";
 import { PlanCanvas } from "./plan/PlanCanvas";
+import { readBackup } from "./save-backup";
 import { useEditor } from "./store";
 import { Toast } from "./Toast";
 import { TopBar } from "./TopBar";
+import { useAutoSave } from "./useAutoSave";
 import { View3D } from "./View3D";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
@@ -31,20 +34,58 @@ function useIsDesktop() {
 
 export function Editor({ roomId }: { roomId: string }) {
   const load = useEditor((s) => s.load);
-  const [status, setStatus] = useState<"loading" | "ready" | "missing">(
-    "loading",
-  );
+  const showToast = useEditor((s) => s.showToast);
+  const query = useRoomQuery(roomId);
+  // 서버에 있는 방 - 불러온 뒤 한 번만 정함
+  const [baseline, setBaseline] = useState<Room | null>(null);
 
+  const record = query.data;
+  // 캐시된 이전 값이 아니라 새로 받은 값으로 열기
+  const fresh = query.isSuccess && !query.isFetching;
   useEffect(() => {
-    const room = loadRoom(roomId);
-    if (room) load(room);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 3단계에서 비동기 불러오기로 바뀔 자리
-    setStatus(room ? "ready" : "missing");
-  }, [roomId, load]);
+    if (baseline || !fresh || !record) return;
+    // 저장 못 한 보관본이 서버보다 새로우면 그걸로 열고 바로 저장
+    const backup = readBackup(roomId);
+    const restore = backup !== null && backup.at > Date.parse(record.updatedAt);
+    load(restore ? backup.room : record.room);
+    if (restore) showToast({ message: "저장하지 못한 변경을 되살렸어요" });
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 불러온 방을 스토어에 옮긴 뒤 화면을 여는 신호
+    setBaseline(record.room);
+  }, [baseline, fresh, record, roomId, load, showToast]);
 
-  if (status === "missing") return <NotFound />;
-  if (status === "loading") return <div className="h-dvh bg-surface" />;
-  return <EditorScreen />;
+  if (query.isError) return <LoadError onRetry={() => query.refetch()} />;
+  if (fresh && record === null) return <NotFound />;
+  if (!baseline) return <div className="h-dvh bg-surface" />;
+  return <EditorScreen roomId={roomId} baseline={baseline} />;
+}
+
+function LoadError({ onRetry }: { onRetry: () => void }) {
+  return (
+    <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-surface px-4 text-center">
+      <span className="flex size-16 items-center justify-center rounded-full bg-canvas text-ink-muted shadow-raised">
+        <CloudOff size={28} aria-hidden />
+      </span>
+      <h1 className="text-lg font-bold text-ink">방을 불러오지 못했어요</h1>
+      <p className="max-w-[300px] text-sm text-ink-muted">
+        인터넷 연결을 확인하고 다시 시도해 주세요
+      </p>
+      <div className="flex gap-2">
+        <Link
+          href="/rooms"
+          className="flex h-11 items-center rounded-sm border border-border bg-canvas px-5 text-sm font-semibold text-ink"
+        >
+          내 방 목록으로
+        </Link>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="h-11 rounded-sm bg-primary px-5 text-sm font-semibold text-white hover:bg-primary-hover"
+        >
+          다시 시도
+        </button>
+      </div>
+    </main>
+  );
 }
 
 function NotFound() {
@@ -99,8 +140,15 @@ function useShortcuts() {
   }, []);
 }
 
-function EditorScreen() {
+function EditorScreen({
+  roomId,
+  baseline,
+}: {
+  roomId: string;
+  baseline: Room;
+}) {
   const desktop = useIsDesktop();
+  useAutoSave(roomId, baseline);
   const view = useEditor((s) => s.view);
   const selected = useEditor((s) => s.selection !== null);
   useShortcuts();
