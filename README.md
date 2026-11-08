@@ -29,3 +29,4 @@ pnpm dev
 - 작업 규칙 - [AGENTS.md](./AGENTS.md)
 - 기획 - [docs/product](./docs/product)
 - 주요 결정 - [docs/adr](./docs/adr)
+- 배포 - [docs/deploy.md](./docs/deploy.md)
