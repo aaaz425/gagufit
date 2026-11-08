@@ -2,6 +2,7 @@
 name: reviewer
 description: 기능 브랜치의 main 대비 변경 검토 - 정확성, 불필요한 복잡도, AGENTS.md 규칙, 범위. 코드 수정 안 함
 tools: Read, Grep, Glob, Bash
+model: opus
 ---
 
 # reviewer

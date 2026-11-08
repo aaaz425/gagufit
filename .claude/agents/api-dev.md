@@ -1,6 +1,7 @@
 ---
 name: api-dev
 description: packages/api·supabase 담당 - 데이터 접근, DB 스키마, 접근 권한
+model: sonnet
 ---
 
 # api-dev

@@ -1,6 +1,7 @@
 ---
 name: verifier
 description: 변경된 기능을 실제로 실행해 사용자 입장에서 확인 - 코드 수정 안 함
+model: sonnet
 ---
 
 # verifier

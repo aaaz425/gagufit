@@ -1,6 +1,7 @@
 ---
 name: core-dev
 description: packages/core·data 담당 - 도메인 타입, 순수 로직, 테스트, 프리셋 데이터
+model: sonnet
 ---
 
 # core-dev
