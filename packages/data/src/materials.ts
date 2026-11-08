@@ -11,25 +11,25 @@ import { withIds } from "./with-ids";
 /** web public 기준 상대 경로 */
 const image = (id: string) => `materials/${id}.jpg`;
 
-// color2d - 견본 평균색 색조 유지, 벽선(scene-wall) 대비 4.5 이상 되게 명도 보정
+// color2d - 견본 평균색 색조 유지, 벽선(scene-wall) 대비 3 이상 되게 명도 보정
 export const FLOOR_MATERIALS = withIds<
   FloorMaterialId,
   Omit<FloorMaterial, "id">
 >({
   "floor-light-oak": {
     name: "밝은 마루",
-    color2d: "#B8A081",
+    color2d: "#AC916C",
     image: image("floor-light-oak"),
   },
   "floor-dark-walnut": {
     name: "진한 마루",
     // 명도만 올리면 채도가 짙어져 분홍빛 - 채도를 낮춰 견본 채도감 유지
-    color2d: "#B79F8F",
+    color2d: "#978070",
     image: image("floor-dark-walnut"),
   },
   "floor-grey-tile": {
     name: "회색 타일",
-    color2d: "#A3A49F",
+    color2d: "#93948F",
     image: image("floor-grey-tile"),
   },
   "floor-white-tile": {
