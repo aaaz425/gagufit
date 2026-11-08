@@ -3,6 +3,7 @@
 import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback } from "react";
+import { canvasInsets } from "./layout";
 import { useQualitySettings } from "./quality";
 import { useEditor, useRoom, warnedFurnitureIds } from "./store";
 
@@ -19,9 +20,10 @@ const Room3D = dynamic(() => import("./view3d/Room3D"), {
 });
 
 /** 3D 보기 - 선택만 하고 편집은 2D·속성 패널에서 */
-export function View3D() {
+export function View3D({ compact }: { compact: boolean }) {
   const room = useRoom();
   const selection = useEditor((s) => s.selection);
+  const leftOpen = useEditor((s) => s.leftOpen);
   const select = useEditor((s) => s.select);
   const [quality] = useQualitySettings();
   const onSelect = useCallback(
@@ -35,6 +37,11 @@ export function View3D() {
         selectedId={selection?.kind === "furniture" ? selection.id : null}
         warningIds={warnedFurnitureIds(room)}
         quality={quality}
+        insets={canvasInsets({
+          desktop: !compact,
+          leftOpen,
+          selected: selection !== null,
+        })}
         onSelect={onSelect}
       />
     </div>

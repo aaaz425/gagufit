@@ -15,6 +15,7 @@ import {
   type ComponentRef,
   type RefObject,
 } from "react";
+import type { Insets } from "../layout";
 import type { QualitySettings } from "../quality";
 import { SCENE_COLORS } from "../scene-colors";
 import { FurnitureMesh } from "./furniture-mesh";
@@ -28,12 +29,16 @@ export type Room3DProps = {
   selectedId: string | null;
   warningIds: ReadonlySet<string>;
   quality: QualitySettings;
+  /** 캔버스 위 패널에 가려진 영역 px - 맞춤·버튼이 비켜감 */
+  insets: Insets;
   onSelect: (id: string | null) => void;
 };
 
 /** 끌기로 판단하는 포인터 이동 거리 px - 회전 후 놓을 때 선택이 바뀌지 않게 */
 const DRAG_THRESHOLD = 4;
 const FOV = 45;
+/** 맞춤 때 보이는 영역 가장자리 여백 px */
+const FIT_MARGIN = 24;
 /** 처음 시점 - 위 45° 내려다보기, 앞 오른쪽에서 */
 const VIEW_ELEVATION = Math.PI / 4;
 const VIEW_AZIMUTH = Math.PI / 6;
@@ -78,34 +83,70 @@ type CameraRigProps = {
   room: Room;
   controls: RefObject<OrbitControlsImpl | null>;
   resetKey: number;
+  insets: Insets;
 };
 
-/** 방 전체가 화면에 들어오게 비스듬히 - 방 크기가 바뀌거나 리셋할 때만 */
-function CameraRig({ room, controls, resetKey }: CameraRigProps) {
+/**
+ * 방 전체가 패널에 가리지 않은 영역 가운데 오게 비스듬히 - 처음·리셋·방 크기 변화 때만
+ * 패널이 열리고 닫혀도 시점은 그대로
+ */
+function CameraRig({ room, controls, resetKey, insets }: CameraRigProps) {
   const camera = useThree((s) => s.camera);
-  const aspect = useThree((s) => s.size.width / Math.max(1, s.size.height));
+  const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
   const radius = Math.hypot(m(room.width), m(room.depth), m(room.height)) / 2;
+  /** 맞춘 순간 보이는 영역 중심까지 화면 이동 px */
+  const shift = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const vfov = (FOV * Math.PI) / 180;
-    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
-    const distance = (radius / Math.sin(Math.min(vfov, hfov) / 2)) * 1.05;
+    const margin = 2 * FIT_MARGIN;
+    const visibleW = Math.max(
+      1,
+      size.width - insets.left - insets.right - margin,
+    );
+    const visibleH = Math.max(
+      1,
+      size.height - insets.top - insets.bottom - margin,
+    );
+    // 보이는 영역만큼 좁아진 화각
+    const halfV = Math.atan(
+      Math.tan((FOV * Math.PI) / 360) * (visibleH / size.height),
+    );
+    const halfH = Math.atan(Math.tan(halfV) * (visibleW / visibleH));
+    const distance = (radius / Math.sin(Math.min(halfV, halfH))) * 1.05;
     const target: [number, number, number] = [0, m(room.height) * 0.25, 0];
     camera.position.set(
       Math.sin(VIEW_AZIMUTH) * Math.cos(VIEW_ELEVATION) * distance,
       target[1] + Math.sin(VIEW_ELEVATION) * distance,
       Math.cos(VIEW_AZIMUTH) * Math.cos(VIEW_ELEVATION) * distance,
     );
+    shift.current = {
+      x: (insets.left - insets.right) / 2,
+      y: (insets.top - insets.bottom) / 2,
+    };
     const c = controls.current;
     if (c) {
       c.target.set(...target);
       c.update();
     }
     invalidate();
-    // 창 크기 변화마다 시점을 되돌리지 않게 aspect는 제외
+    // 창 크기·패널 변화마다 시점을 되돌리지 않게 size·insets는 제외
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera, controls, radius, room.height, resetKey, invalidate]);
+
+  // 회전 중심은 방 가운데로 두고 투영만 옮김 - 창 크기가 바뀌면 다시 적용
+  useEffect(() => {
+    const { width, height } = size;
+    camera.setViewOffset(
+      width,
+      height,
+      -shift.current.x,
+      -shift.current.y,
+      width,
+      height,
+    );
+    invalidate();
+  }, [camera, size, radius, resetKey, invalidate]);
   return null;
 }
 
@@ -118,6 +159,7 @@ export default function Room3D({
   selectedId,
   warningIds,
   quality,
+  insets,
   onSelect,
 }: Room3DProps) {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -190,7 +232,12 @@ export default function Room3D({
             Math.hypot(m(room.width), m(room.depth), m(room.height)) * 3
           }
         />
-        <CameraRig room={room} controls={controls} resetKey={resetKey} />
+        <CameraRig
+          room={room}
+          controls={controls}
+          resetKey={resetKey}
+          insets={insets}
+        />
         {quality.post && (
           <EffectComposer multisampling={0} enableNormalPass>
             <SSAO radius={0.08} intensity={20} luminanceInfluence={0.5} />
@@ -201,7 +248,9 @@ export default function Room3D({
         type="button"
         aria-label="시점 초기화"
         onClick={reset}
-        className="absolute bottom-6 left-6 flex size-11 items-center justify-center rounded-sm bg-canvas text-ink shadow-raised hover:bg-surface"
+        // 2D 확대 버튼과 같은 자리 규칙 - 패널 옆
+        style={{ left: insets.left + 24, bottom: insets.bottom + 24 }}
+        className="absolute flex size-11 items-center justify-center rounded-sm bg-canvas text-ink shadow-raised hover:bg-surface"
       >
         <RotateCcw size={20} />
       </button>

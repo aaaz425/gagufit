@@ -123,7 +123,12 @@ function EditorScreen() {
   const selected = useEditor((s) => s.selection !== null);
   useShortcuts();
 
-  const canvas = view === "2d" ? <PlanCanvas compact={!desktop} /> : <View3D />;
+  const canvas =
+    view === "2d" ? (
+      <PlanCanvas compact={!desktop} />
+    ) : (
+      <View3D compact={!desktop} />
+    );
 
   // 캔버스는 main 전체, 패널은 그 위에 겹쳐 띄움 - layout.ts
   if (desktop) {
