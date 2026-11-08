@@ -19,6 +19,7 @@ import {
 } from "react";
 import { updateFurniture } from "../actions";
 import { useEditor, useRoom, warnedFurnitureIds } from "../store";
+import { canvasInsets, fitPadding } from "../layout";
 import { SelectionToolbar, type ScreenBox } from "../SelectionToolbar";
 import {
   FurnitureGuides,
@@ -27,6 +28,7 @@ import {
   OpeningHandles,
   openingFrame,
   RoomPlan,
+  WALL_PX,
 } from "./RoomPlan";
 import {
   fitView,
@@ -41,9 +43,6 @@ import {
 const LONG_PRESS_MS = 400;
 /** 이만큼 움직이면 누르기가 아닌 끌기 */
 const MOVE_SLOP = 8;
-const FIT_PAD = 48;
-/** 아래 여백 - 방 치수 표기와 확대 버튼 자리 */
-const FIT_PAD_BOTTOM = 96;
 
 type Hit = { kind: string; id: string } | null;
 
@@ -69,6 +68,16 @@ type Gesture =
 
 const present = () => useEditor.getState().history.present;
 
+/** 지금 열린 패널 기준 - 렌더 밖(맞춤 시점)에서도 쓰려고 store에서 바로 읽음 */
+function currentInsets(desktop: boolean) {
+  const s = useEditor.getState();
+  return canvasInsets({
+    desktop,
+    leftOpen: s.leftOpen,
+    selected: s.selection !== null,
+  });
+}
+
 function hitOf(target: EventTarget | null): Hit {
   const el = (target as Element | null)?.closest?.("[data-hit]");
   if (!(el instanceof SVGElement || el instanceof HTMLElement)) return null;
@@ -86,6 +95,12 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const sheet = useEditor((s) => s.sheet);
   const dragging = useEditor((s) => s.dragging);
   const setDragging = useEditor((s) => s.setDragging);
+  const leftOpen = useEditor((s) => s.leftOpen);
+  const insets = canvasInsets({
+    desktop: !compact,
+    leftOpen,
+    selected: selection !== null,
+  });
 
   const boxRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -94,7 +109,6 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   );
   const [view, setViewState] = useState<View | null>(null);
   const viewRef = useRef<View | null>(null);
-  const sizeRef = useRef<{ width: number; height: number } | null>(null);
   const gesture = useRef<Gesture | null>(null);
   const pointers = useRef(new Map<number, Vec2>());
 
@@ -103,11 +117,11 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     setViewState(next);
   };
 
-  const padding = compact
-    ? { side: 32, bottom: 48 }
-    : { side: FIT_PAD, bottom: FIT_PAD_BOTTOM };
   const fit = () => {
-    if (size) setView(fitView(present(), size, padding.side, padding.bottom));
+    if (!size) return;
+    setView(
+      fitView(present(), size, fitPadding(!compact, currentInsets(!compact))),
+    );
   };
 
   useEffect(() => {
@@ -115,23 +129,14 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     if (!box) return;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      // 처음 한 번만 맞춤 - 이후엔 크기 변화만큼 옮겨 가운데 유지
-      const prev = sizeRef.current;
-      sizeRef.current = { width, height };
       setSize({ width, height });
-      const v = viewRef.current;
-      if (v && prev) {
-        const next = {
-          ...v,
-          x: v.x + (width - prev.width) / 2,
-          y: v.y + (height - prev.height) / 2,
-        };
-        viewRef.current = next;
-        setViewState(next);
-      } else if (!v && width > 0 && height > 0) {
-        const next = compact
-          ? fitView(present(), { width, height }, 32, 48)
-          : fitView(present(), { width, height }, FIT_PAD, FIT_PAD_BOTTOM);
+      // 처음 한 번만 맞춤 - 이후 창 크기가 바뀌어도 도면은 그대로
+      if (!viewRef.current && width > 0 && height > 0) {
+        const next = fitView(
+          present(),
+          { width, height },
+          fitPadding(!compact, currentInsets(!compact)),
+        );
         viewRef.current = next;
         setViewState(next);
       }
@@ -139,6 +144,20 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     observer.observe(box);
     return () => observer.disconnect();
   }, [compact]);
+
+  // 끄는 중 화면이 사라지면(2D·3D 전환 등) 그때까지 움직인 것 기록
+  useEffect(() => {
+    const g = gesture;
+    return () => {
+      const current = g.current;
+      g.current = null;
+      if (!current) return;
+      if (current.type === "press") clearTimeout(current.timer);
+      const s = useEditor.getState();
+      if ("before" in current) s.commit(current.before);
+      s.setDragging(false);
+    };
+  }, []);
 
   // 휠 확대 - preventDefault 위해 passive 아님
   useEffect(() => {
@@ -372,7 +391,12 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const zoomBy = (k: number) => {
     const v = viewRef.current;
     if (!v || !size) return;
-    setView(zoomAt(v, { x: size.width / 2, y: size.height / 2 }, v.scale * k));
+    // 패널에 가리지 않은 영역 가운데 기준
+    const anchor = {
+      x: (insets.left + size.width - insets.right) / 2,
+      y: (insets.top + size.height - insets.bottom) / 2,
+    };
+    setView(zoomAt(v, anchor, v.scale * k));
   };
 
   const warned = warnedFurnitureIds(room);
@@ -386,13 +410,22 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       : undefined;
 
   let box: ScreenBox | null = null;
+  /** 문·창문 툴바 자리 - 벽 바깥쪽, 위치 가이드·열림 영역 반대편 */
+  let outside: Vec2 | null = null;
   if (view && (selectedFurniture || selectedOpening)) {
     let pts: Vec2[] = [];
     if (selectedFurniture) {
       pts = furnitureCorners(selectedFurniture);
     } else if (selectedOpening) {
-      const { left, right } = openingFrame(room, selectedOpening);
+      const { left, right, n } = openingFrame(room, selectedOpening);
       pts = [left, right];
+      if (view) {
+        const k = -(WALL_PX + 14 + 24) / view.scale;
+        outside = toScreen(view, {
+          x: (left.x + right.x) / 2 + n.x * k,
+          y: (left.y + right.y) / 2 + n.y * k,
+        });
+      }
     }
     const s = pts.map((p) => toScreen(view, p));
     if (s.length) {
@@ -470,7 +503,13 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       {box && size && !dragging && sheet !== "props" && (
         <SelectionToolbar
           box={box}
-          bounds={size}
+          center={outside}
+          bounds={{
+            left: insets.left,
+            top: insets.top,
+            right: size.width - insets.right,
+            bottom: size.height - insets.bottom,
+          }}
           kind={selectedFurniture ? "furniture" : "opening"}
         />
       )}
@@ -497,7 +536,11 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       )}
 
       {!compact && (
-        <div className="absolute bottom-6 left-6 flex gap-1 rounded-sm bg-canvas p-1 shadow-raised">
+        <div
+          className="absolute bottom-6 flex gap-1 rounded-sm bg-canvas p-1 shadow-raised"
+          // 왼쪽 패널 옆
+          style={{ left: insets.left + 24 }}
+        >
           <ZoomButton label="축소" onClick={() => zoomBy(1 / 1.25)}>
             <Minus size={16} />
           </ZoomButton>

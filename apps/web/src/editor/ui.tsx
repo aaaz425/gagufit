@@ -67,7 +67,7 @@ export function NumberField({
   return (
     <label className="flex min-w-0 flex-1 flex-col gap-2">
       <span className="text-xs font-semibold text-ink-muted">{label}</span>
-      <span className="flex h-11 items-center rounded-sm border border-border bg-canvas px-3 focus-within:border-primary focus-within:outline focus-within:outline-1 focus-within:outline-primary">
+      <span className="flex h-11 items-center rounded-sm border border-border bg-canvas px-2 focus-within:border-primary focus-within:outline focus-within:outline-1 focus-within:outline-primary">
         <input
           inputMode="numeric"
           className="w-full min-w-0 bg-transparent text-base font-medium text-ink tabular-nums outline-none"
