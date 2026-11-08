@@ -216,39 +216,51 @@ function FurnitureProps({
         </button>
       </div>
       <SectionTitle>색</SectionTitle>
-      <div
-        className="flex flex-wrap gap-3"
-        role="radiogroup"
-        aria-label="가구 색"
-      >
-        {Object.values(FURNITURE_COLORS).map((c) => {
-          const on = c.id === f.color;
-          return (
-            <button
-              key={c.id}
-              type="button"
-              role="radio"
-              aria-checked={on}
-              aria-label={c.name}
-              title={c.name}
-              onClick={() => !on && set({ color: c.id })}
-              className="flex size-11 items-center justify-center"
-            >
-              <span
-                className={`size-8 rounded-full ${
-                  on
-                    ? "border-2 border-primary shadow-selection"
-                    : "border border-border"
-                }`}
-                // 견본 색은 데이터 값
-                style={{ background: c.hex }}
-              />
-            </button>
-          );
-        })}
-      </div>
+      <ColorPicker value={f.color} onChange={(color) => set({ color })} />
       <Warnings texts={warnings} />
       {showActions && <Actions furniture />}
+    </div>
+  );
+}
+
+function ColorPicker({
+  value,
+  onChange,
+}: {
+  value: PlacedFurniture["color"];
+  onChange: (color: PlacedFurniture["color"]) => void;
+}) {
+  return (
+    <div
+      className="flex flex-wrap gap-3"
+      role="radiogroup"
+      aria-label="가구 색"
+    >
+      {Object.values(FURNITURE_COLORS).map((c) => {
+        const on = c.id === value;
+        return (
+          <button
+            key={c.id}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            aria-label={c.name}
+            title={c.name}
+            onClick={() => !on && onChange(c.id)}
+            className="flex size-11 items-center justify-center"
+          >
+            <span
+              className={`size-8 rounded-full ${
+                on
+                  ? "border-2 border-primary shadow-selection"
+                  : "border border-border"
+              }`}
+              // 견본 색은 데이터 값
+              style={{ background: c.hex }}
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }
