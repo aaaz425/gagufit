@@ -148,3 +148,26 @@ export function Segment<T extends string>({
 export function SectionTitle({ children }: { children: ReactNode }) {
   return <h3 className="text-sm font-bold text-ink">{children}</h3>;
 }
+
+/** 켜고 끄는 스위치 - 라벨은 감싸는 label이 맡음 */
+export function Switch({
+  on,
+  onChange,
+}: {
+  on: boolean;
+  onChange: (on: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      onClick={() => onChange(!on)}
+      className={`flex h-[26px] w-11 shrink-0 items-center rounded-full p-[3px] ${
+        on ? "justify-end bg-primary" : "justify-start bg-border"
+      }`}
+    >
+      <span className="size-5 rounded-full bg-canvas" />
+    </button>
+  );
+}

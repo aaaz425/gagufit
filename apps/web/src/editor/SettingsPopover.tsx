@@ -3,13 +3,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { useQualitySettings, type QualitySettings } from "./quality";
-
-const ROWS: { key: keyof QualitySettings; label: string; hint?: string }[] = [
-  { key: "hiDpi", label: "고해상도", hint: "끄면 저사양에서 부드러워요" },
-  { key: "shadows", label: "그림자" },
-  { key: "post", label: "후처리 효과" },
-];
+import { QUALITY_ROWS, useQualitySettings } from "./quality";
+import { Switch } from "./ui";
 
 /** 상단 바 설정 버튼 아래 작은 창 - 바깥 누르거나 Esc면 닫힘 */
 export function SettingsPopover({ onClose }: { onClose: () => void }) {
@@ -41,7 +36,7 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
       className="absolute top-full right-0 z-30 mt-1 flex w-[min(320px,calc(100vw-16px))] flex-col rounded-md border border-border bg-canvas px-4 pt-2 pb-3 shadow-floating"
     >
       <h2 className="pt-1 text-sm font-bold text-ink-muted">화면 품질</h2>
-      {ROWS.map((row) => {
+      {QUALITY_ROWS.map((row) => {
         const on = quality[row.key];
         return (
           <label
@@ -56,17 +51,7 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
                 <span className="text-xs text-ink-muted">{row.hint}</span>
               )}
             </span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={on}
-              onClick={() => setQuality({ [row.key]: !on })}
-              className={`flex h-[26px] w-11 shrink-0 items-center rounded-full p-[3px] ${
-                on ? "justify-end bg-primary" : "justify-start bg-border"
-              }`}
-            >
-              <span className="size-5 rounded-full bg-canvas" />
-            </button>
+            <Switch on={on} onChange={(v) => setQuality({ [row.key]: v })} />
           </label>
         );
       })}
@@ -81,6 +66,14 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
       <p className="hidden text-xs text-ink-subtle md:block">
         실행 취소 ⌘Z · 다시 실행 ⇧⌘Z
       </p>
+      <nav
+        aria-label="약관"
+        className="flex items-center justify-center gap-2.5 pt-2.5 pb-0.5 text-xs text-ink-muted"
+      >
+        <Link href="/terms">이용약관</Link>
+        <span aria-hidden className="h-2.5 w-px bg-border" />
+        <Link href="/privacy">개인정보처리방침</Link>
+      </nav>
     </div>
   );
 }
