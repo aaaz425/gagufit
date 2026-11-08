@@ -4,9 +4,9 @@ import { useRooms, type RoomSummary } from "@gagufit/api";
 import { CloudOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { ANON_RETENTION_DAYS } from "@/site/constants";
 import { DeleteModal } from "./DeleteModal";
 import { NEW_ROOM_HREF, NewRoomCard, RoomCard } from "./RoomCard";
-import { ANON_RETENTION_DAYS } from "@/site/constants";
 import { TemplateModal } from "./TemplateModal";
 
 export function RoomList() {

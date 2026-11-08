@@ -8,8 +8,7 @@ export const SITE_URL =
 export const OPERATOR_NAME = "박유진";
 export const CONTACT_EMAIL = "ytokogg@gmail.com";
 export const EFFECTIVE_DATE = "2026-11-09";
-export const SUPABASE_REGION = "대한민국(서울)";
-export const VERCEL_REGION = "대한민국(서울)";
+export const SUPABASE_REGION = "대한민국(서울 리전)";
 
 // 익명 계정 자동 삭제 기준 - DB 정리 작업과 같은 값
 export const ANON_RETENTION_DAYS = 90;
