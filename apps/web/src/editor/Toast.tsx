@@ -27,10 +27,7 @@ export function Toast({ bottom }: { bottom: number }) {
       {toast.undo && (
         <button
           type="button"
-          onClick={() => {
-            undo();
-            showToast(null);
-          }}
+          onClick={undo}
           className="h-11 rounded-sm px-2 font-bold text-primary-inverse"
         >
           실행 취소

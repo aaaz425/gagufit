@@ -95,13 +95,21 @@ export const useEditor = create<EditorState>()((set) => ({
     set((s) => {
       if (s.dragging) return {};
       const next = history.undo(s.history);
-      return { history: next, selection: keepSelection(next.present, s) };
+      return {
+        history: next,
+        selection: keepSelection(next.present, s),
+        toast: null,
+      };
     }),
   redo: () =>
     set((s) => {
       if (s.dragging) return {};
       const next = history.redo(s.history);
-      return { history: next, selection: keepSelection(next.present, s) };
+      return {
+        history: next,
+        selection: keepSelection(next.present, s),
+        toast: null,
+      };
     }),
   select: (selection) =>
     set((s) => ({
