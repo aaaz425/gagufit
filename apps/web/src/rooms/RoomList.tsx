@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { DeleteModal } from "./DeleteModal";
 import { NEW_ROOM_HREF, NewRoomCard, RoomCard } from "./RoomCard";
+import { ANON_RETENTION_DAYS } from "@/site/constants";
 import { TemplateModal } from "./TemplateModal";
 
 export function RoomList() {
@@ -64,6 +65,10 @@ export function RoomList() {
                 아직 만든 방이 없어요. 새 방을 만들어 가구를 배치해 보세요
               </p>
             )}
+            <p className="text-center text-xs text-ink-muted">
+              로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
+              삭제돼요
+            </p>
           </>
         )}
       </main>
