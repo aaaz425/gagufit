@@ -1,33 +1,26 @@
 "use client";
 
 import { useRooms, type RoomSummary } from "@gagufit/api";
-import { Armchair, CloudOff } from "lucide-react";
+import { CloudOff } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { DeleteModal } from "./DeleteModal";
 import { NewRoomCard, RoomCard } from "./RoomCard";
 import { TemplateModal } from "./TemplateModal";
 
-type Dialog = { kind: "new" } | { kind: "delete"; room: RoomSummary } | null;
+// 새 방 모달은 /rooms?new=1 - 내비의 방 만들기와 같은 경로
+const NEW_URL = "/rooms?new=1";
 
 export function RoomList() {
   const rooms = useRooms();
-  const [dialog, setDialog] = useState<Dialog>(null);
+  const router = useRouter();
+  const newOpen = useSearchParams().has("new");
+  const [deleting, setDeleting] = useState<RoomSummary | null>(null);
   const [now] = useState(() => Date.now());
-  const close = () => setDialog(null);
   const list = rooms.data;
 
   return (
-    <div className="min-h-dvh bg-surface">
-      <header className="border-b border-border bg-canvas">
-        <div className="mx-auto flex h-14 max-w-5xl items-center px-4 md:px-10">
-          <span className="flex items-center gap-2 text-lg font-extrabold text-ink">
-            <span className="flex size-8 items-center justify-center rounded-sm bg-primary text-white">
-              <Armchair size={20} aria-hidden />
-            </span>
-            gagufit
-          </span>
-        </div>
-      </header>
+    <div className="bg-surface">
       <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
         <div className="flex items-baseline justify-between">
           <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
@@ -55,7 +48,7 @@ export function RoomList() {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-              <NewRoomCard onClick={() => setDialog({ kind: "new" })} />
+              <NewRoomCard onClick={() => router.push(NEW_URL)} />
               {!list && (
                 <>
                   <Placeholder />
@@ -67,7 +60,7 @@ export function RoomList() {
                   key={summary.id}
                   summary={summary}
                   now={now}
-                  onDelete={() => setDialog({ kind: "delete", room: summary })}
+                  onDelete={() => setDeleting(summary)}
                 />
               ))}
             </div>
@@ -80,12 +73,12 @@ export function RoomList() {
         )}
       </main>
 
-      {dialog?.kind === "new" && <TemplateModal onClose={close} />}
-      {dialog?.kind === "delete" && (
+      {newOpen && <TemplateModal onClose={() => router.replace("/rooms")} />}
+      {deleting && (
         <DeleteModal
-          id={dialog.room.id}
-          name={dialog.room.name}
-          onClose={close}
+          id={deleting.id}
+          name={deleting.name}
+          onClose={() => setDeleting(null)}
         />
       )}
     </div>
