@@ -46,13 +46,22 @@ function prepare(texture: Texture, id: SurfaceId, color: boolean) {
 
 /** 바닥·벽 PBR 재질 - 처음 쓸 때 텍스처를 받아 Suspense로 대기 */
 export function useSurfaceMaterial(id: SurfaceId, hiRes: boolean) {
-  const [map, normalMap, roughnessMap] = useTexture(textureUrls(id, hiRes));
+  const urls = textureUrls(id, hiRes);
+  const [map, normalMap, roughnessMap] = useTexture(urls);
   const material = useMemo(() => {
     prepare(map, id, true);
     prepare(normalMap, id, false);
     prepare(roughnessMap, id, false);
     return new MeshStandardMaterial({ map, normalMap, roughnessMap });
   }, [id, map, normalMap, roughnessMap]);
-  useEffect(() => () => material.dispose(), [material]);
+  // 바뀐 재질의 텍스처는 캐시에서도 빼서 GPU 메모리를 돌려줌
+  useEffect(
+    () => () => {
+      material.dispose();
+      for (const texture of [map, normalMap, roughnessMap]) texture.dispose();
+      useTexture.clear(textureUrls(id, hiRes));
+    },
+    [material, map, normalMap, roughnessMap, id, hiRes],
+  );
   return material;
 }

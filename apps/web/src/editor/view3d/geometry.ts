@@ -7,19 +7,6 @@ export const m = (cm: number) => cm / 100;
 /** 도 → rotation.y 라디안 */
 export const rad = (deg: number) => (deg * Math.PI) / 180;
 
-const boxCache = new Map<string, BoxGeometry>();
-
-/** 같은 크기 상자는 한 지오메트리 공유 - 크기 cm */
-export function sharedBox(width: number, height: number, depth: number) {
-  const key = `${width},${height},${depth}`;
-  let geometry = boxCache.get(key);
-  if (!geometry) {
-    geometry = new BoxGeometry(m(width), m(height), m(depth));
-    boxCache.set(key, geometry);
-  }
-  return geometry;
-}
-
 /**
  * 텍스처가 늘어나지 않게 uv를 m 단위로 둔 상자 - 텍스처 repeat로 실제 크기 맞춤
  * origin은 상자 중심의 기준 좌표(m) - 이어진 벽 조각끼리 무늬가 이어지게

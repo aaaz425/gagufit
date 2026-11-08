@@ -3,6 +3,7 @@
 - 모두 ambientCG 1K-JPG, 라이선스 CC0 1.0 - https://docs.ambientcg.com/license/
 - 맵 - color(Color), normal(NormalGL), roughness(Roughness)
 - `*-512.jpg`는 품질 끄기용 축소본
+- 재질 견본 `apps/web/public/materials/<id>.jpg`·`docs/design/images/<id>.jpg`도 같은 color 맵에서 잘라 256px로 만듦
 - 가공 - JPG 재압축, 일부 color는 견본 평균색에 맞춰 색 보정, 줄무늬 도배는 세로 줄무늬 합성
 
 | 재질 id           | ambientCG 에셋 | URL                                   | 가공               |

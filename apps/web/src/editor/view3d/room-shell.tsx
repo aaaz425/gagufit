@@ -1,14 +1,20 @@
 import {
   doorPassageCorners,
   roomCorners,
-  wallSegment,
+  wallFrame,
   type Opening,
   type Room,
   type Vec2,
   type WallIndex,
 } from "@gagufit/core";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { FLOOR_MATERIALS } from "@gagufit/data";
 import {
   DoubleSide,
@@ -63,13 +69,11 @@ function wallPieces(length: number, top: number, openings: Opening[]) {
   return { pieces, marks };
 }
 
-function wallFrame(room: Room, wall: WallIndex) {
-  const { start, end } = wallSegment(room, wall);
-  const length = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / length, y: (end.y - start.y) / length };
-  // 꼭짓점이 시계 방향이라 바깥은 진행 방향 왼쪽
-  const out = { x: u.y, y: -u.x };
-  return { start, length, u, out, angle: Math.atan2(-u.y, u.x) };
+/** 벽 상자 배치용 - 바깥 방향과 rotation.y */
+function wallPlacement(room: Room, wall: WallIndex) {
+  const { start, length, u, inward } = wallFrame(room, wall);
+  const out = { x: -inward.x, y: -inward.y };
+  return { start, length, out, angle: Math.atan2(-u.y, u.x) };
 }
 
 function pieceGeometry(piece: Piece) {
@@ -92,7 +96,7 @@ type WallProps = {
 };
 
 function Wall({ room, wall, lowered, material }: WallProps) {
-  const frame = wallFrame(room, wall);
+  const frame = wallPlacement(room, wall);
   const top = lowered
     ? Math.min(LOWERED_WALL_HEIGHT, room.height)
     : room.height;
@@ -173,10 +177,7 @@ function doorArea(room: Room, door: Opening): Vec2[] | null {
   if (door.kind === "sliding" || door.swing === "out") {
     return doorPassageCorners(room, door);
   }
-  const { start, end } = wallSegment(room, door.wall);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
-  const inward = { x: -u.y, y: u.x };
+  const { start, u, inward } = wallFrame(room, door.wall);
   const along = door.hinge === "left" ? door.offset : door.offset + door.width;
   const hinge = { x: start.x + u.x * along, y: start.y + u.y * along };
   // 닫힌 문 방향 - 경첩에서 반대쪽 문틀로
@@ -223,14 +224,25 @@ function DoorAreas({ room }: { room: Room }) {
   ));
 }
 
-function TexturedShell(props: ShellProps & { hiRes: boolean }) {
-  const floor = useSurfaceMaterial(props.room.floorMaterial, props.hiRes);
-  const wall = useSurfaceMaterial(props.room.wallMaterial, props.hiRes);
+type TexturedShellProps = ShellProps & {
+  floorId: Room["floorMaterial"];
+  wallId: Room["wallMaterial"];
+  hiRes: boolean;
+};
+
+function TexturedShell({
+  floorId,
+  wallId,
+  hiRes,
+  ...props
+}: TexturedShellProps) {
+  const floor = useSurfaceMaterial(floorId, hiRes);
+  const wall = useSurfaceMaterial(wallId, hiRes);
   return <ShellMeshes {...props} floorMaterial={floor} wallMaterial={wall} />;
 }
 
-// 텍스처 받는 동안 잠깐 보이는 벽
-const PLAIN_WALL = new MeshStandardMaterial({ color: SCENE_COLORS.floor });
+// 처음 텍스처 받는 동안만 보이는 벽 - 기본 재질 흰 페인트에 가깝게
+const PLAIN_WALL = new MeshStandardMaterial({ color: SCENE_COLORS.canvas });
 
 type ShellProps = { room: Room; lowered: ReadonlySet<WallIndex> };
 
@@ -265,7 +277,7 @@ function useLoweredWalls(room: Room) {
     const cz = camera.position.z * 100 + room.depth / 2;
     const next = new Set<WallIndex>();
     roomCorners(room).forEach((_, wall) => {
-      const { start, out } = wallFrame(room, wall);
+      const { start, out } = wallPlacement(room, wall);
       if ((cx - start.x) * out.x + (cz - start.y) * out.y > 0) next.add(wall);
     });
     const same =
@@ -285,6 +297,10 @@ type RoomShellProps = {
 /** 바닥·벽·문 열림 영역 - 방 왼쪽 위 모서리가 원점인 평면 좌표 */
 export function RoomShell({ room, hiRes, onClick }: RoomShellProps) {
   const lowered = useLoweredWalls(room);
+  // 재질을 바꿀 때 새 텍스처를 받는 동안 이전 텍스처 유지 - 단색 깜빡임 방지
+  const floorId = useDeferredValue(room.floorMaterial);
+  const wallId = useDeferredValue(room.wallMaterial);
+  const deferredHiRes = useDeferredValue(hiRes);
   const floorColor = FLOOR_MATERIALS[room.floorMaterial].color2d;
   const plainFloor = useMemo(
     () => new MeshStandardMaterial({ color: floorColor }),
@@ -302,7 +318,13 @@ export function RoomShell({ room, hiRes, onClick }: RoomShellProps) {
   return (
     <group onClick={onClick}>
       <Suspense fallback={plain}>
-        <TexturedShell room={room} lowered={lowered} hiRes={hiRes} />
+        <TexturedShell
+          room={room}
+          lowered={lowered}
+          floorId={floorId}
+          wallId={wallId}
+          hiRes={deferredHiRes}
+        />
       </Suspense>
       <DoorAreas room={room} />
     </group>

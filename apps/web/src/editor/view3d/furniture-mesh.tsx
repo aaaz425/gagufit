@@ -6,15 +6,16 @@ import type {
 import { FURNITURE_COLORS } from "@gagufit/data";
 import { Outlines } from "@react-three/drei";
 import { useThree, type ThreeEvent } from "@react-three/fiber";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import {
+  BoxGeometry,
   Color,
   CylinderGeometry,
   MeshBasicMaterial,
   MeshStandardMaterial,
 } from "three";
 import { SCENE_COLORS } from "../scene-colors";
-import { m, rad, sharedBox } from "./geometry";
+import { m, rad } from "./geometry";
 import { furnitureParts, type Part, type PartTone } from "./furniture-parts";
 
 const SURFACE: Readonly<
@@ -65,8 +66,18 @@ const WARNING_MATERIAL = new MeshBasicMaterial({
   polygonOffsetUnits: -1,
 });
 
+/** 프리셋이 없는 가구 - core 판정과 같이 일반 가구로 보고 상자로 그림 */
+const FALLBACK_LOOK: Pick<FurniturePreset, "category" | "material" | "layer"> =
+  {
+    category: "etc",
+    material: "wood",
+    layer: "normal",
+  };
+
 function partGeometry(part: Part) {
-  return part.shape === "disc" ? DISC : sharedBox(...part.size);
+  return part.shape === "disc"
+    ? DISC
+    : new BoxGeometry(...(part.size.map(m) as [number, number, number]));
 }
 
 function partScale(part: Part): [number, number, number] {
@@ -77,7 +88,8 @@ function partScale(part: Part): [number, number, number] {
 
 type Props = {
   furniture: PlacedFurniture;
-  preset: FurniturePreset;
+  /** 없으면 기본 상자 */
+  preset: FurniturePreset | undefined;
   selected: boolean;
   warning: boolean;
   onClick: (e: ThreeEvent<MouseEvent>, id: string) => void;
@@ -90,28 +102,37 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   warning,
   onClick,
 }: Props) {
-  const parts = useMemo(
-    () => furnitureParts(preset.category, preset.size),
-    [preset],
+  const look = preset ?? FALLBACK_LOOK;
+  const { width, depth, height } = furniture.size;
+  // 크기는 배치 가구마다 따로 - 크기 조절 중 지오메트리가 쌓이지 않게 바뀌면 정리
+  const parts = useMemo(() => {
+    const list = furnitureParts(look.category, { width, depth, height });
+    return list.map((part) => ({ part, geometry: partGeometry(part) }));
+  }, [look.category, width, depth, height]);
+  useEffect(
+    () => () => {
+      for (const { geometry } of parts)
+        if (geometry !== DISC) geometry.dispose();
+    },
+    [parts],
   );
   const dpr = useThree((s) => s.viewport.dpr);
   const hex = FURNITURE_COLORS[furniture.color].hex;
-  const shadow = preset.layer !== "floor";
+  const shadow = look.layer !== "floor";
   return (
     <group
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
       rotation-y={rad(furniture.rotation)}
       onClick={(e) => onClick(e, furniture.id)}
     >
-      {parts.map((part, i) => {
-        const geometry = partGeometry(part);
+      {parts.map(({ part, geometry }, i) => {
         const scale = partScale(part);
         const position = part.center.map(m) as [number, number, number];
         return (
           <group key={i} position={position} scale={scale}>
             <mesh
               geometry={geometry}
-              material={furnitureMaterial(preset.material, hex, part.tone)}
+              material={furnitureMaterial(look.material, hex, part.tone)}
               castShadow={shadow}
               receiveShadow
             >

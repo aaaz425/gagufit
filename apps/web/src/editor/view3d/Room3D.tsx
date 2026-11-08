@@ -1,6 +1,6 @@
 "use client";
 
-import { wallSegment, type Room } from "@gagufit/core";
+import { wallFrame, type Room } from "@gagufit/core";
 import { FURNITURE_PRESETS } from "@gagufit/data";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
@@ -43,9 +43,7 @@ function sunPosition(room: Room): [number, number, number] {
   const opening = room.openings.find((o) => o.kind === "window");
   const reach = m(Math.max(room.width, room.depth));
   if (!opening) return [-reach, reach * 1.5, -reach * 0.6];
-  const { start, end } = wallSegment(room, opening.wall);
-  const len = Math.hypot(end.x - start.x, end.y - start.y);
-  const u = { x: (end.x - start.x) / len, y: (end.y - start.y) / len };
+  const { start, u } = wallFrame(room, opening.wall);
   const mid = opening.offset + opening.width / 2;
   // 방 가운데 원점 기준, 창문 바깥쪽 위
   const x = m(start.x + u.x * mid - room.width / 2) + u.y * reach;
@@ -113,7 +111,7 @@ function CameraRig({ room, controls, resetKey }: CameraRigProps) {
 
 /**
  * 3D 방 보기 - 클라이언트 전용, next/dynamic ssr false로 불러올 것
- * 가구는 FURNITURE_PRESETS에 없는 프리셋이면 그리지 않음
+ * 가구 크기는 배치 가구의 size, 프리셋에 없으면 기본 상자
  */
 export default function Room3D({
   room,
@@ -142,11 +140,13 @@ export default function Room3D({
 
   const furniture = useMemo(
     () =>
-      room.furniture.flatMap((f) =>
-        Object.hasOwn(FURNITURE_PRESETS, f.presetId)
-          ? [{ furniture: f, preset: FURNITURE_PRESETS[f.presetId] }]
-          : [],
-      ),
+      room.furniture.map((f) => ({
+        furniture: f,
+        // 저장 데이터의 presetId가 상속 키일 수 있음
+        preset: Object.hasOwn(FURNITURE_PRESETS, f.presetId)
+          ? FURNITURE_PRESETS[f.presetId]
+          : undefined,
+      })),
     [room.furniture],
   );
 
@@ -155,7 +155,7 @@ export default function Room3D({
       <Canvas
         frameloop="demand"
         dpr={quality.hiDpi ? [1, 2] : 1}
-        shadows="percentage"
+        shadows={quality.shadows && "percentage"}
         camera={{ fov: FOV, near: 0.05, far: 100 }}
         onPointerMissed={(e) => {
           if (e.type === "click") onSelect(null);
