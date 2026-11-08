@@ -80,7 +80,6 @@ export function duplicateFurniture(
   };
 }
 
-/** 폭은 벽 길이까지, offset은 [0, 벽 길이 - 폭] */
 function clampInt(v: number, min: number, max: number): number {
   return Math.min(Math.max(Math.round(v), min), max);
 }
@@ -115,6 +114,7 @@ function sameValues<T extends object>(a: T, b: T): boolean {
   );
 }
 
+/** 폭은 벽 길이까지, offset은 [0, 벽 길이 - 폭] */
 function fitToWall<T extends Opening>(opening: T, length: number): T {
   const width = Math.min(opening.width, length);
   const offset = Math.min(Math.max(opening.offset, 0), length - width);
