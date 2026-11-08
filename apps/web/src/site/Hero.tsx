@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "./Container";
+import { HEADLINE } from "./constants";
 import { MiniRoom } from "./MiniRoom";
 import { WarningBadge } from "./WarningBadge";
 
@@ -11,10 +12,8 @@ export function Hero() {
           <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-bold text-primary">
             원룸 가구 배치 시뮬레이터
           </span>
-          <h1 className="text-[32px] leading-tight font-bold tracking-[-0.8px] md:text-5xl md:leading-[1.25] md:tracking-[-1.2px]">
-            이 가구,
-            <br />
-            우리 방에 들어갈까?
+          <h1 className="text-[32px] leading-tight font-bold tracking-[-0.8px] md:text-[40px] md:leading-[1.25]">
+            {HEADLINE}
           </h1>
           <p className="text-base leading-[1.6] text-ink-muted md:text-lg">
             사기 전에 실제 치수로 미리 놓아 보세요.
