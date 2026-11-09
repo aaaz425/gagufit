@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { CONTACT_EMAIL, DATA_REGION, OPERATOR_NAME } from "@/site/constants";
+import {
+  ANON_RETENTION_DAYS,
+  CONTACT_EMAIL,
+  OPERATOR_NAME,
+  SUPABASE_REGION,
+} from "@/site/constants";
 import { LegalPage, type LegalSection } from "@/site/LegalPage";
 
 export const metadata: Metadata = {
@@ -7,7 +12,7 @@ export const metadata: Metadata = {
   description: "gagufit이 처리하는 정보와 보관·삭제 방법",
 };
 
-// 초안 - 공개 전 법률 검토와 자리표시 값 확정 필요
+// 초안 - 공개 전 법률 검토 필요
 const SECTIONS: LegalSection[] = [
   {
     title: "1. 처리하는 정보",
@@ -29,8 +34,8 @@ const SECTIONS: LegalSection[] = [
   {
     title: "3. 보관 장소와 기간",
     items: [
-      "익명 이용자 번호 - Supabase에 보관하고, 삭제를 요청하기 전까지 남아요. 방을 지워도 자동으로 지워지지 않아요",
-      "방 데이터 - Supabase에 보관하고, 이용자가 방을 직접 지우거나 계정 삭제를 요청할 때까지 남아요",
+      `익명 이용자 번호 - Supabase에 보관하고, 삭제를 요청하거나 마지막 접속 후 ${ANON_RETENTION_DAYS}일이 지날 때까지 남아요. 방을 지워도 자동으로 지워지지 않아요`,
+      `방 데이터 - Supabase에 보관하고, 이용자가 방을 직접 지우거나 계정 삭제를 요청할 때까지 남아요. 익명 계정의 방은 마지막 접속 후 ${ANON_RETENTION_DAYS}일이 지나면 삭제돼요`,
       "접속 기록 - Supabase와 호스팅 업체가 정한 보관 기간을 따라요",
       "브라우저 - 로그인 상태 정보, 서버 저장에 실패한 방의 임시 보관본, 화면 품질 설정을 이용 중인 브라우저에 저장해요. 브라우저 데이터를 지우면 함께 없어져요",
     ],
@@ -51,6 +56,7 @@ const SECTIONS: LegalSection[] = [
     title: "5. 파기 절차와 방법",
     paragraphs: [
       "삭제 요청을 받거나 보관 기간이 끝나면 지체 없이 파기해요. 서버에 저장된 정보는 데이터베이스에서 삭제하는 방법으로 파기해요.",
+      `로그인 없이 만든 익명 계정은 ${ANON_RETENTION_DAYS}일 동안 접속하지 않으면 방 데이터와 함께 자동으로 삭제해요.`,
     ],
   },
   {
@@ -67,10 +73,12 @@ const SECTIONS: LegalSection[] = [
   },
   {
     title: "8. 개인정보 국외 이전",
-    paragraphs: ["서비스 제공을 위해 아래와 같이 정보를 국외로 옮겨 처리해요."],
+    paragraphs: [
+      "서비스 제공을 위해 아래와 같이 정보를 해외 사업자에게 맡겨 처리해요. 방 데이터는 서울 리전에 저장하고, 접속 기록 등은 미국에서 처리될 수 있어요.",
+    ],
     items: [
-      `Supabase - 보관 국가 ${DATA_REGION}, 이전 항목은 익명 이용자 번호·방 데이터·접속 정보, 서비스를 쓰는 동안 네트워크로 전송, 보관 기간은 3번 항목과 같아요`,
-      `Vercel - 처리 국가 ${DATA_REGION}, 이전 항목은 접속 IP·브라우저 정보·접속 기록, 서비스를 쓰는 동안 네트워크로 전송, 보관 기간은 Vercel이 정한 기간을 따라요`,
+      `Supabase - 운영 회사 소재 국가 미국, 보관 국가 ${SUPABASE_REGION}, 로그와 운영 접근은 미국에서 이뤄질 수 있고, 이전 항목은 익명 이용자 번호·방 데이터·접속 정보, 서비스를 쓰는 동안 네트워크로 전송, 보관 기간은 3번 항목과 같아요`,
+      `Vercel - 운영 회사 소재 국가 미국, 처리 국가 미국 등(함수 실행은 서울 리전), 이전 항목은 접속 IP·브라우저 정보·접속 기록, 서비스를 쓰는 동안 네트워크로 전송, 보관 기간은 Vercel이 정한 기간을 따라요`,
     ],
   },
   {
