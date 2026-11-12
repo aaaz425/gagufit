@@ -45,7 +45,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             className={`h-8 shrink-0 rounded-full px-3 text-sm ${TOUCH_44} ${
               i === group
                 ? "bg-primary-soft font-bold text-primary"
-                : "border border-border bg-surface font-medium text-ink-muted"
+                : "border border-border bg-surface font-medium text-ink-muted hover:text-ink"
             }`}
           >
             {g.label}

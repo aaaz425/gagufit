@@ -39,3 +39,43 @@ body {
   background: var(--color-canvas);
   color: var(--color-ink);
 }
+
+@layer base {
+  /* Tailwind 4는 버튼 기본 커서가 없음 - 상호작용 요소 커서는 여기서만 지정 */
+  button,
+  [role="button"],
+  [role="tab"],
+  [role="radio"],
+  [role="switch"],
+  a,
+  summary,
+  label[for],
+  label:has(> button, input:is([type="checkbox"], [type="radio"])),
+  select,
+  input:is([type="checkbox"], [type="radio"], [type="range"]) {
+    cursor: pointer;
+  }
+
+  :is(button, [role="button"], input, select):disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* 평면도 끌기 중 - 자식 커서가 끄는 커서를 덮지 않게 */
+svg[data-dragging] * {
+  cursor: inherit;
+}
+
+/* 평면도 회전 핸들 - 표준 커서에 회전용이 없어 lucide rotate-cw 사용 */
+@utility cursor-rotate {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%23fff' stroke-width='5'%3E%3Cpath d='M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8'/%3E%3Cpath d='M21 3v5h-5'/%3E%3C/g%3E%3Cg stroke='%231f2328' stroke-width='2'%3E%3Cpath d='M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8'/%3E%3Cpath d='M21 3v5h-5'/%3E%3C/g%3E%3C/svg%3E")
+      12 12,
+    grab;
+}

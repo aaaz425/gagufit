@@ -58,7 +58,7 @@ export function MobileBottom() {
           <button
             type="button"
             onClick={() => setSheet("props")}
-            className="flex h-11 items-center gap-2 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary"
+            className="flex h-11 items-center gap-2 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary hover:bg-primary hover:text-white"
           >
             <SlidersHorizontal size={16} aria-hidden />
             치수
@@ -108,7 +108,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-sm px-3 text-xs font-semibold text-ink"
+      className="flex h-12 min-w-16 flex-col items-center justify-center gap-1 rounded-sm px-3 text-xs font-semibold text-ink hover:bg-surface"
     >
       {icon}
       {children}

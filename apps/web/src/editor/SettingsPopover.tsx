@@ -42,7 +42,7 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
         return (
           <label
             key={key}
-            className="flex cursor-pointer items-center gap-3 border-b border-border py-3 last-of-type:border-b-0"
+            className="flex items-center gap-3 border-b border-border py-3 last-of-type:border-b-0"
           >
             <span className="flex min-w-0 flex-1 flex-col gap-1">
               <span className="text-base font-medium text-ink">

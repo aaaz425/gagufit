@@ -4,9 +4,9 @@ import type {
   PlacedFurniture,
 } from "@gagufit/core";
 import { FURNITURE_COLORS } from "@gagufit/data";
-import { Outlines } from "@react-three/drei";
+import { Outlines, useCursor } from "@react-three/drei";
 import { useThree, type ThreeEvent } from "@react-three/fiber";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import {
   BoxGeometry,
   Color,
@@ -116,6 +116,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
     },
     [parts],
   );
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered);
   const dpr = useThree((s) => s.viewport.dpr);
   const hex = FURNITURE_COLORS[furniture.color].hex;
   const shadow = look.layer !== "floor";
@@ -124,6 +126,11 @@ export const FurnitureMesh = memo(function FurnitureMesh({
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
       rotation-y={rad(furniture.rotation)}
       onClick={(e) => onClick(e, furniture.id)}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+      }}
+      onPointerOut={() => setHovered(false)}
     >
       {parts.map(({ part, geometry }, i) => {
         const scale = partScale(part);

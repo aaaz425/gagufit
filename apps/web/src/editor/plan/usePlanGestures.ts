@@ -81,6 +81,15 @@ export function usePlanGestures({
     };
   }, []);
 
+  // 포인터를 붙잡은 동안엔 svg 커서가 적용돼 직접 지정, 끝나면 비움
+  const setCursor = (cursor: string) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    svg.style.cursor = cursor;
+    // 자식 커서보다 우선시킴 - globals.css
+    svg.toggleAttribute("data-dragging", cursor !== "");
+  };
+
   const local = (e: { clientX: number; clientY: number }): Vec2 => {
     const rect = svgRef.current!.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -145,6 +154,7 @@ export function usePlanGestures({
     const r = currentRoom();
     if (hit?.kind === "rotate") {
       gesture.current = { type: "rotate", id: hit.id, before: r };
+      setCursor(getComputedStyle(e.target as Element).cursor);
       setDragging(true);
     } else if (hit?.kind === "width-left" || hit?.kind === "width-right") {
       gesture.current = {
@@ -153,6 +163,7 @@ export function usePlanGestures({
         side: hit.kind === "width-left" ? "left" : "right",
         before: r,
       };
+      setCursor(getComputedStyle(e.target as Element).cursor);
       setDragging(true);
     } else if (hit?.kind === "furniture" || hit?.kind === "opening") {
       if (e.pointerType === "touch") {
@@ -172,6 +183,7 @@ export function usePlanGestures({
         };
       } else {
         gesture.current = startDrag(hit, at);
+        if (gesture.current) setCursor("grabbing");
         setDragging(gesture.current !== null);
       }
     } else {
@@ -181,6 +193,7 @@ export function usePlanGestures({
         view0: viewRef.current,
         moved: false,
       };
+      setCursor("grabbing");
     }
   };
 
@@ -266,6 +279,7 @@ export function usePlanGestures({
     if (!g) return;
     if (g.type === "press") clearTimeout(g.timer);
     if ("before" in g) commit(g.before);
+    setCursor("");
     setDragging(false);
   };
 

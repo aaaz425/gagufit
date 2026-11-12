@@ -134,7 +134,7 @@ export function Segment<T extends string>({
             } ${
               on
                 ? "bg-canvas font-bold text-ink shadow-raised"
-                : `font-medium ${o.unavailable ? "text-ink-subtle" : "text-ink-muted"}`
+                : `font-medium ${o.unavailable ? "cursor-pointer text-ink-subtle" : "text-ink-muted hover:text-ink"}`
             }`}
           >
             {o.label}
@@ -164,7 +164,9 @@ export function Switch({
       aria-checked={on}
       onClick={() => onChange(!on)}
       className={`flex h-[26px] w-11 shrink-0 items-center rounded-full p-[3px] ${
-        on ? "justify-end bg-primary" : "justify-start bg-border"
+        on
+          ? "justify-end bg-primary hover:bg-primary-hover"
+          : "justify-start bg-border hover:bg-primary-soft"
       }`}
     >
       <span className="size-5 rounded-full bg-canvas" />

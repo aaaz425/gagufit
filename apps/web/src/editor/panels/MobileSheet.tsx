@@ -39,7 +39,7 @@ export function MobileSheet() {
               type="button"
               aria-label="접기"
               onClick={close}
-              className="flex size-11 items-center justify-center rounded-sm text-ink"
+              className="flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface"
             >
               <ChevronDown size={22} />
             </button>
