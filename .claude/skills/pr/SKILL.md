@@ -7,7 +7,8 @@ description: PR 초안 작성 후 사용자 확인을 받아 생성 - 기능·�
 
 ## 1. 확인
 
-- `pnpm format:check`, `pnpm turbo run lint typecheck test build` 통과
+- `pnpm format:check` 통과
+- `pnpm turbo run lint typecheck test build` 통과 - `*.md`·`.claude`·`docs`만 바뀌었으면 생략
 - 커밋 안 된 변경 없음
 
 ## 2. 초안
