@@ -2,7 +2,26 @@
 
 import type { Vec2 } from "@gagufit/core";
 import { Sofa } from "lucide-react";
+import { FURNITURE_SEARCH_ID } from "../panels/FurniturePanel";
 import { useEditor } from "../store";
+
+/** 검색창 포커스 + 패널 배경 잠깐 강조 */
+function highlightFurniturePanel() {
+  const input = document.getElementById(FURNITURE_SEARCH_ID);
+  if (!input) return;
+  input.focus();
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  // 키프레임에 var() 미지원 브라우저 있음
+  const soft = getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-primary-soft")
+    .trim();
+  input
+    .closest("aside")
+    ?.animate(
+      [{ backgroundColor: soft }, { backgroundColor: soft, offset: 0.5 }, {}],
+      { duration: 1500, easing: "ease-out" },
+    );
+}
 
 /** 빈 방 안내 - at은 화면 px 가운데 */
 export function EmptyHint({ at, compact }: { at: Vec2; compact: boolean }) {
@@ -24,6 +43,8 @@ export function EmptyHint({ at, compact }: { at: Vec2; compact: boolean }) {
           setPanel("furniture");
           if (compact) setSheet("furniture");
           else setLeftOpen(true);
+          // 패널이 그려진 뒤, 모바일은 키보드가 시트를 가려서 제외
+          if (!compact) requestAnimationFrame(highlightFurniturePanel);
         }}
       >
         가구 추가
