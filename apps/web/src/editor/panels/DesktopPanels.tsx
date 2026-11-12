@@ -27,7 +27,7 @@ function PanelTabs() {
           className={`h-9 flex-1 rounded-sm text-sm ${
             panel === t.value
               ? "bg-canvas font-bold text-ink shadow-raised"
-              : "font-medium text-ink-muted"
+              : "font-medium text-ink-muted hover:text-ink"
           }`}
         >
           {t.label}

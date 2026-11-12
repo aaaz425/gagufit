@@ -62,7 +62,7 @@ export function ModalActions({ children }: { children: ReactNode }) {
 }
 
 export const BUTTON_BASE =
-  "flex h-11 items-center justify-center rounded-sm px-5 text-sm font-semibold disabled:opacity-50";
-export const BUTTON_SECONDARY = `${BUTTON_BASE} border border-border bg-canvas text-ink hover:bg-surface`;
-export const BUTTON_PRIMARY = `${BUTTON_BASE} bg-primary text-white hover:bg-primary-hover`;
-export const BUTTON_DANGER = `${BUTTON_BASE} bg-danger text-white`;
+  "flex h-11 items-center justify-center rounded-sm px-5 text-sm font-semibold disabled:bg-surface disabled:text-ink-subtle";
+export const BUTTON_SECONDARY = `${BUTTON_BASE} border border-border bg-canvas text-ink enabled:hover:bg-surface`;
+export const BUTTON_PRIMARY = `${BUTTON_BASE} bg-primary text-white enabled:hover:bg-primary-hover`;
+export const BUTTON_DANGER = `${BUTTON_BASE} bg-danger text-white enabled:hover:bg-danger-soft enabled:hover:text-danger`;

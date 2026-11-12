@@ -139,6 +139,32 @@ shadow:
 - 경고 배지 - 상단 바 경고 개수, `danger-soft` 배경 `danger` 글자
 - 토글 - 켜짐 `primary`, 꺼짐 `border`
 
+## 상호작용 상태
+
+- 상호작용 요소는 커서·hover·focus-visible·disabled 네 가지 필수
+- 기본 커서·focus-visible 외곽선은 `globals.css` base가 처리 - 개별 지정 금지
+  - 누를 수 있는 요소 `pointer`, disabled·`aria-disabled` `not-allowed`
+    - 예외 - 눌러서 이유를 안내하는 unavailable 옵션은 `pointer`
+  - focus-visible - `primary` 2px 외곽선, 간격 2px
+- hover - 배경 `surface`(primary 버튼 `primary-hover`, 삭제 `danger-soft`), 배경 없는 글자는 `ink`로
+  - tonal - `primary` 배경 흰 글자
+  - 토글 - 켜짐 `primary-hover`, 꺼짐 `primary-soft`
+  - danger 버튼 - `danger-soft` 배경 `danger` 글자
+  - 어두운 바탕(토스트) 위 동작 - `canvas` 10% 배경
+- disabled - `surface` 배경 `ink-subtle` 글자, hover 효과 없음
+- 2D 평면 커서
+
+| 대상            | 기본               | 끌기 중     |
+| --------------- | ------------------ | ----------- |
+| 가구·문·창문    | `grab`             | `grabbing`  |
+| 빈 바닥         | `grab`             | `grabbing`  |
+| 회전 핸들       | 회전 아이콘        | 회전 아이콘 |
+| 문·창문 폭 핸들 | 벽 방향 `*-resize` | 같은 커서   |
+
+- 폭 핸들은 화면 회전 반영 - 벽이 가로면 `ew-resize`, 세로면 `ns-resize`, 대각선이면 `nwse`·`nesw`
+- 핀치·휠은 커서 변화 없음
+- 3D - 선택 가능한 가구 위 `pointer`, 빈 곳은 기본
+
 ## 편집기 규칙
 
 - 선택 - `primary` 바깥 외곽선 3px + `selection` 4px 번짐 + 회전 핸들

@@ -148,7 +148,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     >
       <svg
         ref={svgRef}
-        className="absolute inset-0 h-full w-full touch-none select-none"
+        className="absolute inset-0 h-full w-full cursor-grab touch-none select-none"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -177,6 +177,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
                   room={room}
                   opening={selectedOpening}
                   scale={view.scale}
+                  angle={view.angle}
                 />
               </>
             )}

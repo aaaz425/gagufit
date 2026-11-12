@@ -109,7 +109,7 @@ function Actions({ furniture }: { furniture: boolean }) {
         <button
           type="button"
           onClick={duplicateSelected}
-          className="h-11 flex-1 rounded-sm border border-border bg-canvas text-sm font-semibold text-ink"
+          className="h-11 flex-1 rounded-sm border border-border bg-canvas text-sm font-semibold text-ink hover:bg-surface"
         >
           복제
         </button>
@@ -117,7 +117,7 @@ function Actions({ furniture }: { furniture: boolean }) {
       <button
         type="button"
         onClick={deleteSelected}
-        className="h-11 flex-1 rounded-sm border border-danger bg-canvas text-sm font-semibold text-danger"
+        className="h-11 flex-1 rounded-sm border border-danger bg-canvas text-sm font-semibold text-danger hover:bg-danger-soft"
       >
         삭제
       </button>
@@ -209,7 +209,7 @@ function FurnitureProps({
         <button
           type="button"
           onClick={rotateSelected90}
-          className="flex h-11 items-center gap-2 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary"
+          className="flex h-11 items-center gap-2 rounded-sm bg-primary-soft px-4 text-sm font-bold text-primary hover:bg-primary hover:text-white"
         >
           <RotateCw size={16} aria-hidden />
           90°
@@ -247,7 +247,7 @@ function ColorPicker({
             aria-label={c.name}
             title={c.name}
             onClick={() => !on && onChange(c.id)}
-            className="flex size-11 items-center justify-center"
+            className="flex size-11 items-center justify-center rounded-sm hover:bg-surface"
           >
             <span
               className={`size-8 rounded-full ${

@@ -8,6 +8,9 @@ import { CATEGORY_GROUPS } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
 import { TOUCH_44 } from "../ui";
 
+/** 검색창 id - 빈 방 안내가 찾아 포커스 */
+export const FURNITURE_SEARCH_ID = "furniture-search";
+
 const PRESETS = Object.values(FURNITURE_PRESETS);
 
 /** 검색·칩은 위에 고정, 목록만 스크롤 - 부모가 높이를 정해야 함 */
@@ -27,6 +30,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
       <label className="flex h-11 shrink-0 items-center gap-2 rounded-sm border border-border bg-canvas px-3 focus-within:border-primary focus-within:outline focus-within:outline-1 focus-within:outline-primary">
         <Search size={16} className="shrink-0 text-ink-muted" aria-hidden />
         <input
+          id={FURNITURE_SEARCH_ID}
           type="search"
           aria-label="가구 검색"
           placeholder="가구 검색"
@@ -45,7 +49,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             className={`h-8 shrink-0 rounded-full px-3 text-sm ${TOUCH_44} ${
               i === group
                 ? "bg-primary-soft font-bold text-primary"
-                : "border border-border bg-surface font-medium text-ink-muted"
+                : "border border-border bg-surface font-medium text-ink-muted hover:text-ink"
             }`}
           >
             {g.label}
