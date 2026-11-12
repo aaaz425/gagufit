@@ -27,11 +27,6 @@ const fontDir = join(
   "node_modules/pretendard/dist/public/static",
 );
 const font = (file: string) => readFile(join(fontDir, file));
-const [regular, bold, extraBold] = await Promise.all([
-  font("Pretendard-Regular.otf"),
-  font("Pretendard-Bold.otf"),
-  font("Pretendard-ExtraBold.otf"),
-]);
 
 type Box = { x: number; y: number; w: number; h: number };
 
@@ -56,7 +51,13 @@ function Piece({
   );
 }
 
-export default function Image() {
+// 글꼴은 생성 때만 읽기 - 동적 페이지 메타데이터가 이 모듈을 런타임에 불러옴
+export default async function Image() {
+  const [regular, bold, extraBold] = await Promise.all([
+    font("Pretendard-Regular.otf"),
+    font("Pretendard-Bold.otf"),
+    font("Pretendard-ExtraBold.otf"),
+  ]);
   return new ImageResponse(
     <div
       style={{
