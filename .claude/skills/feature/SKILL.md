@@ -21,6 +21,7 @@ description: 기능 개발 - 의존 없는 기능으로 나눠 기능마다 dev 
 
 ## 3. 구현
 
+- 시작 전 `git fetch origin`, 기능 브랜치는 `origin/main`에서
 - 기능마다 dev 하나, Agent `isolation: "worktree"`
 - 병렬 가능한 기능은 한 번에 실행
 - 전달은 해당 기능 계획만
