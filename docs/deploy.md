@@ -34,18 +34,22 @@ Supabase 운영 프로젝트 + Vercel + gagufit.com
 6. 함수 리전 서울 - 직접
    - Settings > Functions > Function Region `Seoul, South Korea (icn1)`
    - `vercel.json` 추가 없이 대시보드로만 지정
-7. 환경변수 - 직접
+7. 문서만 바뀐 커밋은 빌드 생략 - 직접
+   - Settings > Git > Ignored Build Step > Custom
+   - `git diff --quiet HEAD^ HEAD -- ':/' ':/!*.md' ':/!.claude' ':/!docs'`
+   - 종료 코드 0이면 빌드 생략, `:/`는 Root Directory와 상관없이 저장소 루트 기준
+8. 환경변수 - 직접
    - Settings > Environment Variables, Production에 입력
    - `NEXT_PUBLIC_*`는 빌드 때 박힘 - 값 변경 시 재배포
-8. 도메인 - 직접
+9. 도메인 - 직접
    - Settings > Domains에 `gagufit.com`과 `www.gagufit.com` 추가
    - `www.gagufit.com`은 `gagufit.com`으로 리다이렉트 설정
    - 등록기관 DNS에 Vercel이 안내하는 레코드 입력 (apex A, `www` CNAME)
-9. 배포 후 확인
-   - `https://gagufit.com` 접속, `www`는 apex로 이동, `/privacy` `/terms` 열림
-   - 방 만들기 → 새로고침 후 자동 저장 유지, `/rooms` 목록 표시
-   - Supabase 대시보드 Authentication > Users에 익명 사용자 생성
-   - Database > Cron Jobs에 `delete-stale-anonymous-users` 등록
+10. 배포 후 확인
+    - `https://gagufit.com` 접속, `www`는 apex로 이동, `/privacy` `/terms` 열림
+    - 방 만들기 → 새로고침 후 자동 저장 유지, `/rooms` 목록 표시
+    - Supabase 대시보드 Authentication > Users에 익명 사용자 생성
+    - Database > Cron Jobs에 `delete-stale-anonymous-users` 등록
 
 ## 환경변수
 

@@ -72,5 +72,6 @@ supabase/        마이그레이션 SQL
 
 ## 에이전트
 
-- `.claude/agents` - core-dev, web-dev, api-dev, designer, verifier, reviewer
-- 메인 세션은 PM - 분배·병합·중계, 병렬 작업은 worktree
+- `.claude/agents` - dev, reviewer
+- 메인 세션은 PM - 기능 나누기·분배·중계
+- 기능마다 dev 하나, worktree·브랜치·PR 따로
