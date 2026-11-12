@@ -16,7 +16,7 @@ export function QualitySection() {
         const row = QUALITY_ROWS[key];
         return (
           <li key={key}>
-            <label className="flex min-h-14 cursor-pointer items-center gap-3 border-b border-border py-3">
+            <label className="flex min-h-14 items-center gap-3 border-b border-border py-3">
               <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="text-base font-medium">{row.label}</span>
                 {row.hint && (

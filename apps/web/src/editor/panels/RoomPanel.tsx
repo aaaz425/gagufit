@@ -169,7 +169,7 @@ function Swatches<T extends string>({
             type="button"
             aria-pressed={on}
             onClick={() => !on && onChange(m.id)}
-            className="flex w-16 flex-col items-center gap-2"
+            className="flex w-16 flex-col items-center gap-2 rounded-md hover:bg-surface"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- 56px 견본, 최적화 불필요 */}
             <img

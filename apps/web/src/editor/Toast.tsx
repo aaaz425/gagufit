@@ -28,7 +28,7 @@ export function Toast({ bottom }: { bottom: number }) {
         <button
           type="button"
           onClick={undo}
-          className="h-11 rounded-sm px-2 font-bold text-primary-inverse"
+          className="h-11 rounded-sm px-2 font-bold text-primary-inverse hover:bg-canvas/10"
         >
           실행 취소
         </button>

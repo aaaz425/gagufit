@@ -1,5 +1,5 @@
 {
-  "version": "2.14",
+  "version": "2.22",
   "children": [
     {
       "type": "frame",
@@ -486,6 +486,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 24,
           "padding": [
             32,
@@ -960,6 +961,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 20,
           "padding": [
             32,
@@ -1022,6 +1024,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 16,
           "padding": [
             0,
@@ -1223,6 +1226,7 @@
               "strokeWidth": {
                 "right": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 16,
               "padding": 16,
@@ -1976,8 +1980,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#11111133",
-                        "spread": 3
+                        "color": "#11111133"
                       },
                       "justifyContent": "center",
                       "alignItems": "center",
@@ -2076,6 +2079,7 @@
               "strokeWidth": {
                 "left": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 20,
               "padding": 20,
@@ -2978,6 +2982,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 20,
           "padding": [
             20,
@@ -3042,6 +3047,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 10,
           "padding": [
             0,
@@ -3241,6 +3247,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 8,
           "padding": [
             8,
@@ -3400,6 +3407,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 10,
           "padding": [
             0,
@@ -3677,6 +3685,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -3779,6 +3788,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 10,
           "padding": [
             0,
@@ -3953,6 +3963,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 8,
           "padding": [
             8,
@@ -4634,6 +4645,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -4731,6 +4743,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -4803,6 +4816,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -4863,6 +4877,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -4958,6 +4973,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -5007,6 +5023,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -5056,6 +5073,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -5105,6 +5123,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -5204,6 +5223,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "children": [
                 {
@@ -5214,6 +5234,7 @@
                   "strokeWidth": {
                     "bottom": 2
                   },
+                  "strokeLinejoin": "round",
                   "padding": [
                     0,
                     0,
@@ -5372,6 +5393,7 @@
       "strokeWidth": {
         "bottom": 1
       },
+      "strokeLinejoin": "round",
       "padding": [
         20,
         160
@@ -7133,6 +7155,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 10,
                   "padding": [
                     12,
@@ -7244,8 +7267,7 @@
                           "effect": {
                             "type": "shadow",
                             "shadowType": "outer",
-                            "color": "#0B7D6133",
-                            "spread": 4
+                            "color": "#0B7D6133"
                           }
                         },
                         {
@@ -7562,8 +7584,7 @@
                               "effect": {
                                 "type": "shadow",
                                 "shadowType": "outer",
-                                "color": "#0B7D6133",
-                                "spread": 3
+                                "color": "#0B7D6133"
                               }
                             },
                             {
@@ -8113,6 +8134,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -8197,6 +8219,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 14,
           "padding": [
             0,
@@ -8333,6 +8356,7 @@
               "strokeWidth": {
                 "right": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 14,
               "padding": 16,
@@ -8599,8 +8623,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#0B7D6133",
-                        "spread": 4
+                        "color": "#0B7D6133"
                       }
                     },
                     {
@@ -8816,6 +8839,7 @@
               "strokeWidth": {
                 "left": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 18,
               "padding": 20,
@@ -9300,6 +9324,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -9613,6 +9638,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 20,
           "padding": [
             28,
@@ -10141,6 +10167,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 6,
           "padding": [
             0,
@@ -10308,8 +10335,7 @@
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
-                    "color": "#0B7D6133",
-                    "spread": 4
+                    "color": "#0B7D6133"
                   }
                 },
                 {
@@ -10533,6 +10559,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 6,
           "padding": [
             0,
@@ -10700,8 +10727,7 @@
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
-                    "color": "#0B7D6133",
-                    "spread": 4
+                    "color": "#0B7D6133"
                   }
                 },
                 {
@@ -12590,6 +12616,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -12666,6 +12693,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -12742,6 +12770,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -12818,6 +12847,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -12893,6 +12923,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -12968,6 +12999,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -13043,6 +13075,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 24,
               "padding": [
                 8,
@@ -13681,8 +13714,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#0B7D6133",
-                        "spread": 4
+                        "color": "#0B7D6133"
                       }
                     },
                     {
@@ -14680,6 +14712,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": 16,
                   "justifyContent": "space_between",
@@ -15283,8 +15316,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#0B7D6133",
-                        "spread": 3
+                        "color": "#0B7D6133"
                       }
                     },
                     {
@@ -15325,8 +15357,7 @@
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
-                    "color": "#0B7D6133",
-                    "spread": 3
+                    "color": "#0B7D6133"
                   }
                 }
               ]
@@ -15475,8 +15506,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#0B7D6133",
-                        "spread": 4
+                        "color": "#0B7D6133"
                       }
                     },
                     {
@@ -15537,6 +15567,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 20,
           "padding": [
@@ -15722,8 +15753,7 @@
                           "effect": {
                             "type": "shadow",
                             "shadowType": "outer",
-                            "color": "#0B7D6133",
-                            "spread": 2
+                            "color": "#0B7D6133"
                           }
                         },
                         {
@@ -16273,6 +16303,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -16565,6 +16596,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -16651,6 +16683,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 14,
           "padding": [
             0,
@@ -16792,6 +16825,7 @@
               "strokeWidth": {
                 "right": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 14,
               "padding": 16,
@@ -17336,8 +17370,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#0B7D6133",
-                        "spread": 4
+                        "color": "#0B7D6133"
                       }
                     },
                     {
@@ -17551,6 +17584,7 @@
               "strokeWidth": {
                 "left": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 18,
               "padding": 20,
@@ -17821,6 +17855,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 6,
           "padding": [
             0,
@@ -21024,6 +21059,7 @@
                       "strokeWidth": {
                         "bottom": 1
                       },
+                      "strokeLinejoin": "round",
                       "gap": 10,
                       "padding": [
                         0,
@@ -21201,6 +21237,7 @@
                       "strokeWidth": {
                         "bottom": 1
                       },
+                      "strokeLinejoin": "round",
                       "gap": 10,
                       "padding": [
                         0,
@@ -21411,6 +21448,7 @@
                       "strokeWidth": {
                         "bottom": 1
                       },
+                      "strokeLinejoin": "round",
                       "gap": 10,
                       "padding": [
                         0,
@@ -21591,6 +21629,7 @@
                       "strokeWidth": {
                         "bottom": 1
                       },
+                      "strokeLinejoin": "round",
                       "gap": 10,
                       "padding": [
                         0,
@@ -22188,6 +22227,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 6,
           "padding": [
             0,
@@ -22355,8 +22395,7 @@
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
-                    "color": "#0B7D6133",
-                    "spread": 4
+                    "color": "#0B7D6133"
                   }
                 },
                 {
@@ -22734,6 +22773,7 @@
           "strokeWidth": {
             "bottom": 1
           },
+          "strokeLinejoin": "round",
           "gap": 14,
           "padding": [
             0,
@@ -22870,6 +22910,7 @@
               "strokeWidth": {
                 "right": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 14,
               "padding": 16,
@@ -23136,8 +23177,7 @@
                       "effect": {
                         "type": "shadow",
                         "shadowType": "outer",
-                        "color": "#0B7D6133",
-                        "spread": 4
+                        "color": "#0B7D6133"
                       }
                     },
                     {
@@ -23353,6 +23393,7 @@
               "strokeWidth": {
                 "left": 1
               },
+              "strokeLinejoin": "round",
               "layout": "vertical",
               "gap": 18,
               "padding": 20,
@@ -23891,7 +23932,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/floor-light-oak.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "Gcna3": {
@@ -23913,7 +23954,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/floor-dark-walnut.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -23935,7 +23976,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/floor-grey-tile.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -23967,7 +24008,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/floor-white-tile.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -23989,7 +24030,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/floor-vinyl.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24011,7 +24052,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/floor-carpet.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24071,7 +24112,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/wall-white-paint.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "Gcna3": {
@@ -24093,7 +24134,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/wall-warm-beige.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24115,7 +24156,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/wall-light-grey.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24147,7 +24188,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/wall-silk.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24169,7 +24210,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/wall-stripe.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24191,7 +24232,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "images/wall-concrete.jpg",
-                                "mode": "fill"
+                                "mode": "cover"
                               }
                             },
                             "M4kDko": {
@@ -24690,6 +24731,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -25051,6 +25093,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "gap": 12,
           "padding": [
@@ -25238,8 +25281,7 @@
               "effect": {
                 "type": "shadow",
                 "shadowType": "outer",
-                "color": "#0B7D6133",
-                "spread": 6
+                "color": "#0B7D6133"
               }
             },
             {

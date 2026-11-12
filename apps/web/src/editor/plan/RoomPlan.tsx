@@ -132,7 +132,7 @@ function FurnitureShape({
   const outline = warned ? "danger" : "primary";
   return (
     <g transform={furnitureTransform(f, w, d)}>
-      <g data-hit="furniture" data-id={f.id} className="cursor-move">
+      <g data-hit="furniture" data-id={f.id} className="cursor-grab">
         <FurnitureSymbol category={preset?.category} size={f.size} />
         {warned && (
           <rect
@@ -168,7 +168,7 @@ function FurnitureShape({
             pointerEvents="none"
             {...px}
           />
-          <g data-hit="rotate" data-id={f.id} className="cursor-grab">
+          <g data-hit="rotate" data-id={f.id} className="cursor-rotate">
             <circle cx={w / 2} cy={0} r={22 / scale} fill="transparent" />
             <circle
               cx={w / 2}
@@ -351,10 +351,16 @@ function OpeningShape({
         fill="transparent"
         data-hit="opening"
         data-id={o.id}
-        className="cursor-move"
+        className="cursor-grab"
       />
     </g>
   );
+}
+
+/** 화면에서 벽이 향한 각도(도)에 맞는 양방향 크기 조절 커서 */
+function resizeCursor(deg: number) {
+  const step = Math.round((((deg % 180) + 180) % 180) / 45) % 4;
+  return ["ew-resize", "nwse-resize", "ns-resize", "nesw-resize"][step];
 }
 
 /** 선택한 문·창문 폭 핸들 - 다른 그림 위에 */
@@ -362,22 +368,22 @@ export function OpeningHandles({
   room,
   opening,
   scale,
+  angle,
 }: {
   room: Room;
   opening: Opening;
   scale: number;
+  /** 화면 회전(도) - 벽 방향에 맞는 커서 고르기 */
+  angle: number;
 }) {
-  const { n, left, right } = openingFrame(room, opening);
+  const { n, u, left, right } = openingFrame(room, opening);
+  const cursor = resizeCursor(Math.atan2(u.y, u.x) * (180 / Math.PI) + angle);
   const wall = WALL_PX / scale;
   const handle = (p: Vec2, side: "left" | "right") => {
     const c = add(p, n, -wall / 2);
     const s = 12 / scale;
     return (
-      <g
-        data-hit={`width-${side}`}
-        data-id={opening.id}
-        className="cursor-ew-resize"
-      >
+      <g data-hit={`width-${side}`} data-id={opening.id} style={{ cursor }}>
         <circle cx={c.x} cy={c.y} r={22 / scale} fill="transparent" />
         <rect
           x={c.x - s / 2}
