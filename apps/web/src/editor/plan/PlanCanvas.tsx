@@ -164,6 +164,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
               scale={view.scale}
               selection={selection}
               warned={warned}
+              angle={view.angle}
             />
             {selectedOpening && (
               <>

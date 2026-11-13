@@ -1,3 +1,5 @@
+import { textureId, type TextureRef } from "./PlanDefs";
+
 // 가구 평면 기호 색 - 몸체는 고른 색 그대로, 외곽선·장식은 몸체 밝기에 맞춰 도출
 
 export type SymbolPalette = {
@@ -13,6 +15,8 @@ export type SymbolPalette = {
   rugLine: string;
   /** 속 빈 가구(행거) 바닥 - 선만 있으면 바닥색에 묻힘 */
   ghost: string;
+  /** 질감 패턴 fill, 없으면 질감 없음 */
+  texture?: string;
 };
 
 const DEFAULT: SymbolPalette = {
@@ -47,7 +51,10 @@ const brightness = ([r, g, b]: Rgb) =>
 const INK: Rgb = [38, 30, 24];
 const WHITE: Rgb = [255, 255, 255];
 
-export function symbolPalette(hex?: string): SymbolPalette {
+export function symbolPalette(
+  hex?: string,
+  texture?: TextureRef,
+): SymbolPalette {
   if (!hex) return DEFAULT;
   const c = parse(hex);
   // 어두운 몸체는 밝은 선, 밝은 몸체는 어두운 선
@@ -61,6 +68,7 @@ export function symbolPalette(hex?: string): SymbolPalette {
     screen: dark ? css(line) : "var(--color-scene-wall)",
     rug: hex,
     rugLine: css(line),
+    texture: texture && `url(#${textureId(texture, dark)})`,
     ghost: `rgb(${c[0]} ${c[1]} ${c[2]} / 0.5)`,
   };
 }

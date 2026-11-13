@@ -1,5 +1,6 @@
 import type { FurnitureCategory, Size } from "@gagufit/core";
 import type { ReactNode } from "react";
+import type { TextureRef } from "./PlanDefs";
 import { symbolPalette, type SymbolPalette } from "./symbol-palette";
 
 // 가구 평면 기호 - (0,0)~(w,d) cm, 위쪽이 등·벽 쪽, 선 굵기는 화면 px
@@ -37,7 +38,10 @@ function Rect(props: {
 }
 
 const body = ({ w, d }: Box, p: SymbolPalette) => (
-  <Rect w={w} h={d} r={R} fill={p.body} stroke={p.line} strokeWidth={1} />
+  <>
+    <Rect w={w} h={d} r={R} fill={p.body} stroke={p.line} strokeWidth={1} />
+    {p.texture && <Rect w={w} h={d} r={R} fill={p.texture} />}
+  </>
 );
 
 /** 앞쪽 띠 */
@@ -236,6 +240,7 @@ const DECOR: Record<
   rug: (b, p) => (
     <>
       <Rect w={b.w} h={b.d} r={R} fill={p.rug} />
+      {p.texture && <Rect w={b.w} h={b.d} r={R} fill={p.texture} />}
       <Rect
         x={10}
         y={10}
@@ -256,15 +261,17 @@ export function FurnitureSymbol({
   category = "etc",
   size,
   color,
+  texture,
 }: {
   category?: FurnitureCategory;
   size: Pick<Size, "width" | "depth">;
   /** 고른 색 hex, 없으면 기본 베이지 */
   color?: string;
+  texture?: TextureRef;
 }) {
   return DECOR[category](
     { w: size.width, d: size.depth },
-    symbolPalette(color),
+    symbolPalette(color, texture),
   );
 }
 
