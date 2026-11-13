@@ -41,23 +41,17 @@ const mix = (a: Rgb, b: Rgb, t: number): Rgb => [
 
 const css = ([r, g, b]: Rgb) => `rgb(${r} ${g} ${b})`;
 
-const luminance = ([r, g, b]: Rgb) => {
-  const lin = (v: number) => {
-    const s = v / 255;
-    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-};
+const brightness = ([r, g, b]: Rgb) =>
+  (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
 const INK: Rgb = [38, 30, 24];
 const WHITE: Rgb = [255, 255, 255];
 
-/** hex가 없으면 기본 베이지 팔레트 */
 export function symbolPalette(hex?: string): SymbolPalette {
   if (!hex) return DEFAULT;
   const c = parse(hex);
   // 어두운 몸체는 밝은 선, 밝은 몸체는 어두운 선
-  const dark = luminance(c) < 0.16;
+  const dark = brightness(c) < 0.4;
   const line = dark ? mix(c, WHITE, 0.55) : mix(c, INK, 0.5);
   return {
     body: hex,

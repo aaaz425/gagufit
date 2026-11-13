@@ -8,7 +8,6 @@ import { symbolPalette, type SymbolPalette } from "./symbol-palette";
 const R = 4;
 
 type Box = { w: number; d: number };
-type P = SymbolPalette;
 
 const px = { vectorEffect: "non-scaling-stroke" } as const;
 
@@ -37,16 +36,19 @@ function Rect(props: {
   );
 }
 
-const body = ({ w, d }: Box, p: P) => (
+const body = ({ w, d }: Box, p: SymbolPalette) => (
   <Rect w={w} h={d} r={R} fill={p.body} stroke={p.line} strokeWidth={1} />
 );
 
 /** 앞쪽 띠 */
-const front = ({ w, d }: Box, p: P, h = 5) => (
+const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => (
   <Rect y={d - h} w={w} h={h} fill={p.line} />
 );
 
-const DECOR: Record<FurnitureCategory, (b: Box, p: P) => ReactNode> = {
+const DECOR: Record<
+  FurnitureCategory,
+  (b: Box, p: SymbolPalette) => ReactNode
+> = {
   bed: (b, p) => {
     const pillows = b.w < 120 ? 1 : 2;
     const pw = (b.w - 12.5 * 2 - 10 * (pillows - 1)) / pillows;
@@ -202,7 +204,7 @@ const DECOR: Record<FurnitureCategory, (b: Box, p: P) => ReactNode> = {
         w={b.w - 25}
         h={5}
         r={2}
-        fill="#BFD9E6"
+        fill={p.hi}
         stroke={p.line}
         strokeWidth={1}
       />
@@ -246,7 +248,7 @@ const DECOR: Record<FurnitureCategory, (b: Box, p: P) => ReactNode> = {
       />
     </>
   ),
-  etc: (b, p) => body(b, p),
+  etc: body,
 };
 
 /** 프리셋이 없으면 기타 모양 */
