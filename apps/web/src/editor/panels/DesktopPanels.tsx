@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import type { CSSProperties } from "react";
 import { COLLAPSED_PANEL_WIDTH, PANEL_WIDTH } from "../layout";
 import { useEditor, type PanelTab } from "../store";
@@ -41,7 +41,6 @@ export function LeftPanel() {
   const panel = useEditor((s) => s.panel);
   const open = useEditor((s) => s.leftOpen);
   const setOpen = useEditor((s) => s.setLeftOpen);
-  const Icon = open ? PanelLeftClose : PanelLeftOpen;
   return (
     // 항상 PANEL_WIDTH - 접으면 왼쪽으로 밀어 오른쪽 COLLAPSED_PANEL_WIDTH만 띠로 남김, 여닫는 탭은 가장자리에 붙어 같이 움직임
     <aside
@@ -75,12 +74,18 @@ export function LeftPanel() {
       </div>
       <button
         type="button"
+        data-no-press
         aria-label={open ? "패널 접기" : "패널 펼치기"}
         aria-expanded={open}
         onClick={() => setOpen(!open)}
-        className="absolute top-3 left-full flex size-11 items-center justify-center rounded-r-md border border-l-0 border-border bg-canvas text-ink-muted hover:bg-surface hover:text-ink"
+        // 보이는 폭 20, 누르는 영역은 오른쪽으로 넓혀 44 - 시작점이 패널 테두리 위라 이음새가 가려짐
+        className="absolute top-3 left-full flex h-11 w-5 items-center justify-center rounded-r-md bg-primary-soft text-primary shadow-raised before:absolute before:inset-y-0 before:left-0 before:w-11 hover:bg-primary hover:text-white"
       >
-        <Icon size={20} />
+        <ChevronLeft
+          size={16}
+          aria-hidden
+          className={`transition-transform duration-(--duration-fast) ease-enter ${open ? "" : "rotate-180"}`}
+        />
       </button>
     </aside>
   );

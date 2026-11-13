@@ -1737,12 +1737,12 @@
                   "type": "frame",
                   "id": "oSPmM",
                   "layoutPosition": "absolute",
-                  "x": 280,
+                  "x": 279,
                   "y": 12,
                   "name": "패널 접기 탭",
-                  "width": 44,
+                  "width": 20,
                   "height": 44,
-                  "fill": "$canvas",
+                  "fill": "$primary-soft",
                   "cornerRadius": [
                     0,
                     12,
@@ -1750,10 +1750,15 @@
                     0
                   ],
                   "stroke": "$border",
-                  "strokeWidth": {
-                    "top": 1,
-                    "right": 1,
-                    "bottom": 1
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#1F23280F",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 4
                   },
                   "justifyContent": "center",
                   "alignItems": "center",
@@ -1762,11 +1767,11 @@
                       "type": "icon",
                       "id": "i9dVK",
                       "name": "접기 아이콘",
-                      "width": 20,
-                      "height": 20,
-                      "icon": "panel-left-close",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-left",
                       "library": "lucide",
-                      "fill": "$ink-muted"
+                      "fill": "$primary"
                     }
                   ]
                 }

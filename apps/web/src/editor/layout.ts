@@ -12,7 +12,7 @@ export type Insets = {
 export const PANEL_WIDTH = 300;
 /** 접힌 왼쪽 패널 띠 폭 - 접기 탭이 띠 가장자리에 붙고, 폭은 기존 접힌 상태 유지 */
 export const COLLAPSED_PANEL_WIDTH = 60;
-/** 데스크톱 왼쪽 패널 접기 탭이 캔버스 위로 나오는 아래 끝 - top 12 + 44, 이 아래로 떠 있는 툴바를 둠 */
+/** 데스크톱 왼쪽 패널 접기 탭(손잡이)이 캔버스 위로 나오는 아래 끝 - top 12 + 44, 이 아래로 떠 있는 툴바를 둠 */
 export const PANEL_TAB_BOTTOM = 56;
 /** 모바일 하단 탭·속성 요약 높이 - 안전 영역 제외 */
 const MOBILE_TABS_HEIGHT = 60;
