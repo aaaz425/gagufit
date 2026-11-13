@@ -2,10 +2,11 @@
 
 import { wallFrame, type Room } from "@gagufit/core";
 import { FURNITURE_PRESETS } from "@gagufit/data";
-import { OrbitControls } from "@react-three/drei";
+import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { EffectComposer, SSAO } from "@react-three/postprocessing";
 import { RotateCcw } from "lucide-react";
+import { NeutralToneMapping } from "three";
 import {
   useCallback,
   useEffect,
@@ -58,6 +59,38 @@ function sunPosition(room: Room): [number, number, number] {
 
 const SUN_COLOR = "#FFF3E0";
 const FILL_COLOR = "#DCE6FF";
+
+/** 코드로 만든 작은 환경맵 - 파일·네트워크 없이 부드러운 반사·간접광, 한 번만 그림 */
+function Reflections() {
+  return (
+    <Environment resolution={64} frames={1} environmentIntensity={0.35}>
+      <Lightformer
+        form="rect"
+        intensity={2}
+        color="white"
+        position={[0, 6, 0]}
+        rotation-x={Math.PI / 2}
+        scale={[12, 12, 1]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={3}
+        color={SUN_COLOR}
+        position={[-6, 2.5, -2]}
+        rotation-y={Math.PI / 2}
+        scale={[6, 3, 1]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={1}
+        color={FILL_COLOR}
+        position={[6, 2, 3]}
+        rotation-y={-Math.PI / 2}
+        scale={[6, 3, 1]}
+      />
+    </Environment>
+  );
+}
 
 function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
   const sun = sunPosition(room);
@@ -204,9 +237,11 @@ export default function Room3D({
   );
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full bg-linear-to-b from-canvas to-surface">
       <Canvas
         frameloop="demand"
+        // 색을 덜 바꾸는 톤 매핑 - 가구·벽 색이 본래 색에 가깝게
+        gl={{ toneMapping: NeutralToneMapping }}
         dpr={quality.hiDpi ? [1, 2] : 1}
         shadows={quality.shadows && "percentage"}
         camera={{ fov: FOV, near: 0.05, far: 100 }}
@@ -215,6 +250,7 @@ export default function Room3D({
         }}
       >
         <Lights room={room} shadows={quality.shadows} />
+        <Reflections />
         <group position={[-m(room.width) / 2, 0, -m(room.depth) / 2]}>
           <RoomShell
             room={room}
@@ -228,6 +264,7 @@ export default function Room3D({
               preset={preset}
               selected={f.id === selectedId}
               warning={warningIds.has(f.id)}
+              realShadows={quality.shadows}
               onClick={handleFurnitureClick}
             />
           ))}

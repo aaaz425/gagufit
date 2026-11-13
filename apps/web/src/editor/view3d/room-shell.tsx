@@ -25,6 +25,7 @@ import {
 import { DOOR_AREA_OPACITY, SCENE_COLORS } from "../scene-colors";
 import { floorPolygon, m, worldUvBox } from "./geometry";
 import { useSurfaceMaterial } from "./surface-material";
+import { WallTrim } from "./wall-trim";
 
 /** 벽 두께 - 방 안쪽 치수를 지키게 바깥으로 */
 const WALL_THICKNESS = 10;
@@ -119,6 +120,12 @@ function Wall({ room, wall, lowered, material }: WallProps) {
   );
 
   const half = m(WALL_THICKNESS) / 2;
+  // 벽 로컬 z축이 방 안쪽을 향하면 1
+  const inner =
+    frame.out.x * Math.sin(frame.angle) + frame.out.y * Math.cos(frame.angle) >
+    0
+      ? -1
+      : 1;
   return (
     <group
       position={[
@@ -138,6 +145,13 @@ function Wall({ room, wall, lowered, material }: WallProps) {
           receiveShadow
         />
       ))}
+      <WallTrim
+        length={frame.length}
+        top={top}
+        openings={openings}
+        inner={inner}
+        half={WALL_THICKNESS / 2}
+      />
       {marks.map((p, i) => (
         <mesh
           key={`mark-${i}`}
