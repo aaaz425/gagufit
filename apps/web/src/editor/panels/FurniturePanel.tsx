@@ -56,7 +56,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
           </button>
         ))}
       </div>
-      <ul className="-mx-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-1">
+      <ul className="-mr-4 -ml-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-4 pl-1">
         {list.map((preset) => (
           <li key={preset.id}>
             <button
