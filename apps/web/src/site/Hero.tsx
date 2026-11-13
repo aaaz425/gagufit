@@ -16,7 +16,9 @@ export function Hero() {
             {HEADLINE}
           </h1>
           <p className="text-base leading-[1.6] text-ink-muted md:text-lg">
-            사기 전에 실제 치수로 미리 놓아 보세요.
+            평면도에 실제 치수로 놓고
+            <br />
+            3D로 미리 둘러보세요.
             <br />
             로그인 없이 바로 시작할 수 있어요.
           </p>

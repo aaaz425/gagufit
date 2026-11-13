@@ -14,7 +14,7 @@ const FEATURES = {
   },
   view: {
     icon: Box,
-    title: "2D로 놓고 3D로 확인",
+    title: "평면도로 놓고 3D로 확인",
     desc: "위에서 보며 놓고, 3D로 방을 둘러볼 수 있어요",
   },
   save: {
