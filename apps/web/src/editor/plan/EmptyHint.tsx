@@ -10,15 +10,18 @@ import { useEditor } from "../store";
 function highlightFurniturePanel() {
   const input = document.getElementById(FURNITURE_SEARCH_ID);
   if (!input) return;
-  input.focus();
+  input.focus({ preventScroll: true });
   if (prefersReducedMotion()) return;
-  const panel = input.closest("aside");
-  panel?.classList.add("motion-highlight");
-  panel?.addEventListener(
-    "animationend",
-    () => panel.classList.remove("motion-highlight"),
-    { once: true },
-  );
+  // aside에 붙이면 motion-side가 다시 재생됨 - 안쪽 내용에
+  const body = input.closest("aside")?.firstElementChild;
+  if (!body) return;
+  body.classList.add("motion-highlight");
+  const end = (e: Event) => {
+    if (e.target !== body) return;
+    body.classList.remove("motion-highlight");
+    body.removeEventListener("animationend", end);
+  };
+  body.addEventListener("animationend", end);
 }
 
 /** 빈 방 안내 - at은 화면 px 가운데 */

@@ -1742,14 +1742,14 @@
                   "name": "패널 접기 탭",
                   "width": 44,
                   "height": 44,
-                  "fill": "#FFFFFF",
+                  "fill": "$canvas",
                   "cornerRadius": [
                     0,
                     12,
                     12,
                     0
                   ],
-                  "stroke": "#DDDDDD",
+                  "stroke": "$border",
                   "strokeWidth": {
                     "top": 1,
                     "right": 1,
@@ -1766,7 +1766,7 @@
                       "height": 20,
                       "icon": "panel-left-close",
                       "library": "lucide",
-                      "fill": "#5B616E"
+                      "fill": "$ink-muted"
                     }
                   ]
                 }
