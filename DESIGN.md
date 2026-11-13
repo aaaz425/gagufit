@@ -106,6 +106,7 @@ shadow:
 - 그림자 - 카드 `raised`, 캔버스 위 툴바·바텀시트·모달 `floating`
   - 패널은 그림자 없이 `border`로 구분
 - 터치 대상 44px 이상
+- 스크롤바 - 얇게(`thin`), 막대 `border`·영역에 올리면 `ink-subtle`, 트랙 투명 - `globals.css` 한 곳
 
 ## 컴포넌트
 

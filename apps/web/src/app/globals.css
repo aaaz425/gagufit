@@ -75,6 +75,15 @@ body {
     cursor: not-allowed;
   }
 
+  /* 스크롤바 - 얇게, 평소엔 옅게 영역에 올리면 진하게 */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+  *:hover {
+    scrollbar-color: var(--color-ink-subtle) transparent;
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
