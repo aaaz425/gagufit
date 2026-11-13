@@ -9,11 +9,12 @@ import {
   type Vec2,
 } from "@gagufit/core";
 import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
+import { useId } from "react";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
-import { useId } from "react";
 import { FurnitureSymbol } from "./FurnitureSymbol";
-import { PlanFloor, TextureDefs, type PlanTexture } from "./PlanDefs";
+import { PlanFloor, TextureDefs } from "./PlanDefs";
+import type { PlanTexture } from "./texture";
 
 // 방 cm 좌표에서 그림 - 선 굵기·핸들 크기는 화면 px라 scale로 나눔
 
@@ -59,9 +60,13 @@ export function RoomPlan({
   warned: ReadonlySet<string>;
 }) {
   const wall = WALL_PX / scale;
+  const scope = useId();
   // 러그 - 문 열림 영역 - 다른 가구 순서
   const isRug = (f: PlacedFurniture) =>
     FURNITURE_PRESETS[f.presetId]?.layer === "floor";
+  // 행거는 속이 비쳐 그림자가 진해 보임
+  const isHollow = (f: PlacedFurniture) =>
+    FURNITURE_PRESETS[f.presetId]?.category === "hanger";
   const shape = (f: PlacedFurniture) => (
     <FurnitureShape
       key={f.id}
@@ -72,7 +77,6 @@ export function RoomPlan({
       scope={scope}
     />
   );
-  const scope = useId().replace(/:/g, "");
   const rad = (-angle * Math.PI) / 180;
   const off = {
     x: (SHADOW_PX.x * Math.cos(rad) - SHADOW_PX.y * Math.sin(rad)) / scale,
@@ -121,7 +125,7 @@ export function RoomPlan({
           selected={o.id === selectedOpening}
         />
       ))}
-      {room.furniture.filter((f) => !isRug(f)).map(shadow)}
+      {room.furniture.filter((f) => !isRug(f) && !isHollow(f)).map(shadow)}
       {room.furniture.filter((f) => !isRug(f)).map(shape)}
     </>
   );

@@ -1,6 +1,7 @@
 import type { FloorMaterialId, Room } from "@gagufit/core";
 import { FLOOR_MATERIALS } from "@gagufit/data";
 import type { ReactNode } from "react";
+import { textureId, type PlanTexture } from "./texture";
 
 // 바닥 패턴·가구 질감 - 패턴 좌표는 방 cm, 선 굵기는 화면 1px(1/scale)
 // 간격이 화면 5px 아래로 줄면 그리지 않음 - 줌 아웃에서 뭉개지지 않게
@@ -10,6 +11,8 @@ const MIN_GAP_PX = 5;
 
 type FloorSpec = {
   size: [number, number];
+  /** 패턴 원점 - 선을 타일 가장자리가 아니라 안쪽에 그려 클리핑으로 가늘어지지 않게 */
+  origin?: [number, number];
   /** 화면에 보이는 가장 좁은 간격 cm */
   gap: number;
   opacity: number;
@@ -20,14 +23,17 @@ const planks: FloorSpec = {
   size: [120, 30],
   gap: 15,
   opacity: 0.14,
-  draw: () => <path d="M0 0H120M0 15H120M0 0V15M60 15V30" />,
+  draw: () => (
+    <path d="M0 7.5H120M0 22.5H120M30 7.5V22.5M90 0V7.5M90 22.5V30" />
+  ),
 };
 
 const tile = (s: number): FloorSpec => ({
   size: [s, s],
+  origin: [-s / 2, -s / 2],
   gap: s,
   opacity: 0.16,
-  draw: () => <path d={`M0 0H${s}M0 0V${s}`} />,
+  draw: () => <path d={`M0 ${s / 2}H${s}M${s / 2} 0V${s}`} />,
 });
 
 const dots = (s: number, opacity = 0.12): FloorSpec => ({
@@ -73,6 +79,8 @@ export function PlanFloor({
         <pattern
           id={`${scope}-floor`}
           patternUnits="userSpaceOnUse"
+          x={spec.origin?.[0]}
+          y={spec.origin?.[1]}
           width={spec.size[0]}
           height={spec.size[1]}
         >
@@ -105,15 +113,6 @@ export function PlanFloor({
     </>
   );
 }
-
-/** 가구 질감 - 나무 결·패브릭 짜임, 어두운 몸체는 밝은 선 */
-export type PlanTexture = "wood" | "fabric";
-
-/** scope - 같은 화면에 도면이 여러 개여도 패턴 id가 겹치지 않게 */
-export type TextureRef = { kind: PlanTexture; scope: string };
-
-export const textureId = (t: TextureRef, onDark: boolean) =>
-  `${t.scope}-${t.kind}-${onDark ? "light" : "dark"}`;
 
 const TEXTURES: Record<
   PlanTexture,

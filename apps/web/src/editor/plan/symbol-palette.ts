@@ -1,4 +1,4 @@
-import { textureId, type TextureRef } from "./PlanDefs";
+import { textureId, type TextureRef } from "./texture";
 
 // 가구 평면 기호 색 - 몸체는 고른 색 그대로, 외곽선·장식은 몸체 밝기에 맞춰 도출
 

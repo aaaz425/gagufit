@@ -1,6 +1,6 @@
 import type { FurnitureCategory, Size } from "@gagufit/core";
 import type { ReactNode } from "react";
-import type { TextureRef } from "./PlanDefs";
+import type { TextureRef } from "./texture";
 import { symbolPalette, type SymbolPalette } from "./symbol-palette";
 
 // 가구 평면 기호 - (0,0)~(w,d) cm, 위쪽이 등·벽 쪽, 선 굵기는 화면 px
