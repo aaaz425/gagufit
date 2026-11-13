@@ -4,13 +4,15 @@ import type {
   PlacedFurniture,
 } from "@gagufit/core";
 import { FURNITURE_COLORS } from "@gagufit/data";
-import { Edges, Outlines, useCursor } from "@react-three/drei";
+import { Outlines, useCursor } from "@react-three/drei";
 import { useThree, type ThreeEvent } from "@react-three/fiber";
 import { memo, useEffect, useMemo, useState } from "react";
 import {
   BoxGeometry,
   Color,
   CylinderGeometry,
+  EdgesGeometry,
+  LineBasicMaterial,
   MeshBasicMaterial,
   MeshStandardMaterial,
 } from "three";
@@ -52,6 +54,9 @@ function furnitureMaterial(
   }
   return material;
 }
+
+// 윤곽선은 후처리 노멀 패스에 안 섞이게 Line으로 그림
+const EDGE_MATERIAL = new LineBasicMaterial({ color: SCENE_COLORS.inkMuted });
 
 /** 원기둥을 앞쪽으로 눕힌 지름 1·두께 1 기준 - 세탁기 문 */
 const DISC = new CylinderGeometry(0.5, 0.5, 1, 32).rotateX(Math.PI / 2);
@@ -107,12 +112,17 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   // 크기는 배치 가구마다 따로 - 크기 조절 중 지오메트리가 쌓이지 않게 바뀌면 정리
   const parts = useMemo(() => {
     const list = furnitureParts(look.category, { width, depth, height });
-    return list.map((part) => ({ part, geometry: partGeometry(part) }));
+    return list.map((part) => {
+      const geometry = partGeometry(part);
+      return { part, geometry, edges: new EdgesGeometry(geometry, 20) };
+    });
   }, [look.category, width, depth, height]);
   useEffect(
     () => () => {
-      for (const { geometry } of parts)
+      for (const { geometry, edges } of parts) {
         if (geometry !== DISC) geometry.dispose();
+        edges.dispose();
+      }
     },
     [parts],
   );
@@ -132,7 +142,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
       }}
       onPointerOut={() => setHovered(false)}
     >
-      {parts.map(({ part, geometry }, i) => {
+      {parts.map(({ part, geometry, edges }, i) => {
         const scale = partScale(part);
         const position = part.center.map(m) as [number, number, number];
         return (
@@ -143,8 +153,6 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               castShadow={shadow}
               receiveShadow
             >
-              {/* 그림자·후처리를 꺼도 가구끼리·바닥과 구분되는 윤곽선 */}
-              <Edges threshold={20} color={SCENE_COLORS.wall} />
               {selected && (
                 <Outlines
                   thickness={SELECTION_PX * dpr}
@@ -153,6 +161,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
                 />
               )}
             </mesh>
+            {/* 그림자·후처리를 꺼도 가구끼리·바닥과 구분되는 윤곽선 */}
+            <lineSegments geometry={edges} material={EDGE_MATERIAL} />
             {warning && (
               <mesh
                 geometry={geometry}

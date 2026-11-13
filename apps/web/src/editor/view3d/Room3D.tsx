@@ -56,17 +56,11 @@ function sunPosition(room: Room): [number, number, number] {
   return [x, reach * 1.2, z];
 }
 
-/** 보조광은 햇빛 반대편 낮은 위치 */
-function fillPosition(room: Room): [number, number, number] {
-  const [x, y, z] = sunPosition(room);
-  return [-x, y * 0.6, -z];
-}
-
-// 따뜻한 햇빛, 차가운 보조광
 const SUN_COLOR = "#FFF3E0";
 const FILL_COLOR = "#DCE6FF";
 
 function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
+  const sun = sunPosition(room);
   const half = m(Math.max(room.width, room.depth)) * 0.75;
   return (
     <>
@@ -74,12 +68,12 @@ function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
       <hemisphereLight args={["white", SCENE_COLORS.floor, 0.8]} />
       {/* 햇빛 반대편 약한 보조광 - 그림자 쪽 면이 뭉개지지 않게, 그림자 없음 */}
       <directionalLight
-        position={fillPosition(room)}
+        position={[-sun[0], sun[1] * 0.6, -sun[2]]}
         intensity={0.45}
         color={FILL_COLOR}
       />
       <directionalLight
-        position={sunPosition(room)}
+        position={sun}
         color={SUN_COLOR}
         intensity={2.4}
         castShadow={shadows}
