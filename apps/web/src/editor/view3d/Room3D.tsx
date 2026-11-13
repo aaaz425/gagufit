@@ -2,10 +2,11 @@
 
 import { wallFrame, type Room } from "@gagufit/core";
 import { FURNITURE_PRESETS } from "@gagufit/data";
-import { OrbitControls } from "@react-three/drei";
+import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { EffectComposer, SSAO } from "@react-three/postprocessing";
 import { RotateCcw } from "lucide-react";
+import { NeutralToneMapping } from "three";
 import {
   useCallback,
   useEffect,
@@ -56,19 +57,45 @@ function sunPosition(room: Room): [number, number, number] {
   return [x, reach * 1.2, z];
 }
 
+const SUN_COLOR = "#FFF3E0";
+const FILL_COLOR = "#DCE6FF";
+
+/** 코드로 만든 작은 환경맵 - 파일·네트워크 없이 부드러운 반사·간접광, 한 번만 그림 */
+// 모듈 상수 - 재렌더마다 새로 만들면 환경맵을 다시 구움
+const REFLECTIONS = (
+  <Environment resolution={64} frames={1} environmentIntensity={0.35}>
+    <Lightformer
+      form="rect"
+      intensity={2.5}
+      color={SUN_COLOR}
+      position={[0, 6, 0]}
+      rotation-x={Math.PI / 2}
+      scale={[12, 12, 1]}
+    />
+  </Environment>
+);
+
 function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
+  const sun = sunPosition(room);
   const half = m(Math.max(room.width, room.depth)) * 0.75;
   return (
     <>
-      <ambientLight intensity={1.1} />
-      <hemisphereLight args={["white", SCENE_COLORS.floor, 0.6]} />
+      <ambientLight intensity={0.75} />
+      <hemisphereLight args={["white", SCENE_COLORS.floor, 0.8]} />
+      {/* 햇빛 반대편 약한 보조광 - 그림자 쪽 면이 뭉개지지 않게, 그림자 없음 */}
       <directionalLight
-        position={sunPosition(room)}
-        intensity={1.6}
+        position={[-sun[0], sun[1] * 0.6, -sun[2]]}
+        intensity={0.45}
+        color={FILL_COLOR}
+      />
+      <directionalLight
+        position={sun}
+        color={SUN_COLOR}
+        intensity={2.4}
         castShadow={shadows}
-        shadow-mapSize={[1024, 1024]}
-        shadow-bias={-0.0005}
-        shadow-normalBias={0.02}
+        shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.001}
+        shadow-normalBias={0.05}
         shadow-camera-left={-half}
         shadow-camera-right={half}
         shadow-camera-top={half}
@@ -193,9 +220,11 @@ export default function Room3D({
   );
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full bg-linear-to-b from-canvas to-surface">
       <Canvas
         frameloop="demand"
+        // 색을 덜 바꾸는 톤 매핑 - 가구·벽 색이 본래 색에 가깝게
+        gl={{ toneMapping: NeutralToneMapping }}
         dpr={quality.hiDpi ? [1, 2] : 1}
         shadows={quality.shadows && "percentage"}
         camera={{ fov: FOV, near: 0.05, far: 100 }}
@@ -204,6 +233,7 @@ export default function Room3D({
         }}
       >
         <Lights room={room} shadows={quality.shadows} />
+        {REFLECTIONS}
         <group position={[-m(room.width) / 2, 0, -m(room.depth) / 2]}>
           <RoomShell
             room={room}
@@ -217,6 +247,7 @@ export default function Room3D({
               preset={preset}
               selected={f.id === selectedId}
               warning={warningIds.has(f.id)}
+              realShadows={quality.shadows}
               onClick={handleFurnitureClick}
             />
           ))}
@@ -240,7 +271,7 @@ export default function Room3D({
         />
         {quality.post && (
           <EffectComposer multisampling={0} enableNormalPass>
-            <SSAO radius={0.08} intensity={20} luminanceInfluence={0.5} />
+            <SSAO radius={0.1} intensity={6} luminanceInfluence={0.6} />
           </EffectComposer>
         )}
       </Canvas>
