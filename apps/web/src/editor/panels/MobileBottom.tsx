@@ -1,6 +1,6 @@
 "use client";
 
-import { FURNITURE_PRESETS } from "@gagufit/data";
+import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
 import { Ruler, SlidersHorizontal, Sofa } from "lucide-react";
 import type { ReactNode } from "react";
 import { displayAngle } from "../actions";
@@ -26,7 +26,12 @@ export function MobileBottom() {
       const preset = f && FURNITURE_PRESETS[f.presetId];
       if (f) {
         icon = (
-          <FurnitureThumb category={preset?.category} size={f.size} px={44} />
+          <FurnitureThumb
+            category={preset?.category}
+            size={f.size}
+            color={FURNITURE_COLORS[f.color].hex}
+            px={44}
+          />
         );
         title = preset?.name ?? "가구";
         detail = `${f.size.width} × ${f.size.depth} cm · ${displayAngle(f.rotation)}°`;
