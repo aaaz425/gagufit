@@ -62,6 +62,9 @@ supabase/        마이그레이션 SQL
 - PR은 초안 확인 후 생성, 머지는 사용자만 - `/pr`
 - PR 본문은 변경 핵심만, 부연·파일 경로 나열 없이
 - ADR은 되돌리기 어려운 구조 결정만 - `/adr`
+- 로컬 서버는 떠 있으면 재사용, 직접 띄운 것만 끝나면 정리
+  - Supabase는 worktree끼리 공유 - `supabase status` 확인 후 꺼져 있을 때만 `supabase start`, 켰으면 모든 기능 끝난 뒤 `supabase stop`
+  - 개발 서버는 같은 worktree에서 떠 있으면 재사용, 없으면 빈 포트로 띄우고 확인 후 종료
 
 ## 문서
 
