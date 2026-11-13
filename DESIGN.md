@@ -183,7 +183,7 @@ shadow:
   - 메뉴·팝오버·토스트 - fade + 4~8px 이동
   - 버튼·카드·칩·토글 - 색 transition, 누르면 scale 0.97, 방 카드 hover 시 `floating`
   - 목록 항목 추가 - fade + scale 0.96
-  - 가구 추가 - 2D scale 0.85 → 1 + fade, 3D scale 0.85 → 1, 2D 선택 외곽선 fade-in(3D 외곽선은 바로 표시)
+  - 가구 추가 - 2D scale 0.85 → 1 + fade, 3D scale 0.85 → 1, 2D 선택 외곽선 fade-in(3D 선택 표시는 바로 표시)
 - 편집 조작은 늦추지 않기 - 끌기·회전·확대 중 위치·크기에 transition 금지, delay 없음
   - 2D SVG는 `transform` 속성 요소에 CSS transition·animation 금지, 안쪽 요소에만
   - 애니메이션은 `transform`·`opacity`·`scale`만
@@ -237,7 +237,7 @@ shadow:
 - 가구 윤곽선 - 품질 설정과 무관하게 항상 얇은 `ink-muted` 색 선, 꺼도 가구끼리·바닥과 구분
 - 방 마감 - 걸레받이(문 자리 제외), 창문 틀·유리·턱, 문 틀·문짝·손잡이
 - 품질 끄기 - 고해상도 끄면 DPR 1·텍스처 512px, 그림자·후처리 없음
-- 선택 - 가구 `primary` 외곽선, 경고 - `danger` 반투명 덧칠
+- 선택 - `primary` 외곽선 화면 3px(경고면 `danger`) + 가구 발자국 둘레 바닥에 `primary` 테두리 4cm·옅은 번짐 8cm, 바닥 표시는 다른 가구 아래로 들어가면 가려짐, 러그는 바닥 표시만
 - 문 열림 영역 - 바닥에 부채꼴 표시, 2D와 같은 색
 
 ## 재질·색

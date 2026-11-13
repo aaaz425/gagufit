@@ -24,7 +24,10 @@ import {
   LinearFilter,
   MeshBasicMaterial,
   MeshStandardMaterial,
+  Path,
   PlaneGeometry,
+  Shape,
+  ShapeGeometry,
   RGBAFormat,
   type BufferGeometry,
   type Group,
@@ -43,7 +46,7 @@ const SURFACE: Readonly<
 };
 
 /** 선택 외곽선 CSS px - drei Outlines 기본 모드는 그리기 버퍼 px */
-const SELECTION_PX = 4;
+const SELECTION_PX = 3;
 
 const materialCache = new Map<string, MeshStandardMaterial>();
 
@@ -173,6 +176,52 @@ function contactGeometry(w: number, d: number) {
   return g;
 }
 
+// 바닥 선택 표시 - 발자국 바깥으로 테두리 + 옅은 번짐, 2D 선택 표현과 같은 구성 (cm)
+const FLOOR_RING_CM = 4;
+const FLOOR_GLOW_CM = 8;
+
+function rectPath(shape: Shape | Path, w: number, d: number) {
+  shape.moveTo(-w / 2, -d / 2);
+  shape.lineTo(w / 2, -d / 2);
+  shape.lineTo(w / 2, d / 2);
+  shape.lineTo(-w / 2, d / 2);
+  shape.closePath();
+}
+
+/** 안쪽 w×d 사각형을 비우고 margin만큼 바깥까지 채운 바닥 판 */
+function floorRing(w: number, d: number, inner: number, outer: number) {
+  const shape = new Shape();
+  rectPath(shape, m(w + 2 * outer), m(d + 2 * outer));
+  const hole = new Path();
+  rectPath(hole, m(w + 2 * inner), m(d + 2 * inner));
+  shape.holes.push(hole);
+  const g = new ShapeGeometry(shape);
+  g.rotateX(-Math.PI / 2);
+  return g;
+}
+
+const floorMark = (color: string, opacity: number) =>
+  new MeshBasicMaterial({
+    color,
+    opacity,
+    transparent: true,
+    depthWrite: false,
+    toneMapped: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
+  });
+const FLOOR_MARKS = {
+  primary: {
+    ring: floorMark(SCENE_COLORS.primary, 1),
+    glow: floorMark(SCENE_COLORS.primary, 0.2),
+  },
+  danger: {
+    ring: floorMark(SCENE_COLORS.danger, 1),
+    glow: floorMark(SCENE_COLORS.danger, 0.2),
+  },
+};
+
 function partScale(part: Part): [number, number, number] {
   return part.shape === "disc"
     ? (part.size.map(m) as [number, number, number])
@@ -243,6 +292,23 @@ export const FurnitureMesh = memo(function FurnitureMesh({
     }));
   }, [look.category, width, depth, height]);
   const contact = useMemo(() => contactGeometry(width, depth), [width, depth]);
+  const floorMarks = useMemo(
+    () =>
+      selected
+        ? {
+            ring: floorRing(width, depth, 0, FLOOR_RING_CM),
+            glow: floorRing(width, depth, FLOOR_RING_CM, FLOOR_GLOW_CM),
+          }
+        : null,
+    [selected, width, depth],
+  );
+  useEffect(
+    () => () => {
+      floorMarks?.ring.dispose();
+      floorMarks?.glow.dispose();
+    },
+    [floorMarks],
+  );
   useEffect(() => () => contact.dispose(), [contact]);
   useEffect(
     () => () => {
@@ -253,9 +319,9 @@ export const FurnitureMesh = memo(function FurnitureMesh({
     },
     [parts],
   );
+  const dpr = useThree((s) => s.viewport.dpr);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered);
-  const dpr = useThree((s) => s.viewport.dpr);
   const hex = FURNITURE_COLORS[furniture.color].hex;
   const shadow = look.layer !== "floor";
   return (
@@ -280,6 +346,24 @@ export const FurnitureMesh = memo(function FurnitureMesh({
           raycast={() => null}
         />
       )}
+      {floorMarks && (
+        <>
+          <mesh
+            geometry={floorMarks.glow}
+            material={FLOOR_MARKS[warning ? "danger" : "primary"].glow}
+            position-y={0.004}
+            renderOrder={2}
+            raycast={() => null}
+          />
+          <mesh
+            geometry={floorMarks.ring}
+            material={FLOOR_MARKS[warning ? "danger" : "primary"].ring}
+            position-y={0.005}
+            renderOrder={3}
+            raycast={() => null}
+          />
+        </>
+      )}
       {parts.map(({ part, geometry, edges }, i) => {
         const scale = partScale(part);
         const position = part.center.map(m) as [number, number, number];
@@ -291,7 +375,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               castShadow={shadow}
               receiveShadow
             >
-              {selected && (
+              {/* 러그는 바닥에 붙은 판이라 뒤집힌 셸이 바닥과 깊이 경쟁해 번짐 - 바닥 표시만 */}
+              {selected && shadow && (
                 <Outlines
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선
