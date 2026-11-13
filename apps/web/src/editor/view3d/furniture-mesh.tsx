@@ -4,7 +4,7 @@ import type {
   PlacedFurniture,
 } from "@gagufit/core";
 import { FURNITURE_COLORS } from "@gagufit/data";
-import { Outlines, useCursor } from "@react-three/drei";
+import { Edges, Outlines, useCursor } from "@react-three/drei";
 import { useThree, type ThreeEvent } from "@react-three/fiber";
 import { memo, useEffect, useMemo, useState } from "react";
 import {
@@ -143,6 +143,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               castShadow={shadow}
               receiveShadow
             >
+              {/* 그림자·후처리를 꺼도 가구끼리·바닥과 구분되는 윤곽선 */}
+              <Edges threshold={20} color={SCENE_COLORS.wall} />
               {selected && (
                 <Outlines
                   thickness={SELECTION_PX * dpr}
