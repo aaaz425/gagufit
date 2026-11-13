@@ -1732,6 +1732,43 @@
                       "fill": "#888888"
                     }
                   ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oSPmM",
+                  "layoutPosition": "absolute",
+                  "x": 280,
+                  "y": 12,
+                  "name": "패널 접기 탭",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": [
+                    0,
+                    12,
+                    12,
+                    0
+                  ],
+                  "stroke": "#DDDDDD",
+                  "strokeWidth": {
+                    "top": 1,
+                    "right": 1,
+                    "bottom": 1
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "i9dVK",
+                      "name": "접기 아이콘",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "panel-left-close",
+                      "library": "lucide",
+                      "fill": "#5B616E"
+                    }
+                  ]
                 }
               ]
             },
