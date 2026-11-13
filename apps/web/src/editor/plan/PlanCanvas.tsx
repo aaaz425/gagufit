@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { currentRoom, useEditor, useRoom, warnedFurnitureIds } from "../store";
-import { canvasInsets, fitPadding } from "../layout";
+import { canvasInsets, fitPadding, PANEL_TAB_BOTTOM } from "../layout";
 import { SelectionToolbar } from "../SelectionToolbar";
 import { EmptyHint } from "./EmptyHint";
 import {
@@ -207,7 +207,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
           center={outside}
           bounds={{
             left: insets.left,
-            top: insets.top,
+            top: insets.top + (compact ? 0 : PANEL_TAB_BOTTOM),
             right: size.width - insets.right,
             bottom: size.height - insets.bottom,
           }}

@@ -4,6 +4,7 @@ import { useRooms, type RoomSummary } from "@gagufit/api";
 import { CloudOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { exitDelay } from "@/motion";
 import { ANON_RETENTION_DAYS } from "@/site/constants";
 import { DeleteModal } from "./DeleteModal";
 import { NEW_ROOM_HREF, NewRoomCard, RoomCard } from "./RoomCard";
@@ -12,8 +13,16 @@ import { TemplateModal } from "./TemplateModal";
 export function RoomList() {
   const rooms = useRooms();
   const [deleting, setDeleting] = useState<RoomSummary | null>(null);
+  // 지운 카드를 퇴장 효과 동안만 제자리에 남김
+  const [leaving, setLeaving] = useState<{
+    summary: RoomSummary;
+    index: number;
+  } | null>(null);
   const [now] = useState(() => Date.now());
   const list = rooms.data;
+  const cards = list?.map((summary) => ({ summary, exiting: false }));
+  if (cards && leaving && !list?.some((r) => r.id === leaving.summary.id))
+    cards.splice(leaving.index, 0, { summary: leaving.summary, exiting: true });
 
   return (
     <div className="flex flex-1 flex-col bg-surface">
@@ -51,10 +60,11 @@ export function RoomList() {
                   <Placeholder />
                 </>
               )}
-              {list?.map((summary) => (
+              {cards?.map(({ summary, exiting }) => (
                 <RoomCard
                   key={summary.id}
                   summary={summary}
+                  exiting={exiting}
                   now={now}
                   onDelete={() => setDeleting(summary)}
                 />
@@ -81,6 +91,13 @@ export function RoomList() {
           id={deleting.id}
           name={deleting.name}
           onClose={() => setDeleting(null)}
+          onDeleted={() => {
+            setLeaving({
+              summary: deleting,
+              index: list?.findIndex((r) => r.id === deleting.id) ?? 0,
+            });
+            setTimeout(() => setLeaving(null), exitDelay());
+          }}
         />
       )}
     </div>

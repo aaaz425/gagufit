@@ -5,8 +5,15 @@ import type {
 } from "@gagufit/core";
 import { FURNITURE_COLORS } from "@gagufit/data";
 import { Outlines, useCursor } from "@react-three/drei";
-import { useThree, type ThreeEvent } from "@react-three/fiber";
-import { memo, useEffect, useMemo, useState } from "react";
+import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   BoxGeometry,
   Color,
@@ -17,9 +24,13 @@ import {
   LinearFilter,
   MeshBasicMaterial,
   MeshStandardMaterial,
+  Path,
   PlaneGeometry,
+  Shape,
+  ShapeGeometry,
   RGBAFormat,
   type BufferGeometry,
+  type Group,
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { SCENE_COLORS } from "../scene-colors";
@@ -165,10 +176,82 @@ function contactGeometry(w: number, d: number) {
   return g;
 }
 
+// 바닥 선택 표시 - 발자국 바깥으로 테두리 + 옅은 번짐, 2D 선택 표현과 같은 구성 (cm)
+const FLOOR_RING_CM = 4;
+const FLOOR_GLOW_CM = 8;
+
+function rectPath(shape: Shape | Path, w: number, d: number) {
+  shape.moveTo(-w / 2, -d / 2);
+  shape.lineTo(w / 2, -d / 2);
+  shape.lineTo(w / 2, d / 2);
+  shape.lineTo(-w / 2, d / 2);
+  shape.closePath();
+}
+
+/** 안쪽 w×d 사각형을 비우고 margin만큼 바깥까지 채운 바닥 판 */
+function floorRing(w: number, d: number, inner: number, outer: number) {
+  const shape = new Shape();
+  rectPath(shape, m(w + 2 * outer), m(d + 2 * outer));
+  const hole = new Path();
+  rectPath(hole, m(w + 2 * inner), m(d + 2 * inner));
+  shape.holes.push(hole);
+  const g = new ShapeGeometry(shape);
+  g.rotateX(-Math.PI / 2);
+  return g;
+}
+
+const floorMark = (color: string, opacity: number) =>
+  new MeshBasicMaterial({
+    color,
+    opacity,
+    transparent: true,
+    depthWrite: false,
+    toneMapped: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
+  });
+const FLOOR_MARKS = {
+  primary: {
+    ring: floorMark(SCENE_COLORS.primary, 1),
+    glow: floorMark(SCENE_COLORS.primary, 0.2),
+  },
+  danger: {
+    ring: floorMark(SCENE_COLORS.danger, 1),
+    glow: floorMark(SCENE_COLORS.danger, 0.2),
+  },
+};
+
 function partScale(part: Part): [number, number, number] {
   return part.shape === "disc"
     ? (part.size.map(m) as [number, number, number])
     : [1, 1, 1];
+}
+
+// 등장 효과 길이(초)와 시작 크기 - globals.css 움직임 토큰과 맞춤
+const ENTER_S = 0.2;
+const ENTER_FROM = 0.85;
+// demand 루프는 멈춰 있던 시간이 첫 delta로 들어옴 - 효과가 통째로 건너뛰지 않게 제한
+const MAX_DELTA = 1 / 30;
+
+/** 추가 직후 작게 시작해 커짐 - frameloop demand라 끝날 때까지 invalidate */
+function useScaleIn(enabled: boolean) {
+  const ref = useRef<Group>(null);
+  const invalidate = useThree((s) => s.invalidate);
+  const t = useRef(enabled ? 0 : 1);
+  useLayoutEffect(() => {
+    if (t.current >= 1) return;
+    ref.current?.scale.setScalar(ENTER_FROM);
+    invalidate();
+  }, [invalidate]);
+  useFrame((_, delta) => {
+    if (t.current >= 1) return;
+    t.current = Math.min(1, t.current + Math.min(delta, MAX_DELTA) / ENTER_S);
+    const eased = 1 - (1 - t.current) ** 3;
+    ref.current?.scale.setScalar(ENTER_FROM + (1 - ENTER_FROM) * eased);
+    if (t.current < 1) invalidate();
+  });
+  return ref;
 }
 
 type Props = {
@@ -179,6 +262,10 @@ type Props = {
   warning: boolean;
   /** 진짜 그림자를 켰는지 - 접지 그림자 농도만 달라짐 */
   realShadows: boolean;
+  /** 등장 효과 켬 - 끄면 바로 보임 */
+  animate: boolean;
+  /** 추가 직후라 등장 효과 */
+  enter: boolean;
   onClick: (e: ThreeEvent<MouseEvent>, id: string) => void;
 };
 
@@ -188,8 +275,11 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   selected,
   warning,
   realShadows,
+  animate,
+  enter,
   onClick,
 }: Props) {
+  const groupRef = useScaleIn(animate && enter);
   const look = preset ?? FALLBACK_LOOK;
   const { width, depth, height } = furniture.size;
   // 크기는 배치 가구마다 따로 - 크기 조절 중 지오메트리가 쌓이지 않게 바뀌면 정리
@@ -202,6 +292,23 @@ export const FurnitureMesh = memo(function FurnitureMesh({
     }));
   }, [look.category, width, depth, height]);
   const contact = useMemo(() => contactGeometry(width, depth), [width, depth]);
+  const floorMarks = useMemo(
+    () =>
+      selected
+        ? {
+            ring: floorRing(width, depth, 0, FLOOR_RING_CM),
+            glow: floorRing(width, depth, FLOOR_RING_CM, FLOOR_GLOW_CM),
+          }
+        : null,
+    [selected, width, depth],
+  );
+  useEffect(
+    () => () => {
+      floorMarks?.ring.dispose();
+      floorMarks?.glow.dispose();
+    },
+    [floorMarks],
+  );
   useEffect(() => () => contact.dispose(), [contact]);
   useEffect(
     () => () => {
@@ -212,13 +319,14 @@ export const FurnitureMesh = memo(function FurnitureMesh({
     },
     [parts],
   );
+  const dpr = useThree((s) => s.viewport.dpr);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered);
-  const dpr = useThree((s) => s.viewport.dpr);
   const hex = FURNITURE_COLORS[furniture.color].hex;
   const shadow = look.layer !== "floor";
   return (
     <group
+      ref={groupRef}
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
       rotation-y={rad(furniture.rotation)}
       onClick={(e) => onClick(e, furniture.id)}
@@ -238,6 +346,24 @@ export const FurnitureMesh = memo(function FurnitureMesh({
           raycast={() => null}
         />
       )}
+      {floorMarks && (
+        <>
+          <mesh
+            geometry={floorMarks.glow}
+            material={FLOOR_MARKS[warning ? "danger" : "primary"].glow}
+            position-y={0.004}
+            renderOrder={2}
+            raycast={() => null}
+          />
+          <mesh
+            geometry={floorMarks.ring}
+            material={FLOOR_MARKS[warning ? "danger" : "primary"].ring}
+            position-y={0.005}
+            renderOrder={3}
+            raycast={() => null}
+          />
+        </>
+      )}
       {parts.map(({ part, geometry, edges }, i) => {
         const scale = partScale(part);
         const position = part.center.map(m) as [number, number, number];
@@ -249,7 +375,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               castShadow={shadow}
               receiveShadow
             >
-              {selected && part.tone === "main" && (
+              {/* 러그는 바닥에 붙은 판이라 뒤집힌 셸이 바닥과 깊이 경쟁해 번짐 - 바닥 표시만 */}
+              {selected && shadow && (
                 <Outlines
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선

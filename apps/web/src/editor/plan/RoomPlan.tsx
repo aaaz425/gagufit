@@ -10,6 +10,7 @@ import {
 } from "@gagufit/core";
 import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
 import { useId } from "react";
+import { useInitialIds } from "@/motion";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
 import { FurnitureSymbol } from "./FurnitureSymbol";
@@ -61,6 +62,7 @@ export function RoomPlan({
 }) {
   const wall = WALL_PX / scale;
   const scope = useId();
+  const initialIds = useInitialIds(room.furniture.map((f) => f.id));
   // 러그 - 문 열림 영역 - 다른 가구 순서
   const isRug = (f: PlacedFurniture) =>
     FURNITURE_PRESETS[f.presetId]?.layer === "floor";
@@ -73,6 +75,7 @@ export function RoomPlan({
       furniture={f}
       warned={warned.has(f.id)}
       selected={selection?.kind === "furniture" && selection.id === f.id}
+      enter={!initialIds.has(f.id)}
       scale={scale}
       scope={scope}
     />
@@ -135,12 +138,15 @@ function FurnitureShape({
   furniture: f,
   warned,
   selected,
+  enter,
   scale,
   scope,
 }: {
   furniture: PlacedFurniture;
   warned: boolean;
   selected: boolean;
+  /** 추가 직후 등장 효과 */
+  enter: boolean;
   scale: number;
   scope: string;
 }) {
@@ -149,7 +155,12 @@ function FurnitureShape({
   const outline = warned ? "danger" : "primary";
   return (
     <g transform={furnitureTransform(f, w, d)}>
-      <g data-hit="furniture" data-id={f.id} className="cursor-grab">
+      {/* 끌기·회전은 바깥 g의 transform 속성 - 등장 효과는 안쪽 g에서만 */}
+      <g
+        data-hit="furniture"
+        data-id={f.id}
+        className={enter ? "motion-plan-pop cursor-grab" : "cursor-grab"}
+      >
         <FurnitureSymbol
           category={preset?.category}
           size={f.size}
@@ -169,7 +180,7 @@ function FurnitureShape({
         )}
       </g>
       {selected && (
-        <>
+        <g className="motion-select">
           <rect
             width={w}
             height={d}
@@ -202,7 +213,7 @@ function FurnitureShape({
               {...px}
             />
           </g>
-        </>
+        </g>
       )}
     </g>
   );

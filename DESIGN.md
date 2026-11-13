@@ -106,6 +106,7 @@ shadow:
 - 그림자 - 카드 `raised`, 캔버스 위 툴바·바텀시트·모달 `floating`
   - 패널은 그림자 없이 `border`로 구분
 - 터치 대상 44px 이상
+- 스크롤바 - 얇게(`thin`), 막대 `scene-furniture`·영역에 올리면 `scene-furniture-line`, 트랙 `surface` - `globals.css` 한 곳
 
 ## 컴포넌트
 
@@ -134,6 +135,10 @@ shadow:
 - 토스트 - `ink` 바탕 흰 글자 + `primary-inverse` 동작, 화면 아래 가운데
 - 확인 모달 - 제목에 대상 이름, 결과 한 줄, 오른쪽 취소·확인, 지우기는 `danger`
 - 패널 - 데스크톱 좌·우 고정, `canvas` 배경, `border` 구분
+  - 왼쪽 패널 접기·펼치기 - 오른쪽 위 가장자리에 붙은 얇은 손잡이 탭(보이는 폭 20·높이 44, 오른쪽만 `md` 모서리, `scene-furniture` 배경 + `scene-furniture-line` 외곽선 + `ink` chevron 16px, `raised`), hover는 `scene-furniture-soft` 배경, 누르는 영역은 44px, 열림·닫힘에 chevron 회전
+    - 흰 패널·베이지 캔버스 사이에서 또렷하고 초록 포인트와 부딪치지 않는 따뜻한 갈색, 방 가구색과 같은 계열이라 새 토큰은 두지 않음
+  - 접으면 폭 60px 띠만 남고 손잡이는 띠 가장자리에 붙음
+  - 탭 옆 접기 버튼은 두지 않음
 - 바텀시트 - 모바일 패널, 손잡이 표시, 위로 끌어 확장
 - 모달 - 템플릿 선택, 모바일은 전체 화면
 - 경고 배지 - 상단 바 경고 개수, `danger-soft` 배경 `danger` 글자
@@ -164,6 +169,28 @@ shadow:
 - 폭 핸들은 화면 회전 반영 - 벽이 가로면 `ew-resize`, 세로면 `ns-resize`, 대각선이면 `nwse`·`nesw`
 - 핀치·휠은 커서 변화 없음
 - 3D - 선택 가능한 가구 위 `pointer`, 빈 곳은 기본
+
+## 움직임
+
+- 토큰은 `globals.css` `@theme` - 시간 3단계, easing 2개
+  - 시간 - 빠름 `--duration-fast` 120ms(hover·press·2D 선택 외곽선), 기본 `--duration-base` 200ms(메뉴·토스트·목록·가구 등장), 느림 `--duration-slow` 280ms(모달·바텀시트·페이지 진입)
+  - easing - 들어올 때 `--ease-enter` ease-out, 나갈 때 `--ease-exit` ease-in
+- 닫기는 항상 빠름 120ms
+- 적용
+  - 페이지 진입 - 본문 fade (transform 쓰면 fixed 모달 기준이 바뀜)
+  - 모달·바텀시트 - 딤 fade, 창 fade + scale 0.96 / 아래에서 슬라이드
+  - 왼쪽 패널 - 처음·접기·펼치기 모두 왼쪽에서 슬라이드(느림), 내용은 접히면 fade-out
+  - 메뉴·팝오버·토스트 - fade + 4~8px 이동
+  - 버튼·카드·칩·토글 - 색 transition, 누르면 scale 0.97, 방 카드 hover 시 `floating`
+  - 목록 항목 추가 - fade + scale 0.96
+  - 가구 추가 - 2D scale 0.85 → 1 + fade, 3D scale 0.85 → 1, 2D 선택 외곽선 fade-in(3D 선택 표시는 바로 표시)
+- 편집 조작은 늦추지 않기 - 끌기·회전·확대 중 위치·크기에 transition 금지, delay 없음
+  - 2D SVG는 `transform` 속성 요소에 CSS transition·animation 금지, 안쪽 요소에만
+  - 애니메이션은 `transform`·`opacity`·`scale`만
+- 끄기
+  - `prefers-reduced-motion: reduce` - 시간 토큰 전부 0ms, 3D 생략
+  - 3D - 고해상도 끈 저사양 모드도 생략
+- 큰 덮개 버튼(딤)은 `data-no-press`로 press 효과 제외
 
 ## 편집기 규칙
 
@@ -210,7 +237,7 @@ shadow:
 - 가구 윤곽선 - 품질 설정과 무관하게 항상 얇은 `ink-muted` 색 선, 꺼도 가구끼리·바닥과 구분
 - 방 마감 - 걸레받이(문 자리 제외), 창문 틀·유리·턱, 문 틀·문짝·손잡이
 - 품질 끄기 - 고해상도 끄면 DPR 1·텍스처 512px, 그림자·후처리 없음
-- 선택 - 가구 `primary` 외곽선, 경고 - `danger` 반투명 덧칠
+- 선택 - `primary` 외곽선 화면 3px(경고면 `danger`) + 가구 발자국 둘레 바닥에 `primary` 테두리 4cm·옅은 번짐 8cm, 바닥 표시는 다른 가구 아래로 들어가면 가려짐, 러그는 바닥 표시만
 - 문 열림 영역 - 바닥에 부채꼴 표시, 2D와 같은 색
 
 ## 재질·색

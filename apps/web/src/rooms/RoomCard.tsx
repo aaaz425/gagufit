@@ -3,7 +3,8 @@
 import type { RoomSummary } from "@gagufit/api";
 import { MoreVertical, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { usePresence } from "@/motion";
 import { RoomThumb } from "./RoomThumb";
 
 const MINUTE = 60_000;
@@ -22,13 +23,17 @@ function modifiedLabel(iso: string, now: number): string {
 export function RoomCard({
   summary,
   now,
+  exiting,
   onDelete,
 }: {
   summary: RoomSummary;
+  /** 지워지는 중 */
+  exiting: boolean;
   now: number;
   onDelete: () => void;
 }) {
   const [menu, setMenu] = useState(false);
+  const { mounted: menuMounted, exiting: menuExiting } = usePresence(menu);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,7 +53,10 @@ export function RoomCard({
   }, [menu]);
 
   return (
-    <div className="relative rounded-md bg-canvas shadow-raised">
+    <div
+      data-exiting={exiting || undefined}
+      className="motion-item relative rounded-md bg-canvas shadow-raised transition-shadow duration-(--duration-fast) ease-enter hover:shadow-floating"
+    >
       <Link
         href={`/rooms/${summary.id}`}
         className="flex flex-col gap-3 rounded-md p-3"
@@ -75,10 +83,12 @@ export function RoomCard({
         >
           <MoreVertical size={20} />
         </button>
-        {menu && (
+        {menuMounted && (
           <div
             role="menu"
-            className="absolute right-0 bottom-full z-20 mb-1 w-36 rounded-md border border-border bg-canvas p-1 shadow-floating"
+            data-exiting={menuExiting || undefined}
+            style={{ "--motion-y": "4px" } as CSSProperties}
+            className="motion-menu absolute right-0 bottom-full z-20 mb-1 w-36 rounded-md border border-border bg-canvas p-1 shadow-floating"
           >
             <button
               type="button"

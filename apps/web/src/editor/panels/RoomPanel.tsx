@@ -5,6 +5,7 @@ import { FLOOR_MATERIALS, WALL_MATERIALS } from "@gagufit/data";
 import { AppWindow, ChevronRight, DoorOpen, PanelLeftOpen } from "lucide-react";
 import { addOpeningToRoom } from "../actions";
 import { OPENING_LABELS, openingSummary } from "../labels";
+import { useInitialIds } from "@/motion";
 import { useEditor, useRoom } from "../store";
 import { NumberField, SectionTitle } from "../ui";
 
@@ -26,6 +27,7 @@ export function OpeningIcon({
 
 export function RoomPanel({ onPick }: { onPick?: () => void }) {
   const room = useRoom();
+  const initialIds = useInitialIds(room.openings.map((o) => o.id));
   const selection = useEditor((s) => s.selection);
   const select = useEditor((s) => s.select);
   const update = useEditor((s) => s.update);
@@ -66,7 +68,10 @@ export function RoomPanel({ onPick }: { onPick?: () => void }) {
         {room.openings.map((o) => {
           const on = selection?.kind === "opening" && selection.id === o.id;
           return (
-            <li key={o.id}>
+            <li
+              key={o.id}
+              className={initialIds.has(o.id) ? undefined : "motion-item"}
+            >
               <button
                 type="button"
                 aria-pressed={on}

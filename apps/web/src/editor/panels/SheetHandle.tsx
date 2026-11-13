@@ -15,6 +15,7 @@ export function SheetHandle({
     <div
       role="button"
       tabIndex={0}
+      data-no-press
       aria-label={onOpen ? "펼치기" : "접기"}
       className="-mb-2 flex h-11 shrink-0 cursor-grab touch-none items-center justify-center"
       onPointerDown={(e) => {

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore } from "react";
+import { usePresence } from "@/motion";
 import { warningBadgeLabel } from "./labels";
 import { SettingsPopover } from "./SettingsPopover";
 import {
@@ -145,6 +146,7 @@ export function ViewSwitch() {
 
 function SettingsButton({ compact }: { compact: boolean }) {
   const [open, setOpen] = useState(false);
+  const { mounted, exiting } = usePresence(open);
   return (
     <div className="relative">
       <IconButton
@@ -154,7 +156,9 @@ function SettingsButton({ compact }: { compact: boolean }) {
       >
         <Settings size={compact ? 22 : 20} />
       </IconButton>
-      {open && <SettingsPopover onClose={() => setOpen(false)} />}
+      {mounted && (
+        <SettingsPopover exiting={exiting} onClose={() => setOpen(false)} />
+      )}
     </div>
   );
 }
