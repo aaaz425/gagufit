@@ -172,7 +172,7 @@ shadow:
   - easing - 들어올 때 `--ease-enter` ease-out, 나갈 때 `--ease-exit` ease-in
 - 닫기는 항상 빠름 120ms
 - 적용
-  - 페이지 진입 - 본문 fade + 4px 위로
+  - 페이지 진입 - 본문 fade (transform 쓰면 fixed 모달 기준이 바뀜)
   - 모달·바텀시트 - 딤 fade, 창 fade + scale 0.96 / 아래에서 슬라이드
   - 메뉴·팝오버·토스트 - fade + 4~8px 이동
   - 버튼·카드·칩·토글 - 색 transition, 누르면 scale 0.97, 방 카드 hover 시 `floating`

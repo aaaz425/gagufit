@@ -23,14 +23,17 @@ function modifiedLabel(iso: string, now: number): string {
 export function RoomCard({
   summary,
   now,
+  exiting,
   onDelete,
 }: {
   summary: RoomSummary;
+  /** 지워지는 중 */
+  exiting: boolean;
   now: number;
   onDelete: () => void;
 }) {
   const [menu, setMenu] = useState(false);
-  const { mounted, exiting } = usePresence(menu);
+  const { mounted: menuMounted, exiting: menuExiting } = usePresence(menu);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,7 +53,10 @@ export function RoomCard({
   }, [menu]);
 
   return (
-    <div className="motion-item relative rounded-md bg-canvas shadow-raised transition-shadow duration-(--duration-fast) ease-enter hover:shadow-floating">
+    <div
+      data-exiting={exiting || undefined}
+      className="motion-item relative rounded-md bg-canvas shadow-raised transition-shadow duration-(--duration-fast) ease-enter hover:shadow-floating"
+    >
       <Link
         href={`/rooms/${summary.id}`}
         className="flex flex-col gap-3 rounded-md p-3"
@@ -77,10 +83,10 @@ export function RoomCard({
         >
           <MoreVertical size={20} />
         </button>
-        {mounted && (
+        {menuMounted && (
           <div
             role="menu"
-            data-exiting={exiting || undefined}
+            data-exiting={menuExiting || undefined}
             style={{ "--motion-y": "4px" } as CSSProperties}
             className="motion-menu absolute right-0 bottom-full z-20 mb-1 w-36 rounded-md border border-border bg-canvas p-1 shadow-floating"
           >

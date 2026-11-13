@@ -81,36 +81,45 @@ body {
   }
 
   /* 색 transition + 누르면 살짝 작아짐 - SVG 안은 transform 속성과 겹쳐 제외, 큰 덮개 버튼은 data-no-press */
-  :is(button, [role="button"], [role="tab"], [role="radio"], [role="switch"], a):not(
-      svg *
-    ) {
-    transition-property: color, background-color, border-color, box-shadow,
-      opacity, scale;
+  :is(
+    button,
+    [role="button"],
+    [role="tab"],
+    [role="radio"],
+    [role="switch"],
+    a
+  ):not(svg *) {
+    transition-property:
+      color, background-color, border-color, box-shadow, opacity, scale;
     transition-duration: var(--duration-fast);
     transition-timing-function: var(--ease-enter);
   }
 
-  :is(button, [role="button"], [role="tab"], [role="radio"], [role="switch"], a):not(
-      svg *,
-      [data-no-press],
-      :disabled,
-      [aria-disabled="true"]
-    ):active {
-    scale: 0.97;
+  @media (prefers-reduced-motion: no-preference) {
+    :is(
+        button,
+        [role="button"],
+        [role="tab"],
+        [role="radio"],
+        [role="switch"],
+        a
+      ):not(svg *, [data-no-press], :disabled, [aria-disabled="true"]):active {
+      scale: 0.97;
+    }
   }
 }
 
 /* 들어올 때 enter, 나갈 때 data-exiting + exit(더 짧게) - 위치·크기는 transform만, 편집 중 요소에는 쓰지 않기 */
 @layer components {
+  /* 페이지는 opacity만 - transform이면 fixed 자식(모달)의 기준이 바뀜 */
   .motion-page {
-    animation: motion-rise var(--duration-slow) var(--ease-enter);
+    animation: motion-fade var(--duration-slow) var(--ease-enter);
   }
-  .motion-fade,
-  .motion-select {
+  .motion-fade {
     animation: motion-fade var(--duration-base) var(--ease-enter);
   }
   .motion-select {
-    animation-duration: var(--duration-fast);
+    animation: motion-fade var(--duration-fast) var(--ease-enter);
   }
   .motion-pop {
     animation: motion-pop var(--duration-slow) var(--ease-enter);
@@ -129,8 +138,7 @@ body {
   }
   /* 패널 배경 강조 - 붙였다 animationend에서 뗌 */
   .motion-highlight {
-    animation: motion-highlight calc(var(--duration-slow) * 5)
-      var(--ease-enter);
+    animation: motion-highlight calc(var(--duration-slow) * 5) var(--ease-enter);
   }
   /* SVG 가구 - 자기 중심 기준 */
   .motion-plan-pop {
@@ -138,7 +146,16 @@ body {
     transform-origin: center;
     animation: motion-plan-pop var(--duration-base) var(--ease-enter);
   }
-  :is(.motion-fade, .motion-pop, .motion-menu, .motion-toast)[data-exiting] {
+  [data-exiting] {
+    pointer-events: none;
+  }
+  :is(
+    .motion-fade,
+    .motion-pop,
+    .motion-menu,
+    .motion-toast,
+    .motion-item
+  )[data-exiting] {
     animation: motion-fade-out var(--duration-fast) var(--ease-exit) forwards;
   }
   .motion-sheet[data-exiting] {
@@ -146,12 +163,6 @@ body {
   }
 }
 
-@keyframes motion-rise {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-}
 @keyframes motion-fade {
   from {
     opacity: 0;
@@ -197,10 +208,6 @@ body {
   }
 }
 @keyframes motion-highlight {
-  from,
-  to {
-    background-color: transparent;
-  }
   20%,
   50% {
     background-color: var(--color-primary-soft);

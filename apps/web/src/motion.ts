@@ -9,7 +9,7 @@ export function prefersReducedMotion(): boolean {
   return matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-const exitDelay = () => (prefersReducedMotion() ? 0 : EXIT_MS);
+export const exitDelay = () => (prefersReducedMotion() ? 0 : EXIT_MS);
 
 /** 닫기 요청 → data-exiting 켜고 퇴장 뒤 onDone */
 export function useExit(onDone: () => void): [boolean, () => void] {

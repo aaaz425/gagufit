@@ -17,7 +17,8 @@ export function MobileSheet() {
   if (current && current !== kept) setKept(current);
   const { mounted, exiting } = usePresence(current !== null);
   const sheet = current ?? kept;
-  if (!mounted || !sheet) return null;
+  // 속성 시트는 선택이 풀리며 내용이 비므로 퇴장 없이 닫음
+  if (!mounted || !sheet || (!current && sheet === "props")) return null;
   const exit = exiting || undefined;
   const close = () => setSheet(null);
 

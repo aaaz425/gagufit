@@ -11,6 +11,7 @@ import { useExit } from "@/motion";
 
 // 퇴장 효과를 거쳐 닫는 함수
 const CloseContext = createContext<() => void>(() => {});
+export const useModalClose = () => useContext(CloseContext);
 
 /** 딤 + 가운데 창 - Esc·딤 누르면 닫힘, fullOnMobile이면 모바일에서 전체 화면 */
 export function Modal({
@@ -85,7 +86,7 @@ export const BUTTON_DANGER = `${BUTTON_BASE} bg-danger text-white enabled:hover:
 
 /** 퇴장 효과를 거쳐 닫는 취소 버튼 - Modal 안에서만 */
 export function ModalCancel() {
-  const close = useContext(CloseContext);
+  const close = useModalClose();
   return (
     <button type="button" onClick={close} className={BUTTON_SECONDARY}>
       취소
