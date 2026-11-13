@@ -170,7 +170,7 @@ shadow:
 
 - 선택 - `primary` 바깥 외곽선 3px + `selection` 4px 번짐 + 회전 핸들
   - 크림색 가구 위에서도 보이게 하는 보완, 두께 줄이지 않기
-- 경고 - `danger` 외곽선 2px + `danger-soft` 채움, 선택과 겹치면 경고 우선
+- 경고 - `danger` 외곽선 2px + `danger` 28% 덧칠(몸체 색 유지), 선택과 겹치면 경고 우선
 - 드래그 중 - 벽까지 거리 치수 가이드, `ink-muted` 가는 선 + caption 숫자
 - 품질 끄기 - 그림자·후처리 없이도 가구 구분되게 외곽선 유지
 
@@ -179,9 +179,10 @@ shadow:
 - 기호 16종 - 침대, 책상, 의자, 소파, 식탁, 옷장, 서랍장, 책장, 행거, TV장, 협탁, 화장대, 냉장고, 세탁기, 러그, 기타
 - 시안 - `docs/design/gagufit.pen`의 가구 평면 기호 16종
 - 위쪽이 등·벽 쪽, 아래쪽이 앞 - 회전해도 앞방향이 보이게
-- 몸체 고른 색 대표색(기본 `scene-furniture`) + `scene-furniture-line` 1px, 장식은 `scene-furniture-line`·흰색 50%
-- 침대 이불 `scene-furniture-soft`, 폭 120cm 미만이면 베개 1개
-- 러그 `scene-rug`, 외곽선 없이 안쪽 테두리 - 다른 가구 아래에 깔림
+- 몸체 고른 색 대표색(기본 `scene-furniture`) - 외곽선·장식은 몸체 밝기에서 도출: 밝은 색은 어둡게, 어두운 색(차콜·월넛)은 밝게
+  - 기본색일 때 `scene-furniture-line` 1px, 장식은 `scene-furniture-line`·흰색 50%
+- 침대 이불 몸체보다 살짝 짙게(기본 `scene-furniture-soft`), 폭 120cm 미만이면 베개 1개
+- 러그 고른 색(기본 `scene-rug`), 외곽선 없이 안쪽 테두리 - 다른 가구 아래에 깔림
 - 장식은 실제 치수에 맞춰 늘이고 몸체 모서리 4px 유지
 - 이름은 선택했을 때만 - 속성 패널·선택 툴바 근처
 

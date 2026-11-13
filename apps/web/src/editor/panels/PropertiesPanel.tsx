@@ -154,7 +154,12 @@ function FurnitureProps({
     <div className="flex flex-col gap-4">
       <Header
         icon={
-          <FurnitureThumb category={preset?.category} size={f.size} px={44} />
+          <FurnitureThumb
+            category={preset?.category}
+            size={f.size}
+            color={FURNITURE_COLORS[f.color].hex}
+            px={44}
+          />
         }
         title={preset?.name ?? "가구"}
         subtitle={preset ? CATEGORY_LABELS[preset.category] : "기타"}

@@ -7,7 +7,11 @@ import {
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FLOOR_MATERIALS, FURNITURE_PRESETS } from "@gagufit/data";
+import {
+  FLOOR_MATERIALS,
+  FURNITURE_COLORS,
+  FURNITURE_PRESETS,
+} from "@gagufit/data";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
 import { FurnitureSymbol } from "./FurnitureSymbol";
@@ -133,13 +137,17 @@ function FurnitureShape({
   return (
     <g transform={furnitureTransform(f, w, d)}>
       <g data-hit="furniture" data-id={f.id} className="cursor-grab">
-        <FurnitureSymbol category={preset?.category} size={f.size} />
+        <FurnitureSymbol
+          category={preset?.category}
+          size={f.size}
+          color={FURNITURE_COLORS[f.color].hex}
+        />
         {warned && (
           <rect
             width={w}
             height={d}
             rx={4}
-            fill={tint("danger-soft", 70)}
+            fill={tint("danger", 28)}
             stroke="var(--color-danger)"
             strokeWidth={2}
             {...px}
