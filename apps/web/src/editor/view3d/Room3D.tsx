@@ -13,9 +13,11 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
   type ComponentRef,
   type RefObject,
 } from "react";
+import { prefersReducedMotion, useInitialIds } from "@/motion";
 import type { Insets } from "../layout";
 import type { QualitySettings } from "../quality";
 import { SCENE_COLORS } from "../scene-colors";
@@ -207,6 +209,11 @@ export default function Room3D({
     [onSelect],
   );
 
+  const initialIds = useInitialIds(room.furniture.map((f) => f.id));
+  // 고해상도를 끈 저사양에서는 3D 움직임 생략
+  const [reducedMotion] = useState(prefersReducedMotion);
+  const animate = quality.hiDpi && !reducedMotion;
+
   const furniture = useMemo(
     () =>
       room.furniture.map((f) => ({
@@ -248,6 +255,8 @@ export default function Room3D({
               selected={f.id === selectedId}
               warning={warningIds.has(f.id)}
               realShadows={quality.shadows}
+              animate={animate}
+              enter={!initialIds.has(f.id)}
               onClick={handleFurnitureClick}
             />
           ))}

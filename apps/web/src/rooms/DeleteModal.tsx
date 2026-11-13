@@ -2,7 +2,7 @@
 
 import { useDeleteRoom } from "@gagufit/api";
 import { clearBackup } from "@/editor/save-backup";
-import { BUTTON_DANGER, BUTTON_SECONDARY, Modal, ModalActions } from "./Modal";
+import { BUTTON_DANGER, Modal, ModalActions, ModalCancel } from "./Modal";
 
 export function DeleteModal({
   id,
@@ -25,9 +25,7 @@ export function DeleteModal({
         </p>
       )}
       <ModalActions>
-        <button type="button" onClick={onClose} className={BUTTON_SECONDARY}>
-          취소
-        </button>
+        <ModalCancel />
         <button
           type="button"
           disabled={del.isPending}

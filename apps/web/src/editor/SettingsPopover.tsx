@@ -7,7 +7,13 @@ import { QUALITY_KEYS, QUALITY_ROWS, useQualitySettings } from "./quality";
 import { Switch } from "./ui";
 
 /** 상단 바 설정 버튼 아래 작은 창 - 바깥 누르거나 Esc면 닫힘 */
-export function SettingsPopover({ onClose }: { onClose: () => void }) {
+export function SettingsPopover({
+  exiting,
+  onClose,
+}: {
+  exiting: boolean;
+  onClose: () => void;
+}) {
   const [quality, setQuality] = useQualitySettings();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -33,7 +39,8 @@ export function SettingsPopover({ onClose }: { onClose: () => void }) {
       ref={ref}
       role="dialog"
       aria-label="화면 품질"
-      className="absolute top-full right-0 z-30 mt-1 flex w-[min(320px,calc(100vw-16px))] flex-col rounded-md border border-border bg-canvas px-4 pt-2 pb-3 shadow-floating"
+      data-exiting={exiting || undefined}
+      className="motion-menu absolute top-full right-0 z-30 mt-1 flex w-[min(320px,calc(100vw-16px))] flex-col rounded-md border border-border bg-canvas px-4 pt-2 pb-3 shadow-floating"
     >
       <h2 className="pt-1 text-sm font-bold text-ink-muted">화면 품질</h2>
       {QUALITY_KEYS.map((key) => {

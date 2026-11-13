@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { usePresence } from "@/motion";
 import { useEditor } from "./store";
 
 const TOAST_MS = 4000;
@@ -16,15 +17,20 @@ export function Toast({ bottom }: { bottom: number }) {
     return () => clearTimeout(timer);
   }, [toast, showToast]);
 
-  if (!toast) return null;
+  // 사라지는 동안 마지막 내용 유지
+  const [kept, setKept] = useState(toast);
+  if (toast && toast !== kept) setKept(toast);
+  const { mounted, exiting } = usePresence(toast !== null);
+  if (!mounted || !kept) return null;
   return (
     <div
       role="status"
-      className="pointer-events-auto absolute left-1/2 z-30 flex w-[min(360px,calc(100%-32px))] -translate-x-1/2 items-center gap-3 rounded-md bg-ink py-3 pr-2 pl-4 text-sm font-medium text-white shadow-floating"
+      data-exiting={exiting || undefined}
+      className="motion-toast pointer-events-auto absolute left-1/2 z-30 flex w-[min(360px,calc(100%-32px))] -translate-x-1/2 items-center gap-3 rounded-md bg-ink py-3 pr-2 pl-4 text-sm font-medium text-white shadow-floating"
       style={{ bottom }}
     >
-      <span className="flex-1">{toast.message}</span>
-      {toast.undo && (
+      <span className="flex-1">{kept.message}</span>
+      {kept.undo && (
         <button
           type="button"
           onClick={undo}

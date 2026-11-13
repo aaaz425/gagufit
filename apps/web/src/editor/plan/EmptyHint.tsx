@@ -2,6 +2,7 @@
 
 import type { Vec2 } from "@gagufit/core";
 import { Sofa } from "lucide-react";
+import { prefersReducedMotion } from "@/motion";
 import { FURNITURE_SEARCH_ID } from "../panels/FurniturePanel";
 import { useEditor } from "../store";
 
@@ -10,17 +11,14 @@ function highlightFurniturePanel() {
   const input = document.getElementById(FURNITURE_SEARCH_ID);
   if (!input) return;
   input.focus();
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  // 키프레임에 var() 미지원 브라우저 있음
-  const soft = getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-primary-soft")
-    .trim();
-  input
-    .closest("aside")
-    ?.animate(
-      [{ backgroundColor: soft }, { backgroundColor: soft, offset: 0.5 }, {}],
-      { duration: 1500, easing: "ease-out" },
-    );
+  if (prefersReducedMotion()) return;
+  const panel = input.closest("aside");
+  panel?.classList.add("motion-highlight");
+  panel?.addEventListener(
+    "animationend",
+    () => panel.classList.remove("motion-highlight"),
+    { once: true },
+  );
 }
 
 /** 빈 방 안내 - at은 화면 px 가운데 */

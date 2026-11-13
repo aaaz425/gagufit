@@ -4,7 +4,7 @@ import { useCreateRoom } from "@gagufit/api";
 import { ROOM_TEMPLATES, roomFromTemplate } from "@gagufit/data";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, Modal, ModalActions } from "./Modal";
+import { BUTTON_PRIMARY, Modal, ModalActions, ModalCancel } from "./Modal";
 import { RoomThumb } from "./RoomThumb";
 
 const TEMPLATES = Object.values(ROOM_TEMPLATES);
@@ -59,9 +59,7 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
           </p>
         )}
         <ModalActions>
-          <button type="button" onClick={onClose} className={BUTTON_SECONDARY}>
-            취소
-          </button>
+          <ModalCancel />
           <button
             type="button"
             onClick={start}

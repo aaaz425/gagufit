@@ -165,11 +165,15 @@ export function Switch({
       onClick={() => onChange(!on)}
       className={`flex h-[26px] w-11 shrink-0 items-center rounded-full p-[3px] ${
         on
-          ? "justify-end bg-primary hover:bg-primary-hover"
-          : "justify-start bg-border hover:bg-primary-soft"
+          ? "bg-primary hover:bg-primary-hover"
+          : "bg-border hover:bg-primary-soft"
       }`}
     >
-      <span className="size-5 rounded-full bg-canvas" />
+      <span
+        className={`size-5 rounded-full bg-canvas transition-transform duration-(--duration-fast) ease-enter ${
+          on ? "translate-x-[18px]" : ""
+        }`}
+      />
     </button>
   );
 }

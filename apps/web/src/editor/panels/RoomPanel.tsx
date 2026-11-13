@@ -66,7 +66,7 @@ export function RoomPanel({ onPick }: { onPick?: () => void }) {
         {room.openings.map((o) => {
           const on = selection?.kind === "opening" && selection.id === o.id;
           return (
-            <li key={o.id}>
+            <li key={o.id} className="motion-item">
               <button
                 type="button"
                 aria-pressed={on}

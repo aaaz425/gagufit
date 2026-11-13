@@ -5,8 +5,15 @@ import type {
 } from "@gagufit/core";
 import { FURNITURE_COLORS } from "@gagufit/data";
 import { Outlines, useCursor } from "@react-three/drei";
-import { useThree, type ThreeEvent } from "@react-three/fiber";
-import { memo, useEffect, useMemo, useState } from "react";
+import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   BoxGeometry,
   Color,
@@ -20,6 +27,7 @@ import {
   PlaneGeometry,
   RGBAFormat,
   type BufferGeometry,
+  type Group,
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { SCENE_COLORS } from "../scene-colors";
@@ -171,6 +179,61 @@ function partScale(part: Part): [number, number, number] {
     : [1, 1, 1];
 }
 
+// 등장·선택 효과 길이(초)와 시작 크기 - globals.css 움직임 토큰과 맞춤
+const ENTER_S = 0.2;
+const OUTLINE_FADE_S = 0.12;
+const ENTER_FROM = 0.85;
+
+/** 추가 직후 작게 시작해 커짐 - frameloop demand라 끝날 때까지 invalidate */
+function useScaleIn(enabled: boolean) {
+  const ref = useRef<Group>(null);
+  const invalidate = useThree((s) => s.invalidate);
+  const t = useRef(enabled ? 0 : 1);
+  useLayoutEffect(() => {
+    if (t.current >= 1) return;
+    ref.current?.scale.setScalar(ENTER_FROM);
+    invalidate();
+  }, [invalidate]);
+  useFrame((_, delta) => {
+    if (t.current >= 1) return;
+    t.current = Math.min(1, t.current + delta / ENTER_S);
+    const eased = 1 - (1 - t.current) ** 3;
+    ref.current?.scale.setScalar(ENTER_FROM + (1 - ENTER_FROM) * eased);
+    if (t.current < 1) invalidate();
+  });
+  return ref;
+}
+
+/** 선택 외곽선 - animate면 투명에서 서서히 */
+function SelectionOutline({
+  thickness,
+  color,
+  animate,
+}: {
+  thickness: number;
+  color: string;
+  animate: boolean;
+}) {
+  const invalidate = useThree((s) => s.invalidate);
+  const [opacity, setOpacity] = useState(animate ? 0 : 1);
+  useLayoutEffect(() => {
+    if (animate) invalidate();
+  }, [animate, invalidate]);
+  useFrame((_, delta) => {
+    if (opacity >= 1) return;
+    setOpacity(Math.min(1, opacity + delta / OUTLINE_FADE_S));
+    invalidate();
+  });
+  return (
+    <Outlines
+      thickness={thickness}
+      color={color}
+      opacity={opacity}
+      transparent={opacity < 1}
+    />
+  );
+}
+
 type Props = {
   furniture: PlacedFurniture;
   /** 없으면 기본 상자 */
@@ -179,6 +242,10 @@ type Props = {
   warning: boolean;
   /** 진짜 그림자를 켰는지 - 접지 그림자 농도만 달라짐 */
   realShadows: boolean;
+  /** 등장·선택 효과 켬 - 끄면 바로 보임 */
+  animate: boolean;
+  /** 추가 직후라 등장 효과 */
+  enter: boolean;
   onClick: (e: ThreeEvent<MouseEvent>, id: string) => void;
 };
 
@@ -188,8 +255,11 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   selected,
   warning,
   realShadows,
+  animate,
+  enter,
   onClick,
 }: Props) {
+  const groupRef = useScaleIn(animate && enter);
   const look = preset ?? FALLBACK_LOOK;
   const { width, depth, height } = furniture.size;
   // 크기는 배치 가구마다 따로 - 크기 조절 중 지오메트리가 쌓이지 않게 바뀌면 정리
@@ -219,6 +289,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   const shadow = look.layer !== "floor";
   return (
     <group
+      ref={groupRef}
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
       rotation-y={rad(furniture.rotation)}
       onClick={(e) => onClick(e, furniture.id)}
@@ -250,10 +321,11 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               receiveShadow
             >
               {selected && part.tone === "main" && (
-                <Outlines
+                <SelectionOutline
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선
                   color={warning ? SCENE_COLORS.danger : SCENE_COLORS.primary}
+                  animate={animate}
                 />
               )}
             </mesh>
