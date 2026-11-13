@@ -1,23 +1,27 @@
 import {
   doorPassageCorners,
   furnitureCorners,
+  type FurnitureMaterial,
   wallFrame,
   type Opening,
   type PlacedFurniture,
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FLOOR_MATERIALS, FURNITURE_PRESETS } from "@gagufit/data";
+import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
+import { useId } from "react";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
 import { FurnitureSymbol } from "./FurnitureSymbol";
+import { PlanFloor, TextureDefs } from "./PlanDefs";
+import type { PlanTexture } from "./texture";
 
 // 방 cm 좌표에서 그림 - 선 굵기·핸들 크기는 화면 px라 scale로 나눔
 
 /** 벽 두께 px - 방 바깥쪽으로 */
 export const WALL_PX = 8;
-/** 격자 간격 */
-const GRID = 50;
+/** 가구 그림자 화면 오프셋 px - 빛은 왼쪽 위, 화면을 돌려도 고정 */
+const SHADOW_PX = { x: 3, y: 4 };
 
 const px = { vectorEffect: "non-scaling-stroke" } as const;
 const tint = (color: string, percent: number) =>
@@ -46,24 +50,23 @@ export function RoomPlan({
   scale,
   selection,
   warned,
+  angle = 0,
 }: {
   room: Room;
   scale: number;
+  /** 화면 회전(도) - 그림자 방향 고정용 */
+  angle?: number;
   selection: Selection;
   warned: ReadonlySet<string>;
 }) {
   const wall = WALL_PX / scale;
-  const gridX = Array.from(
-    { length: Math.ceil(room.width / GRID) - 1 },
-    (_, i) => (i + 1) * GRID,
-  );
-  const gridY = Array.from(
-    { length: Math.ceil(room.depth / GRID) - 1 },
-    (_, i) => (i + 1) * GRID,
-  );
+  const scope = useId();
   // 러그 - 문 열림 영역 - 다른 가구 순서
   const isRug = (f: PlacedFurniture) =>
     FURNITURE_PRESETS[f.presetId]?.layer === "floor";
+  // 행거는 속이 비쳐 그림자가 진해 보임
+  const isHollow = (f: PlacedFurniture) =>
+    FURNITURE_PRESETS[f.presetId]?.category === "hanger";
   const shape = (f: PlacedFurniture) => (
     <FurnitureShape
       key={f.id}
@@ -71,6 +74,28 @@ export function RoomPlan({
       warned={warned.has(f.id)}
       selected={selection?.kind === "furniture" && selection.id === f.id}
       scale={scale}
+      scope={scope}
+    />
+  );
+  const rad = (-angle * Math.PI) / 180;
+  const off = {
+    x: (SHADOW_PX.x * Math.cos(rad) - SHADOW_PX.y * Math.sin(rad)) / scale,
+    y: (SHADOW_PX.x * Math.sin(rad) + SHADOW_PX.y * Math.cos(rad)) / scale,
+  };
+  const shadow = (f: PlacedFurniture) => (
+    <rect
+      key={f.id}
+      width={f.size.width}
+      height={f.size.depth}
+      rx={4}
+      fill="var(--color-scene-wall)"
+      opacity={0.16}
+      transform={furnitureTransform(
+        { ...f, position: add(f.position, off) },
+        f.size.width,
+        f.size.depth,
+      )}
+      pointerEvents="none"
     />
   );
   const selectedOpening =
@@ -78,19 +103,8 @@ export function RoomPlan({
 
   return (
     <>
-      <rect
-        width={room.width}
-        height={room.depth}
-        fill={FLOOR_MATERIALS[room.floorMaterial].color2d}
-      />
-      <g stroke="var(--color-scene-grid)" strokeWidth={1} {...px}>
-        {gridX.map((x) => (
-          <line key={`x${x}`} x1={x} x2={x} y1={0} y2={room.depth} {...px} />
-        ))}
-        {gridY.map((y) => (
-          <line key={`y${y}`} y1={y} y2={y} x1={0} x2={room.width} {...px} />
-        ))}
-      </g>
+      <TextureDefs scale={scale} scope={scope} />
+      <PlanFloor room={room} scale={scale} scope={scope} />
       <rect
         x={-wall / 2}
         y={-wall / 2}
@@ -111,6 +125,7 @@ export function RoomPlan({
           selected={o.id === selectedOpening}
         />
       ))}
+      {room.furniture.filter((f) => !isRug(f) && !isHollow(f)).map(shadow)}
       {room.furniture.filter((f) => !isRug(f)).map(shape)}
     </>
   );
@@ -121,11 +136,13 @@ function FurnitureShape({
   warned,
   selected,
   scale,
+  scope,
 }: {
   furniture: PlacedFurniture;
   warned: boolean;
   selected: boolean;
   scale: number;
+  scope: string;
 }) {
   const preset = FURNITURE_PRESETS[f.presetId];
   const { width: w, depth: d } = f.size;
@@ -133,13 +150,18 @@ function FurnitureShape({
   return (
     <g transform={furnitureTransform(f, w, d)}>
       <g data-hit="furniture" data-id={f.id} className="cursor-grab">
-        <FurnitureSymbol category={preset?.category} size={f.size} />
+        <FurnitureSymbol
+          category={preset?.category}
+          size={f.size}
+          color={FURNITURE_COLORS[f.color].hex}
+          texture={textureOf(preset?.material, scope)}
+        />
         {warned && (
           <rect
             width={w}
             height={d}
             rx={4}
-            fill={tint("danger-soft", 70)}
+            fill={tint("danger", 28)}
             stroke="var(--color-danger)"
             strokeWidth={2}
             {...px}
@@ -186,6 +208,17 @@ function FurnitureShape({
   );
 }
 
+const TEXTURE_OF: Record<FurnitureMaterial, PlanTexture | undefined> = {
+  wood: "wood",
+  fabric: "fabric",
+  appliance: undefined,
+};
+
+const textureOf = (m: FurnitureMaterial | undefined, scope: string) => {
+  const kind = m && TEXTURE_OF[m];
+  return kind ? { kind, scope } : undefined;
+};
+
 type OpeningFrame = ReturnType<typeof openingFrame>;
 
 /** 방 안쪽 열림 영역 - 여닫이는 부채꼴, 미닫이는 통로 */
@@ -194,11 +227,13 @@ function OpeningInside({
   opening: o,
   frame,
   selected,
+  scale,
 }: {
   room: Room;
   opening: Opening;
   frame: OpeningFrame;
   selected: boolean;
+  scale: number;
 }) {
   const { u, n, left, right } = frame;
   const color = selected ? "primary" : "ink-muted";
@@ -228,6 +263,15 @@ function OpeningInside({
           y2={open.y}
           stroke={`var(--color-${color})`}
           strokeWidth={selected ? 3 : 2}
+          {...px}
+        />
+        <circle
+          cx={hinge.x}
+          cy={hinge.y}
+          r={3 / scale}
+          fill="var(--color-canvas)"
+          stroke={`var(--color-${color})`}
+          strokeWidth={1.5}
           {...px}
         />
       </>
@@ -335,6 +379,7 @@ function OpeningShape({
         opening={o}
         frame={frame}
         selected={selected}
+        scale={scale}
       />
       <OpeningInWall opening={o} frame={frame} wall={wall} gap={gap} />
       {selected && (
