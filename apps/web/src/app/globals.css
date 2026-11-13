@@ -136,6 +136,10 @@ body {
   .motion-item {
     animation: motion-item var(--duration-base) var(--ease-enter);
   }
+  /* 편집기 왼쪽 패널 - 처음 들어올 때 */
+  .motion-side {
+    animation: motion-side var(--duration-slow) var(--ease-enter);
+  }
   /* 패널 배경 강조 - 붙였다 animationend에서 뗌 */
   .motion-highlight {
     animation: motion-highlight calc(var(--duration-slow) * 5) var(--ease-enter);
@@ -205,6 +209,11 @@ body {
   from {
     opacity: 0;
     transform: scale(0.96);
+  }
+}
+@keyframes motion-side {
+  from {
+    transform: translateX(-100%);
   }
 }
 @keyframes motion-highlight {
