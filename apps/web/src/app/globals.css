@@ -75,13 +75,13 @@ body {
     cursor: not-allowed;
   }
 
-  /* 스크롤바 - 얇게, 평소엔 옅게 영역에 올리면 진하게 */
+  /* 스크롤바 - 얇게, 갈색 막대(손잡이 탭과 같은 계열)·옅은 트랙, 영역에 올리면 막대 진하게 */
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-border) transparent;
+    scrollbar-color: var(--color-scene-furniture) var(--color-surface);
   }
   *:hover {
-    scrollbar-color: var(--color-ink-subtle) transparent;
+    scrollbar-color: var(--color-scene-furniture-line) var(--color-surface);
   }
 
   :focus-visible {
