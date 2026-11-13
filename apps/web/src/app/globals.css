@@ -32,6 +32,21 @@
   --shadow-floating:
     0 4px 12px rgba(31, 35, 40, 0.08), 0 12px 32px rgba(31, 35, 40, 0.12);
   --shadow-selection: 0 0 0 4px rgba(11, 125, 97, 0.2);
+
+  /* 움직임 - reduced-motion이면 아래에서 0ms */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 280ms;
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
 }
 
 body {
@@ -63,6 +78,138 @@ body {
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+
+  /* 색 transition + 누르면 살짝 작아짐 - SVG 안은 transform 속성과 겹쳐 제외, 큰 덮개 버튼은 data-no-press */
+  :is(button, [role="button"], [role="tab"], [role="radio"], [role="switch"], a):not(
+      svg *
+    ) {
+    transition-property: color, background-color, border-color, box-shadow,
+      opacity, scale;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-enter);
+  }
+
+  :is(button, [role="button"], [role="tab"], [role="radio"], [role="switch"], a):not(
+      svg *,
+      [data-no-press],
+      :disabled,
+      [aria-disabled="true"]
+    ):active {
+    scale: 0.97;
+  }
+}
+
+/* 들어올 때 enter, 나갈 때 data-exiting + exit(더 짧게) - 위치·크기는 transform만, 편집 중 요소에는 쓰지 않기 */
+@layer components {
+  .motion-page {
+    animation: motion-rise var(--duration-slow) var(--ease-enter);
+  }
+  .motion-fade,
+  .motion-select {
+    animation: motion-fade var(--duration-base) var(--ease-enter);
+  }
+  .motion-select {
+    animation-duration: var(--duration-fast);
+  }
+  .motion-pop {
+    animation: motion-pop var(--duration-slow) var(--ease-enter);
+  }
+  .motion-menu {
+    animation: motion-menu var(--duration-base) var(--ease-enter);
+  }
+  .motion-toast {
+    animation: motion-toast var(--duration-base) var(--ease-enter);
+  }
+  .motion-sheet {
+    animation: motion-sheet var(--duration-slow) var(--ease-enter);
+  }
+  .motion-item {
+    animation: motion-item var(--duration-base) var(--ease-enter);
+  }
+  /* 패널 배경 강조 - 붙였다 animationend에서 뗌 */
+  .motion-highlight {
+    animation: motion-highlight calc(var(--duration-slow) * 5)
+      var(--ease-enter);
+  }
+  /* SVG 가구 - 자기 중심 기준 */
+  .motion-plan-pop {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: motion-plan-pop var(--duration-base) var(--ease-enter);
+  }
+  :is(.motion-fade, .motion-pop, .motion-menu, .motion-toast)[data-exiting] {
+    animation: motion-fade-out var(--duration-fast) var(--ease-exit) forwards;
+  }
+  .motion-sheet[data-exiting] {
+    animation: motion-sheet-out var(--duration-fast) var(--ease-exit) forwards;
+  }
+}
+
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@keyframes motion-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes motion-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes motion-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes motion-menu {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-y, -4px)) scale(0.98);
+  }
+}
+@keyframes motion-toast {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes motion-sheet {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes motion-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes motion-item {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes motion-highlight {
+  from,
+  to {
+    background-color: transparent;
+  }
+  20%,
+  50% {
+    background-color: var(--color-primary-soft);
+  }
+}
+@keyframes motion-plan-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
   }
 }
 

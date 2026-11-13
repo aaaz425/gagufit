@@ -165,6 +165,27 @@ shadow:
 - 핀치·휠은 커서 변화 없음
 - 3D - 선택 가능한 가구 위 `pointer`, 빈 곳은 기본
 
+## 움직임
+
+- 토큰은 `globals.css` `@theme` - 시간 3단계, easing 2개
+  - 시간 - 빠름 `--duration-fast` 120ms(hover·press·선택 외곽선), 기본 `--duration-base` 200ms(메뉴·토스트·목록·가구 등장), 느림 `--duration-slow` 280ms(모달·바텀시트·페이지 진입)
+  - easing - 들어올 때 `--ease-enter` ease-out, 나갈 때 `--ease-exit` ease-in
+- 닫기는 항상 빠름 120ms
+- 적용
+  - 페이지 진입 - 본문 fade + 4px 위로
+  - 모달·바텀시트 - 딤 fade, 창 fade + scale 0.96 / 아래에서 슬라이드
+  - 메뉴·팝오버·토스트 - fade + 4~8px 이동
+  - 버튼·카드·칩·토글 - 색 transition, 누르면 scale 0.97, 방 카드 hover 시 `floating`
+  - 목록 항목 추가 - fade + scale 0.96
+  - 가구 추가 - 2D scale 0.85 → 1 + fade, 3D scale 0.85 → 1, 선택 외곽선 fade-in
+- 편집 조작은 늦추지 않기 - 끌기·회전·확대 중 위치·크기에 transition 금지, delay 없음
+  - 2D SVG는 `transform` 속성 요소에 CSS transition·animation 금지, 안쪽 요소에만
+  - 애니메이션은 `transform`·`opacity`·`scale`만
+- 끄기
+  - `prefers-reduced-motion: reduce` - 시간 토큰 전부 0ms, 3D 생략
+  - 3D - 고해상도 끈 저사양 모드도 생략
+- 큰 덮개 버튼(딤)은 `data-no-press`로 press 효과 제외
+
 ## 편집기 규칙
 
 - 선택 - `primary` 바깥 외곽선 3px + `selection` 4px 번짐 + 회전 핸들
