@@ -2,7 +2,8 @@
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      // next build가 .next를 비워 같은 패키지 typecheck와 겹치면 .next/types를 못 찾음
+      "dependsOn": ["^build", "typecheck"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {},
