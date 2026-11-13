@@ -28,8 +28,6 @@ import {
   RGBAFormat,
   type BufferGeometry,
   type Group,
-  type Mesh,
-  type ShaderMaterial,
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { SCENE_COLORS } from "../scene-colors";
@@ -45,7 +43,7 @@ const SURFACE: Readonly<
 };
 
 /** 선택 외곽선 CSS px - drei Outlines 기본 모드는 그리기 버퍼 px */
-const SELECTION_PX = 3;
+const SELECTION_PX = 4;
 
 const materialCache = new Map<string, MeshStandardMaterial>();
 
@@ -181,9 +179,8 @@ function partScale(part: Part): [number, number, number] {
     : [1, 1, 1];
 }
 
-// 등장·선택 효과 길이(초)와 시작 크기 - globals.css 움직임 토큰과 맞춤
+// 등장 효과 길이(초)와 시작 크기 - globals.css 움직임 토큰과 맞춤
 const ENTER_S = 0.2;
-const OUTLINE_FADE_S = 0.12;
 const ENTER_FROM = 0.85;
 // demand 루프는 멈춰 있던 시간이 첫 delta로 들어옴 - 효과가 통째로 건너뛰지 않게 제한
 const MAX_DELTA = 1 / 30;
@@ -208,50 +205,6 @@ function useScaleIn(enabled: boolean) {
   return ref;
 }
 
-/** 선택 외곽선 - animate면 투명에서 서서히 */
-function SelectionOutline({
-  thickness,
-  color,
-  animate,
-}: {
-  thickness: number;
-  color: string;
-  animate: boolean;
-}) {
-  const invalidate = useThree((s) => s.invalidate);
-  const marker = useRef<Group>(null);
-  const t = useRef(animate ? 0 : 1);
-  // Outlines가 부모 mesh 아래 만든 재질 - ref를 받지 않아 uniform을 직접 바꿈
-  const setOpacity = (value: number) => {
-    marker.current?.parent?.traverse((o) => {
-      const material = (o as Mesh).material as ShaderMaterial | undefined;
-      // 부모 mesh 자신의 재질은 uniforms.opacity가 없음
-      if (material?.uniforms?.opacity) material.uniforms.opacity.value = value;
-    });
-  };
-  useLayoutEffect(() => {
-    if (t.current >= 1) return;
-    setOpacity(0);
-    invalidate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 처음 한 번
-  }, []);
-  useFrame((_, delta) => {
-    if (t.current >= 1) return;
-    t.current = Math.min(
-      1,
-      t.current + Math.min(delta, MAX_DELTA) / OUTLINE_FADE_S,
-    );
-    setOpacity(t.current);
-    if (t.current < 1) invalidate();
-  });
-  return (
-    <>
-      <Outlines thickness={thickness} color={color} transparent />
-      <group ref={marker} />
-    </>
-  );
-}
-
 type Props = {
   furniture: PlacedFurniture;
   /** 없으면 기본 상자 */
@@ -260,7 +213,7 @@ type Props = {
   warning: boolean;
   /** 진짜 그림자를 켰는지 - 접지 그림자 농도만 달라짐 */
   realShadows: boolean;
-  /** 등장·선택 효과 켬 - 끄면 바로 보임 */
+  /** 등장 효과 켬 - 끄면 바로 보임 */
   animate: boolean;
   /** 추가 직후라 등장 효과 */
   enter: boolean;
@@ -338,12 +291,11 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               castShadow={shadow}
               receiveShadow
             >
-              {selected && part.tone === "main" && (
-                <SelectionOutline
+              {selected && (
+                <Outlines
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선
                   color={warning ? SCENE_COLORS.danger : SCENE_COLORS.primary}
-                  animate={animate}
                 />
               )}
             </mesh>

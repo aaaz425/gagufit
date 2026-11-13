@@ -173,7 +173,7 @@ shadow:
 ## 움직임
 
 - 토큰은 `globals.css` `@theme` - 시간 3단계, easing 2개
-  - 시간 - 빠름 `--duration-fast` 120ms(hover·press·선택 외곽선), 기본 `--duration-base` 200ms(메뉴·토스트·목록·가구 등장), 느림 `--duration-slow` 280ms(모달·바텀시트·페이지 진입)
+  - 시간 - 빠름 `--duration-fast` 120ms(hover·press·2D 선택 외곽선), 기본 `--duration-base` 200ms(메뉴·토스트·목록·가구 등장), 느림 `--duration-slow` 280ms(모달·바텀시트·페이지 진입)
   - easing - 들어올 때 `--ease-enter` ease-out, 나갈 때 `--ease-exit` ease-in
 - 닫기는 항상 빠름 120ms
 - 적용
@@ -183,7 +183,7 @@ shadow:
   - 메뉴·팝오버·토스트 - fade + 4~8px 이동
   - 버튼·카드·칩·토글 - 색 transition, 누르면 scale 0.97, 방 카드 hover 시 `floating`
   - 목록 항목 추가 - fade + scale 0.96
-  - 가구 추가 - 2D scale 0.85 → 1 + fade, 3D scale 0.85 → 1, 선택 외곽선 fade-in
+  - 가구 추가 - 2D scale 0.85 → 1 + fade, 3D scale 0.85 → 1, 2D 선택 외곽선 fade-in(3D 외곽선은 바로 표시)
 - 편집 조작은 늦추지 않기 - 끌기·회전·확대 중 위치·크기에 transition 금지, delay 없음
   - 2D SVG는 `transform` 속성 요소에 CSS transition·animation 금지, 안쪽 요소에만
   - 애니메이션은 `transform`·`opacity`·`scale`만
