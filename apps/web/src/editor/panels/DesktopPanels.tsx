@@ -79,7 +79,7 @@ export function LeftPanel() {
         aria-expanded={open}
         onClick={() => setOpen(!open)}
         // 보이는 폭 20, 누르는 영역은 오른쪽으로 넓혀 44 - 시작점이 패널 테두리 위라 이음새가 가려짐
-        className="absolute top-3 left-full flex h-11 w-5 items-center justify-center rounded-r-md bg-primary-soft text-primary shadow-raised before:absolute before:inset-y-0 before:left-0 before:w-11 hover:bg-primary hover:text-white"
+        className="absolute top-3 left-full flex h-11 w-5 items-center justify-center rounded-r-md border border-l-0 border-scene-furniture-line bg-scene-furniture text-ink shadow-raised before:absolute before:inset-y-0 before:left-0 before:w-11 hover:bg-scene-furniture-soft"
       >
         <ChevronLeft
           size={16}

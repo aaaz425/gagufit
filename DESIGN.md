@@ -134,7 +134,8 @@ shadow:
 - 토스트 - `ink` 바탕 흰 글자 + `primary-inverse` 동작, 화면 아래 가운데
 - 확인 모달 - 제목에 대상 이름, 결과 한 줄, 오른쪽 취소·확인, 지우기는 `danger`
 - 패널 - 데스크톱 좌·우 고정, `canvas` 배경, `border` 구분
-  - 왼쪽 패널 접기·펼치기 - 오른쪽 위 가장자리에 붙은 얇은 손잡이 탭(보이는 폭 20·높이 44, 오른쪽만 `md` 모서리, tonal: `primary-soft` 배경 + `primary` chevron 16px, `raised`), hover는 `primary` 배경 흰 chevron, 누르는 영역은 44px, 열림·닫힘에 chevron 회전
+  - 왼쪽 패널 접기·펼치기 - 오른쪽 위 가장자리에 붙은 얇은 손잡이 탭(보이는 폭 20·높이 44, 오른쪽만 `md` 모서리, `scene-furniture` 배경 + `scene-furniture-line` 외곽선 + `ink` chevron 16px, `raised`), hover는 `scene-furniture-soft` 배경, 누르는 영역은 44px, 열림·닫힘에 chevron 회전
+    - 흰 패널·베이지 캔버스 사이에서 또렷하고 초록 포인트와 부딪치지 않는 따뜻한 갈색, 방 가구색과 같은 계열이라 새 토큰은 두지 않음
   - 접으면 폭 60px 띠만 남고 손잡이는 띠 가장자리에 붙음
   - 탭 옆 접기 버튼은 두지 않음
 - 바텀시트 - 모바일 패널, 손잡이 표시, 위로 끌어 확장
