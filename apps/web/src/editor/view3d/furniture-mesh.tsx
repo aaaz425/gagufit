@@ -96,7 +96,8 @@ function partGeometry(part: Part) {
 
 /** 윤곽선은 각진 상자 모서리 기준 - 손잡이처럼 작은 조각은 생략 */
 function partEdges(part: Part): BufferGeometry | null {
-  if (part.shape === "disc" || Math.min(...part.size) < 2.5) return null;
+  if (part.shape === "disc" || Math.min(...part.size) < 2.5 || part.round > 2)
+    return null;
   const box = new BoxGeometry(
     ...(part.size.map(m) as [number, number, number]),
   );
@@ -106,7 +107,7 @@ function partEdges(part: Part): BufferGeometry | null {
 }
 
 /** 접지 그림자 테두리 폭 cm */
-const CONTACT_MARGIN = 14;
+const CONTACT_MARGIN = 8;
 
 let contactTexture: DataTexture | undefined;
 /**
@@ -132,23 +133,19 @@ function getContactTexture() {
   return contactTexture;
 }
 
-// 진짜 그림자를 켜면 접지 그림자는 옅게
-const CONTACT_MATERIALS = new Map<boolean, MeshBasicMaterial>();
-function contactMaterial(realShadows: boolean) {
-  let material = CONTACT_MATERIALS.get(realShadows);
-  if (!material) {
-    material = new MeshBasicMaterial({
-      color: "black",
-      map: getContactTexture(),
-      transparent: true,
-      opacity: realShadows ? 0.18 : 0.38,
-      depthWrite: false,
-      toneMapped: false,
-    });
-    CONTACT_MATERIALS.set(realShadows, material);
-  }
-  return material;
+function contactMaterial(opacity: number) {
+  return new MeshBasicMaterial({
+    color: "black",
+    map: getContactTexture(),
+    transparent: true,
+    opacity,
+    depthWrite: false,
+    toneMapped: false,
+  });
 }
+// 진짜 그림자를 켜면 접지 그림자는 옅게
+const CONTACT_SOFT = contactMaterial(0.38);
+const CONTACT_FAINT = contactMaterial(0.18);
 
 /** 가구 발자국 둘레로 번지는 바닥 판 - 아홉 조각 uv */
 function contactGeometry(w: number, d: number) {
@@ -219,8 +216,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   useCursor(hovered);
   const dpr = useThree((s) => s.viewport.dpr);
   const hex = FURNITURE_COLORS[furniture.color].hex;
-  const layer = look.layer;
-  const shadow = layer !== "floor";
+  const shadow = look.layer !== "floor";
   return (
     <group
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
@@ -232,10 +228,10 @@ export const FurnitureMesh = memo(function FurnitureMesh({
       }}
       onPointerOut={() => setHovered(false)}
     >
-      {layer !== "floor" && (
+      {shadow && (
         <mesh
           geometry={contact}
-          material={contactMaterial(realShadows)}
+          material={realShadows ? CONTACT_FAINT : CONTACT_SOFT}
           position-y={0.002}
           renderOrder={1}
           // 클릭이 가구 뒤 바닥으로 가게 막지 않음
@@ -253,7 +249,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               castShadow={shadow}
               receiveShadow
             >
-              {selected && (
+              {selected && part.tone === "main" && (
                 <Outlines
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선
@@ -263,7 +259,12 @@ export const FurnitureMesh = memo(function FurnitureMesh({
             </mesh>
             {/* 그림자·후처리를 꺼도 가구끼리·바닥과 구분되는 윤곽선 */}
             {edges && (
-              <lineSegments geometry={edges} material={EDGE_MATERIAL} />
+              <lineSegments
+                geometry={edges}
+                material={EDGE_MATERIAL}
+                // 선 raycast는 반경이 커서 가구 옆 바닥 클릭을 가로챔
+                raycast={() => null}
+              />
             )}
             {warning && (
               <mesh

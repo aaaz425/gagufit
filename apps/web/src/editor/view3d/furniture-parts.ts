@@ -78,7 +78,7 @@ function cabinet(
     const bar = Math.min(20, h * 0.2);
     for (let j = 0; j <= vertical; j++) {
       const x =
-        -w / 2 + doorW * (j + 0.5) + (j % 2 === 0 ? 1 : -1) * doorW * 0.38;
+        -w / 2 + doorW * (j + 0.5) + (j < vertical / 2 ? 1 : -1) * doorW * 0.38;
       parts.push(
         box(
           [x - 0.6, h / 2 - bar / 2, face],
@@ -334,7 +334,8 @@ function shapes(category: FurnitureCategory, size: Size): Part[] {
         box([-w / 2, 0, -d / 2], [w / 2, t * 2, d / 2], "main", 0.5),
         box([-w / 2, h - t, -d / 2], [w / 2, h, d / 2], "main", 0.5),
       ];
-      const ys = [t * 2];
+      const bottoms = [t * 2];
+      const tops: number[] = [];
       for (let i = 1; i <= shelves; i++) {
         const y = (h * i) / (shelves + 1);
         parts.push(
@@ -345,28 +346,28 @@ function shapes(category: FurnitureCategory, size: Size): Part[] {
             0.5,
           ),
         );
-        ys.push(y + t / 2);
+        tops.push(y - t / 2);
+        bottoms.push(y + t / 2);
       }
-      // 칸마다 책 덩어리 몇 개 - 높이·너비가 조금씩 다름
-      const widths = [9, 12, 7, 10];
-      const heights = [0.72, 0.88, 0.62, 0.8];
-      const tones: PartTone[] = ["light", "line", "light", "line"];
-      const tops = [...ys.slice(1), h - t];
-      ys.forEach((bottom, row) => {
+      tops.push(h - t);
+      // 칸마다 책 덩어리 둘 - 높이가 서로 다름
+      const inner = w - 2 * t - 4;
+      bottoms.forEach((bottom, row) => {
         const room = tops[row] - bottom;
-        let x = -w / 2 + t + 2;
-        for (let k = 0; k < 4; k++) {
-          const bw = widths[(k + row) % 4];
-          if (x + bw > w / 2 - t - 2) break;
+        const books: [number, number, number, PartTone][] = [
+          [0, 0.45, 0.8, "light"],
+          [0.5, 0.35, 0.65, "line"],
+        ];
+        for (const [from, size, height, tone] of books) {
+          const x = -w / 2 + t + 2 + inner * from;
           parts.push(
             box(
               [x, bottom, -d / 2 + t + 2],
-              [x + bw, bottom + room * heights[(k + row) % 4], d / 2 - 3],
-              tones[(k + row) % 4],
+              [x + inner * size, bottom + room * height, d / 2 - 3],
+              tone,
               0.5,
             ),
           );
-          x += bw + 2;
         }
       });
       return parts;
