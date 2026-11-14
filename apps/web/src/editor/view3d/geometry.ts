@@ -4,6 +4,19 @@ import { BoxGeometry, BufferGeometry, Float32BufferAttribute } from "three";
 /** cm → m, 렌더링 시에만 */
 export const m = (cm: number) => cm / 100;
 
+/** 방 평면 좌표 cm → 방 가운데가 원점인 월드 x·z m */
+export const planToWorld = (
+  room: { width: number; depth: number },
+  p: Vec2,
+): [number, number] => [m(p.x - room.width / 2), m(p.y - room.depth / 2)];
+
+/** 월드 x·z m → 방 평면 좌표 cm */
+export const worldToPlan = (
+  room: { width: number; depth: number },
+  x: number,
+  z: number,
+): Vec2 => ({ x: x * 100 + room.width / 2, y: z * 100 + room.depth / 2 });
+
 /** 도 → rotation.y 라디안 */
 export const rad = (deg: number) => (deg * Math.PI) / 180;
 

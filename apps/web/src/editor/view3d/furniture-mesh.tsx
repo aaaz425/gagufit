@@ -277,6 +277,7 @@ type Props = {
   /** 추가 직후라 등장 효과 */
   enter: boolean;
   onClick: (e: ThreeEvent<MouseEvent>, id: string) => void;
+  onPointerDown: (e: ThreeEvent<PointerEvent>, id: string) => void;
 };
 
 export const FurnitureMesh = memo(function FurnitureMesh({
@@ -288,6 +289,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   animate,
   enter,
   onClick,
+  onPointerDown,
 }: Props) {
   const groupRef = useScaleIn(animate && enter);
   const look = preset ?? FALLBACK_LOOK;
@@ -331,7 +333,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   );
   const dpr = useThree((s) => s.viewport.dpr);
   const [hovered, setHovered] = useState(false);
-  useCursor(hovered);
+  // 선택된 가구는 끌 수 있음 - 끄는 중 grabbing은 끌기 훅이 지정
+  useCursor(hovered, selected ? "grab" : "pointer");
   const hex = FURNITURE_COLORS[furniture.color].hex;
   const shadow = look.layer !== "floor";
   return (
@@ -340,6 +343,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
       rotation-y={rad(furniture.rotation)}
       onClick={(e) => onClick(e, furniture.id)}
+      onPointerDown={(e) => onPointerDown(e, furniture.id)}
       onPointerOver={(e) => {
         e.stopPropagation();
         setHovered(true);

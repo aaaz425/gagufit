@@ -9,6 +9,7 @@ import {
 } from "@gagufit/core";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import {
+  memo,
   Suspense,
   useDeferredValue,
   useEffect,
@@ -309,7 +310,11 @@ type RoomShellProps = {
 };
 
 /** 바닥·벽·문 열림 영역 - 방 왼쪽 위 모서리가 원점인 평면 좌표 */
-export function RoomShell({ room, hiRes, onClick }: RoomShellProps) {
+export const RoomShell = memo(function RoomShell({
+  room,
+  hiRes,
+  onClick,
+}: RoomShellProps) {
   const lowered = useLoweredWalls(room);
   // 재질을 바꿀 때 새 텍스처를 받는 동안 이전 텍스처 유지 - 단색 깜빡임 방지
   const floorId = useDeferredValue(room.floorMaterial);
@@ -343,4 +348,4 @@ export function RoomShell({ room, hiRes, onClick }: RoomShellProps) {
       <DoorAreas room={room} />
     </group>
   );
-}
+});

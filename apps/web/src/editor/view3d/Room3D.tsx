@@ -1,13 +1,25 @@
 "use client";
 
-import { wallFrame, type Room } from "@gagufit/core";
+import {
+  furnitureCorners,
+  wallFrame,
+  type Room,
+  type Vec2,
+} from "@gagufit/core";
 import { FURNITURE_PRESETS } from "@gagufit/data";
 import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
-import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
+import {
+  Canvas,
+  useFrame,
+  useThree,
+  type RootState,
+  type ThreeEvent,
+} from "@react-three/fiber";
 import { EffectComposer, SSAO } from "@react-three/postprocessing";
 import { RotateCcw } from "lucide-react";
-import { NeutralToneMapping } from "three";
+import { NeutralToneMapping, Vector3 } from "three";
 import {
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -22,9 +34,11 @@ import type { Insets } from "../layout";
 import type { QualitySettings } from "../quality";
 import type { WarningTone } from "../labels";
 import { SCENE_COLORS } from "../scene-colors";
+import type { ScreenBox } from "../SelectionToolbar";
 import { FurnitureMesh } from "./furniture-mesh";
-import { m } from "./geometry";
+import { m, planToWorld } from "./geometry";
 import { RoomShell } from "./room-shell";
+import { useFurnitureDrag } from "./use-furniture-drag";
 
 type OrbitControlsImpl = ComponentRef<typeof OrbitControls>;
 
@@ -36,7 +50,15 @@ export type Room3DProps = {
   /** 캔버스 위 패널에 가려진 영역 px - 맞춤·버튼이 비켜감 */
   insets: Insets;
   onSelect: (id: string | null) => void;
+  /** 선택된 가구가 화면에서 차지하는 영역 - 시점이 바뀌어도 따라감, 선택이 없으면 null */
+  onSelectionBox: (box: ScreenBox | null, canvas: ScreenSize) => void;
+  /** 끌기는 시작·이동·끝 - 이동 위치는 평면 cm 정수 */
+  onDragStart: () => void;
+  onDragMove: (id: string, position: Vec2) => void;
+  onDragEnd: () => void;
 };
+
+export type ScreenSize = { width: number; height: number };
 
 /** 끌기로 판단하는 포인터 이동 거리 px - 회전 후 놓을 때 선택이 바뀌지 않게 */
 const DRAG_THRESHOLD = 4;
@@ -55,9 +77,11 @@ function sunPosition(room: Room): [number, number, number] {
   const { start, u } = wallFrame(room, opening.wall);
   const mid = opening.offset + opening.width / 2;
   // 방 가운데 원점 기준, 창문 바깥쪽 위
-  const x = m(start.x + u.x * mid - room.width / 2) + u.y * reach;
-  const z = m(start.y + u.y * mid - room.depth / 2) - u.x * reach;
-  return [x, reach * 1.2, z];
+  const [wx, wz] = planToWorld(room, {
+    x: start.x + u.x * mid,
+    y: start.y + u.y * mid,
+  });
+  return [wx + u.y * reach, reach * 1.2, wz - u.x * reach];
 }
 
 const SUN_COLOR = "#FFF3E0";
@@ -78,7 +102,13 @@ const REFLECTIONS = (
   </Environment>
 );
 
-function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
+const Lights = memo(function Lights({
+  room,
+  shadows,
+}: {
+  room: Room;
+  shadows: boolean;
+}) {
   const sun = sunPosition(room);
   const half = m(Math.max(room.width, room.depth)) * 0.75;
   return (
@@ -107,7 +137,7 @@ function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
       />
     </>
   );
-}
+});
 
 type CameraRigProps = {
   room: Room;
@@ -180,19 +210,134 @@ function CameraRig({ room, controls, resetKey, insets }: CameraRigProps) {
   return null;
 }
 
+const NO_FURNITURE: Room["furniture"] = [];
+
+/**
+ * 벽·바닥·조명용 방 - 가구만 바뀌는 끌기 중에는 같은 객체를 돌려줘 다시 그리지 않음
+ * 가구 목록은 비움, 벽·조명은 가구를 쓰지 않음
+ */
+function useShellRoom(room: Room): Room {
+  return useMemo(
+    () => ({ ...room, furniture: NO_FURNITURE }),
+    // 가구 외 필드만 비교
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      room.name,
+      room.width,
+      room.depth,
+      room.height,
+      room.floorMaterial,
+      room.wallMaterial,
+      room.openings,
+    ],
+  );
+}
+
+/** 선택된 가구 상자의 화면 영역을 알림 - 매 프레임 투영, 1px 넘게 바뀔 때만 */
+function SelectionAnchor({
+  room,
+  selectedId,
+  onSelectionBox,
+}: {
+  room: Room;
+  selectedId: string | null;
+  onSelectionBox: Room3DProps["onSelectionBox"];
+}) {
+  const last = useRef<{ box: ScreenBox | null; w: number; h: number }>({
+    box: null,
+    w: 0,
+    h: 0,
+  });
+  const corner = useMemo(() => new Vector3(), []);
+  const furniture = selectedId
+    ? room.furniture.find((f) => f.id === selectedId)
+    : undefined;
+  useFrame(({ camera, size }) => {
+    let box: ScreenBox | null = null;
+    if (furniture) {
+      camera.updateMatrixWorld();
+      box = {
+        minX: Infinity,
+        maxX: -Infinity,
+        minY: Infinity,
+        maxY: -Infinity,
+      };
+      for (const p of furnitureCorners(furniture)) {
+        for (const y of [0, furniture.size.height]) {
+          const [wx, wz] = planToWorld(room, p);
+          corner.set(wx, m(y), wz);
+          // 카메라 뒤 꼭짓점이 있으면 투영이 뒤집혀 상자가 틀어짐 - 툴바 숨김
+          if (corner.clone().applyMatrix4(camera.matrixWorldInverse).z >= 0) {
+            box = null;
+            break;
+          }
+          corner.project(camera);
+          const x = ((corner.x + 1) / 2) * size.width;
+          const sy = ((1 - corner.y) / 2) * size.height;
+          box.minX = Math.min(box.minX, x);
+          box.maxX = Math.max(box.maxX, x);
+          box.minY = Math.min(box.minY, sy);
+          box.maxY = Math.max(box.maxY, sy);
+        }
+        if (!box) break;
+      }
+    }
+    const prev = last.current;
+    const same =
+      prev.w === size.width &&
+      prev.h === size.height &&
+      (prev.box === box ||
+        (prev.box &&
+          box &&
+          Math.abs(prev.box.minX - box.minX) < 1 &&
+          Math.abs(prev.box.maxX - box.maxX) < 1 &&
+          Math.abs(prev.box.minY - box.minY) < 1 &&
+          Math.abs(prev.box.maxY - box.maxY) < 1));
+    if (same) return;
+    last.current = { box, w: size.width, h: size.height };
+    onSelectionBox(box, size);
+  });
+  return null;
+}
+
 /**
  * 3D 방 보기 - 클라이언트 전용, next/dynamic ssr false로 불러올 것
  * 가구 크기는 배치 가구의 size, 프리셋에 없으면 기본 상자
  */
-export default function Room3D({
+function Room3D({
   room,
   selectedId,
   warningTones,
   quality,
   insets,
   onSelect,
+  onSelectionBox,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
 }: Room3DProps) {
   const controls = useRef<OrbitControlsImpl>(null);
+  const three = useRef<RootState | null>(null);
+  const roomRef = useRef(room);
+  const selectedRef = useRef(selectedId);
+  useEffect(() => {
+    roomRef.current = room;
+    selectedRef.current = selectedId;
+  });
+  const handleFurniturePointerDown = useFurnitureDrag({
+    three,
+    controls,
+    read: () => ({
+      selectedId: selectedRef.current,
+      room: roomRef.current,
+      position: (id) =>
+        roomRef.current.furniture.find((f) => f.id === id)?.position,
+    }),
+    onSelect,
+    onDragStart,
+    onDragMove,
+    onDragEnd,
+  });
   const [resetKey, reset] = useReducer((n: number) => n + 1, 0);
 
   const handleFurnitureClick = useCallback(
@@ -210,6 +355,9 @@ export default function Room3D({
     [onSelect],
   );
 
+  const shellRoom = useShellRoom(room);
+  // 가구·벽은 방 평면 좌표 그대로 그리므로 왼쪽 위 모서리를 월드에 맞춤
+  const origin = planToWorld(room, { x: 0, y: 0 });
   const initialIds = useInitialIds(room.furniture.map((f) => f.id));
   // 고해상도를 끈 저사양에서는 3D 움직임 생략
   const [reducedMotion] = useState(prefersReducedMotion);
@@ -236,15 +384,18 @@ export default function Room3D({
         dpr={quality.hiDpi ? [1, 2] : 1}
         shadows={quality.shadows && "percentage"}
         camera={{ fov: FOV, near: 0.05, far: 100 }}
+        onCreated={(state) => {
+          three.current = state;
+        }}
         onPointerMissed={(e) => {
           if (e.type === "click") onSelect(null);
         }}
       >
-        <Lights room={room} shadows={quality.shadows} />
+        <Lights room={shellRoom} shadows={quality.shadows} />
         {REFLECTIONS}
-        <group position={[-m(room.width) / 2, 0, -m(room.depth) / 2]}>
+        <group position={[origin[0], 0, origin[1]]}>
           <RoomShell
-            room={room}
+            room={shellRoom}
             hiRes={quality.hiDpi}
             onClick={handleEmptyClick}
           />
@@ -259,6 +410,7 @@ export default function Room3D({
               animate={animate}
               enter={!initialIds.has(f.id)}
               onClick={handleFurnitureClick}
+              onPointerDown={handleFurniturePointerDown}
             />
           ))}
         </group>
@@ -272,6 +424,11 @@ export default function Room3D({
           maxDistance={
             Math.hypot(m(room.width), m(room.depth), m(room.height)) * 3
           }
+        />
+        <SelectionAnchor
+          room={room}
+          selectedId={selectedId}
+          onSelectionBox={onSelectionBox}
         />
         <CameraRig
           room={room}
@@ -298,3 +455,5 @@ export default function Room3D({
     </div>
   );
 }
+
+export default memo(Room3D);

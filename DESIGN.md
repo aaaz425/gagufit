@@ -172,7 +172,7 @@ shadow:
 
 - 폭 핸들은 화면 회전 반영 - 벽이 가로면 `ew-resize`, 세로면 `ns-resize`, 대각선이면 `nwse`·`nesw`
 - 핀치·휠은 커서 변화 없음
-- 3D - 선택 가능한 가구 위 `pointer`, 빈 곳은 기본
+- 3D - 선택 안 된 가구 위 `pointer`, 선택된 가구 위 `grab`, 끄는 중 `grabbing`, 빈 곳은 기본
 
 ## 움직임
 
