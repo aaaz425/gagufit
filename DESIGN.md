@@ -133,6 +133,7 @@ shadow:
 - 설정 행 - 라벨·설명 + 오른쪽 토글·값·화살표, `border` 구분
 - 메뉴 - `canvas` + `border` + `floating`, 항목 40px, 삭제만 `danger`
 - 토스트 - `ink` 바탕 흰 글자 + `primary-inverse` 동작, 화면 아래 가운데
+  - 안내용은 동작 없이 문구만(길게 누르기 안내)
 - 확인 모달 - 제목에 대상 이름, 결과 한 줄, 오른쪽 취소·확인, 지우기는 `danger`
 - 패널 - 데스크톱 좌·우 고정, `canvas` 배경, `border` 구분
   - 왼쪽 패널 접기·펼치기 - 오른쪽 위 가장자리에 붙은 얇은 손잡이 탭(보이는 폭 20·높이 44, 오른쪽만 `md` 모서리, `scene-furniture` 배경 + `scene-furniture-line` 외곽선 + `ink` chevron 16px, `raised`), hover는 `scene-furniture-soft` 배경, 누르는 영역은 44px, 열림·닫힘에 chevron 회전
