@@ -69,8 +69,8 @@ export function SelectionToolbar({
     >
       {kind === "furniture" && (
         <>
-          <ToolButton label="90° 회전" onClick={rotateSelected90}>
-            <RotateCw size={18} className="text-ink" />
+          <ToolButton label="90° 회전" onClick={rotateSelected90} tonal>
+            <RotateCw size={18} className="text-primary" />
           </ToolButton>
           <ToolButton label="복제" onClick={duplicateSelected}>
             <Copy size={18} className="text-ink" />
@@ -87,10 +87,12 @@ export function SelectionToolbar({
 function ToolButton({
   label,
   onClick,
+  tonal,
   children,
 }: {
   label: string;
   onClick: () => void;
+  tonal?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -99,7 +101,7 @@ function ToolButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="flex size-11 items-center justify-center rounded-full hover:bg-surface"
+      className={`flex size-11 items-center justify-center rounded-full ${tonal ? "bg-primary-soft" : "hover:bg-surface"}`}
     >
       {children}
     </button>
