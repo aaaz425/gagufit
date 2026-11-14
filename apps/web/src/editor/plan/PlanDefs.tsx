@@ -131,9 +131,9 @@ const TEXTURES: Record<
     ),
   },
   fabric: {
-    size: [8, 8],
+    size: [6, 6],
     minScale: 0.6,
-    draw: (w) => <circle cx={4} cy={4} r={w * 0.7} fill="currentColor" />,
+    draw: () => <path d="M0 3H6M3 0V6" />,
   },
 };
 

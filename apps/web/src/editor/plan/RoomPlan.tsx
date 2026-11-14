@@ -14,7 +14,7 @@ import { useInitialIds } from "@/motion";
 import type { WarningTone } from "../labels";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
-import { FurnitureSymbol } from "./FurnitureSymbol";
+import { FurnitureSymbol, SymbolDefs } from "./FurnitureSymbol";
 import { PlanFloor, TextureDefs } from "./PlanDefs";
 import type { PlanTexture } from "./texture";
 
@@ -24,6 +24,11 @@ import type { PlanTexture } from "./texture";
 export const WALL_PX = 8;
 /** 가구 그림자 화면 오프셋 px - 빛은 왼쪽 위, 화면을 돌려도 고정 */
 const SHADOW_PX = { x: 3, y: 4 };
+/** 그림자 품질 켬 - 길이는 높이 비례(cm), 방향은 같은 화면 방향 */
+const SHADOW_DIR = { x: 0.6, y: 0.8 };
+const SHADOW_PER_HEIGHT = 0.1;
+const SHADOW_MAX = 14;
+const SHADOW_BLUR_PX = 4;
 
 const px = { vectorEffect: "non-scaling-stroke" } as const;
 const tint = (color: string, percent: number) =>
@@ -53,11 +58,14 @@ export function RoomPlan({
   selection,
   warned,
   angle = 0,
+  rich = false,
 }: {
   room: Room;
   scale: number;
   /** 화면 회전(도) - 그림자 방향 고정용 */
   angle?: number;
+  /** 그림자 품질 켬 - 높이 비례 블러 그림자·부품 그림자 */
+  rich?: boolean;
   selection: Selection;
   warned: ReadonlyMap<string, WarningTone>;
 }) {
@@ -79,34 +87,61 @@ export function RoomPlan({
       enter={!initialIds.has(f.id)}
       scale={scale}
       scope={scope}
+      rich={rich}
     />
   );
   const rad = (-angle * Math.PI) / 180;
-  const off = {
-    x: (SHADOW_PX.x * Math.cos(rad) - SHADOW_PX.y * Math.sin(rad)) / scale,
-    y: (SHADOW_PX.x * Math.sin(rad) + SHADOW_PX.y * Math.cos(rad)) / scale,
+  const turn = (v: Vec2, k: number): Vec2 => ({
+    x: (v.x * Math.cos(rad) - v.y * Math.sin(rad)) * k,
+    y: (v.x * Math.sin(rad) + v.y * Math.cos(rad)) * k,
+  });
+  const shadow = (f: PlacedFurniture) => {
+    const off = rich
+      ? turn(
+          SHADOW_DIR,
+          Math.min(f.size.height * SHADOW_PER_HEIGHT, SHADOW_MAX),
+        )
+      : turn(SHADOW_PX, 1 / scale);
+    return (
+      <rect
+        key={f.id}
+        width={f.size.width}
+        height={f.size.depth}
+        rx={4}
+        fill="var(--color-scene-wall)"
+        opacity={rich ? 0.2 : 0.16}
+        filter={rich ? `url(#${scope}-sh)` : undefined}
+        transform={furnitureTransform(
+          { ...f, position: add(f.position, off) },
+          f.size.width,
+          f.size.depth,
+        )}
+        pointerEvents="none"
+      />
+    );
   };
-  const shadow = (f: PlacedFurniture) => (
-    <rect
-      key={f.id}
-      width={f.size.width}
-      height={f.size.depth}
-      rx={4}
-      fill="var(--color-scene-wall)"
-      opacity={0.16}
-      transform={furnitureTransform(
-        { ...f, position: add(f.position, off) },
-        f.size.width,
-        f.size.depth,
-      )}
-      pointerEvents="none"
-    />
-  );
   const selectedOpening =
     selection?.kind === "opening" ? selection.id : undefined;
 
   return (
     <>
+      <defs>
+        <clipPath id={`${scope}-room`}>
+          <rect width={room.width} height={room.depth} />
+        </clipPath>
+        {rich && (
+          <filter
+            id={`${scope}-sh`}
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%"
+          >
+            <feGaussianBlur stdDeviation={SHADOW_BLUR_PX / scale} />
+          </filter>
+        )}
+      </defs>
+      <SymbolDefs scope={scope} rich={rich} />
       <TextureDefs scale={scale} scope={scope} />
       <PlanFloor room={room} scale={scale} scope={scope} />
       <rect
@@ -129,7 +164,10 @@ export function RoomPlan({
           selected={o.id === selectedOpening}
         />
       ))}
-      {room.furniture.filter((f) => !isRug(f) && !isHollow(f)).map(shadow)}
+      {/* 그림자는 방 안으로만 */}
+      <g clipPath={`url(#${scope}-room)`}>
+        {room.furniture.filter((f) => !isRug(f) && !isHollow(f)).map(shadow)}
+      </g>
       {room.furniture.filter((f) => !isRug(f)).map(shape)}
     </>
   );
@@ -142,6 +180,7 @@ function FurnitureShape({
   enter,
   scale,
   scope,
+  rich,
 }: {
   furniture: PlacedFurniture;
   warned: WarningTone | undefined;
@@ -150,6 +189,7 @@ function FurnitureShape({
   enter: boolean;
   scale: number;
   scope: string;
+  rich: boolean;
 }) {
   const preset = FURNITURE_PRESETS[f.presetId];
   const { width: w, depth: d } = f.size;
@@ -167,6 +207,8 @@ function FurnitureShape({
           size={f.size}
           color={FURNITURE_COLORS[f.color].hex}
           texture={textureOf(preset?.material, scope)}
+          scope={scope}
+          rich={rich}
         />
         {warned === "danger" && (
           <rect
