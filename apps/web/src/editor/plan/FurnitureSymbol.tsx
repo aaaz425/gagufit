@@ -4,7 +4,7 @@ import type { TextureRef } from "./texture";
 import { symbolPalette, type SymbolPalette } from "./symbol-palette";
 
 // 가구 평면 기호 - (0,0)~(w,d) cm, 위쪽이 등·벽 쪽, 선 굵기는 화면 px
-// 빛은 왼쪽 위 - 하이라이트·명암은 몸체 색 위 반투명 겹침만, rich일 때만 부품 그림자(블러)
+// 빛은 왼쪽 위
 
 /** 몸체 모서리 */
 const R = 4;
@@ -39,9 +39,9 @@ function Rect(props: {
 }
 
 type Ctx = {
-  /** SVG id 접두 */
-  u: string;
-  /** 블러 그림자 사용 - 품질 설정 */
+  /** SymbolDefs와 같은 scope */
+  scope: string;
+  /** 부품 블러 그림자 - 품질 설정 */
   rich: boolean;
 };
 
@@ -78,14 +78,14 @@ function Part(props: {
           rx={r}
           fill={SHADOW}
           opacity={0.28}
-          filter={`url(#${c.u}b)`}
+          filter={`url(#${c.scope}-b)`}
         />
       )}
       <Rect x={x} y={y} w={w} h={h} r={r} fill={fill} />
       {props.textured && p.texture && (
         <Rect x={x} y={y} w={w} h={h} r={r} fill={p.texture} />
       )}
-      <Rect x={x} y={y} w={w} h={h} r={r} fill={`url(#${c.u}s)`} />
+      <Rect x={x} y={y} w={w} h={h} r={r} fill={`url(#${c.scope}-s)`} />
       <rect
         x={x}
         y={y}
@@ -138,15 +138,7 @@ const DECOR: Record<
     return (
       <>
         {body(b, p, c)}
-        <Part
-          c={c}
-          p={p}
-          y={blanket}
-          w={b.w}
-          h={b.d - blanket}
-          fill={p.soft}
-          z={1.5}
-        />
+        <Part c={c} p={p} y={blanket} w={b.w} h={b.d - blanket} fill={p.soft} />
         <Part c={c} p={p} w={b.w} h={head} fill={p.line} />
         {Array.from({ length: pillows }, (_, i) => (
           <Part
@@ -253,18 +245,9 @@ const DECOR: Record<
     return (
       <>
         {body(b, p, c)}
-        <Part c={c} p={p} w={b.w} h={back} r={rr} fill={p.soft} z={2} />
-        <Part c={c} p={p} w={arm} h={b.d} r={rr} fill={p.soft} z={2} />
-        <Part
-          c={c}
-          p={p}
-          x={b.w - arm}
-          w={arm}
-          h={b.d}
-          r={rr}
-          fill={p.soft}
-          z={2}
-        />
+        <Part c={c} p={p} w={b.w} h={back} r={rr} fill={p.soft} />
+        <Part c={c} p={p} w={arm} h={b.d} r={rr} fill={p.soft} />
+        <Part c={c} p={p} x={b.w - arm} w={arm} h={b.d} r={rr} fill={p.soft} />
         {Array.from({ length: seats }, (_, i) => (
           <Part
             key={i}
@@ -513,12 +496,37 @@ const DECOR: Record<
   etc: (b, p, c) => body(b, p, c),
 };
 
+/** 입체 표현 공용 gradient·filter - 도면(방)·썸네일 svg마다 한 번만 */
+export function SymbolDefs({
+  scope,
+  rich = false,
+}: {
+  scope: string;
+  rich?: boolean;
+}) {
+  return (
+    <defs>
+      <linearGradient id={`${scope}-s`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#fff" stopOpacity={0.38} />
+        <stop offset="0.5" stopColor="#fff" stopOpacity={0} />
+        <stop offset="1" style={{ stopColor: SHADOW }} stopOpacity={0.14} />
+      </linearGradient>
+      {rich && (
+        <filter id={`${scope}-b`} x="-30%" y="-30%" width="160%" height="170%">
+          <feGaussianBlur stdDeviation={1.4} />
+        </filter>
+      )}
+    </defs>
+  );
+}
+
 /** 프리셋이 없으면 기타 모양 */
 export function FurnitureSymbol({
   category = "etc",
   size,
   color,
   texture,
+  scope,
   rich = false,
 }: {
   category?: FurnitureCategory;
@@ -526,30 +534,15 @@ export function FurnitureSymbol({
   /** 고른 색 hex, 없으면 기본 베이지 */
   color?: string;
   texture?: TextureRef;
-  /** 부품 그림자(블러) - 편집기 그림자 품질 설정 */
+  /** 같은 svg의 SymbolDefs scope */
+  scope: string;
+  /** 부품 그림자 - 편집기 그림자 품질 설정 */
   rich?: boolean;
 }) {
-  const u = useId().replace(/[^a-z0-9]/gi, "");
-  return (
-    <>
-      <defs>
-        <linearGradient id={`${u}s`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity={0.38} />
-          <stop offset="0.5" stopColor="#fff" stopOpacity={0} />
-          <stop offset="1" style={{ stopColor: SHADOW }} stopOpacity={0.14} />
-        </linearGradient>
-        {rich && (
-          <filter id={`${u}b`} x="-30%" y="-30%" width="160%" height="170%">
-            <feGaussianBlur stdDeviation={1.4} />
-          </filter>
-        )}
-      </defs>
-      {DECOR[category](
-        { w: size.width, d: size.depth },
-        symbolPalette(color, texture),
-        { u, rich },
-      )}
-    </>
+  return DECOR[category](
+    { w: size.width, d: size.depth },
+    symbolPalette(color, texture),
+    { scope, rich },
   );
 }
 
@@ -566,6 +559,7 @@ export function FurnitureThumb({
   px?: number;
 }) {
   const { width, depth } = size;
+  const scope = useId();
   const pad = Math.max(width, depth) * 0.12;
   return (
     <span
@@ -578,7 +572,13 @@ export function FurnitureThumb({
         height={px}
         aria-hidden
       >
-        <FurnitureSymbol category={category} size={size} color={color} />
+        <SymbolDefs scope={scope} />
+        <FurnitureSymbol
+          category={category}
+          size={size}
+          color={color}
+          scope={scope}
+        />
       </svg>
     </span>
   );

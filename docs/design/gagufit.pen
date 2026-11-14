@@ -19952,17 +19952,7 @@
                       "name": "이불",
                       "fill": "$scene-furniture-soft",
                       "width": 120,
-                      "height": 116,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 116
                     },
                     {
                       "type": "rectangle",
@@ -19978,17 +19968,7 @@
                       "name": "머리판",
                       "fill": "$scene-furniture-line",
                       "width": 120,
-                      "height": 8,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 8
                     },
                     {
                       "type": "rectangle",
@@ -20306,17 +20286,7 @@
                       "height": 9,
                       "stroke": "$scene-furniture-line",
                       "strokeWidth": 1,
-                      "strokeLinejoin": "round",
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "strokeLinejoin": "round"
                     },
                     {
                       "type": "rectangle",
@@ -20413,17 +20383,7 @@
                       "name": "등받이",
                       "fill": "$scene-furniture-line",
                       "width": 144,
-                      "height": 18,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 18
                     },
                     {
                       "type": "rectangle",
@@ -20434,17 +20394,7 @@
                       "name": "팔걸이",
                       "fill": "$scene-furniture-line",
                       "width": 14,
-                      "height": 68,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 68
                     },
                     {
                       "type": "rectangle",
@@ -20455,17 +20405,7 @@
                       "name": "팔걸이",
                       "fill": "$scene-furniture-line",
                       "width": 14,
-                      "height": 68,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 68
                     },
                     {
                       "type": "rectangle",
@@ -21271,17 +21211,7 @@
                       "name": "TV",
                       "fill": "$scene-wall",
                       "width": 72,
-                      "height": 5,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 5
                     },
                     {
                       "type": "rectangle",
@@ -21497,17 +21427,7 @@
                       "name": "거울",
                       "fill": "#BFD9E6",
                       "width": 44,
-                      "height": 4,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 4
                     },
                     {
                       "type": "rectangle",
@@ -21726,17 +21646,7 @@
                       "name": "조작부",
                       "fill": "$scene-furniture-line",
                       "width": 48,
-                      "height": 9,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "height": 9
                     },
                     {
                       "type": "ellipse",
@@ -21748,17 +21658,7 @@
                       "width": 28,
                       "height": 28,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 2,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#3D3A3640",
-                        "offset": {
-                          "x": 1,
-                          "y": 1.5
-                        },
-                        "blur": 2
-                      }
+                      "strokeWidth": 2
                     },
                     {
                       "type": "ellipse",

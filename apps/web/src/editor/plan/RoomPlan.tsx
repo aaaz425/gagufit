@@ -14,7 +14,7 @@ import { useInitialIds } from "@/motion";
 import type { WarningTone } from "../labels";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
-import { FurnitureSymbol } from "./FurnitureSymbol";
+import { FurnitureSymbol, SymbolDefs } from "./FurnitureSymbol";
 import { PlanFloor, TextureDefs } from "./PlanDefs";
 import type { PlanTexture } from "./texture";
 
@@ -64,7 +64,7 @@ export function RoomPlan({
   scale: number;
   /** 화면 회전(도) - 그림자 방향 고정용 */
   angle?: number;
-  /** 그림자 품질 켬 - 높이 비례 블러 그림자·부품 그림자·린넨 짜임 */
+  /** 그림자 품질 켬 - 높이 비례 블러 그림자·부품 그림자 */
   rich?: boolean;
   selection: Selection;
   warned: ReadonlyMap<string, WarningTone>;
@@ -141,7 +141,8 @@ export function RoomPlan({
           </filter>
         )}
       </defs>
-      <TextureDefs scale={scale} scope={scope} rich={rich} />
+      <SymbolDefs scope={scope} rich={rich} />
+      <TextureDefs scale={scale} scope={scope} />
       <PlanFloor room={room} scale={scale} scope={scope} />
       <rect
         x={-wall / 2}
@@ -206,6 +207,7 @@ function FurnitureShape({
           size={f.size}
           color={FURNITURE_COLORS[f.color].hex}
           texture={textureOf(preset?.material, scope)}
+          scope={scope}
           rich={rich}
         />
         {warned === "danger" && (
