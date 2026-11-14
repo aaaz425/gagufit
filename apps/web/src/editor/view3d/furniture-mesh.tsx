@@ -277,6 +277,7 @@ type Props = {
   /** 추가 직후라 등장 효과 */
   enter: boolean;
   onClick: (e: ThreeEvent<MouseEvent>, id: string) => void;
+  onPointerDown: (e: ThreeEvent<PointerEvent>, id: string) => void;
 };
 
 export const FurnitureMesh = memo(function FurnitureMesh({
@@ -288,6 +289,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   animate,
   enter,
   onClick,
+  onPointerDown,
 }: Props) {
   const groupRef = useScaleIn(animate && enter);
   const look = preset ?? FALLBACK_LOOK;
@@ -340,6 +342,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
       position={[m(furniture.position.x), 0, m(furniture.position.y)]}
       rotation-y={rad(furniture.rotation)}
       onClick={(e) => onClick(e, furniture.id)}
+      onPointerDown={(e) => onPointerDown(e, furniture.id)}
       onPointerOver={(e) => {
         e.stopPropagation();
         setHovered(true);
