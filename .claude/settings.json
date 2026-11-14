@@ -16,6 +16,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git fetch:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
       "Bash(git switch:*)",
       "Bash(git merge:*)",
       "Bash(git worktree:*)",
@@ -24,8 +26,6 @@
       "Bash(supabase db reset)"
     ],
     "ask": [
-      "Bash(gh pr create:*)",
-      "Bash(git push:*)",
       "Bash(supabase db push:*)",
       "Bash(supabase link:*)"
     ],
