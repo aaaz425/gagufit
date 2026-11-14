@@ -27,6 +27,8 @@ import {
   CATEGORY_LABELS,
   OPENING_LABELS,
   wallLabel,
+  WARNING_TONE,
+  type WarningTone,
   warningText,
 } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
@@ -90,11 +92,16 @@ function Header({
   );
 }
 
-function Warnings({ texts }: { texts: string[] }) {
-  return texts.map((text) => (
+const WARNING_STYLE: Record<WarningTone, string> = {
+  danger: "bg-danger-soft text-danger",
+  caution: "bg-caution-soft text-caution",
+};
+
+function Warnings({ items }: { items: { text: string; tone: WarningTone }[] }) {
+  return items.map(({ text, tone }) => (
     <p
       key={text}
-      className="flex items-center gap-2 rounded-sm bg-danger-soft p-3 text-sm font-medium text-danger"
+      className={`flex items-center gap-2 rounded-sm p-3 text-sm font-medium ${WARNING_STYLE[tone]}`}
     >
       <TriangleAlert size={16} className="shrink-0" aria-hidden />
       {text}
@@ -148,7 +155,10 @@ function FurnitureProps({
         ? w.furnitureIds.includes(f.id)
         : w.furnitureId === f.id,
     )
-    .map((w) => warningText(room, w, f.id));
+    .map((w) => ({
+      text: warningText(room, w, f.id),
+      tone: WARNING_TONE[w.type],
+    }));
 
   return (
     <div className="flex flex-col gap-4">
@@ -222,7 +232,7 @@ function FurnitureProps({
       </div>
       <SectionTitle>색</SectionTitle>
       <ColorPicker value={f.color} onChange={(color) => set({ color })} />
-      <Warnings texts={warnings} />
+      <Warnings items={warnings} />
       {showActions && <Actions furniture />}
     </div>
   );
@@ -287,7 +297,10 @@ function OpeningProps({
   const { length } = wallFrame(room, o.wall);
   const blockers = warningsOf(room)
     .filter((w) => w.type === "doorBlocked" && w.openingId === o.id)
-    .map((w) => warningText(room, w, ""));
+    .map((w) => ({
+      text: warningText(room, w, ""),
+      tone: WARNING_TONE[w.type],
+    }));
 
   return (
     <div className="flex flex-col gap-4">
@@ -385,7 +398,7 @@ function OpeningProps({
           />
         </>
       )}
-      <Warnings texts={blockers} />
+      <Warnings items={blockers} />
       {showActions && <Actions furniture={false} />}
     </div>
   );

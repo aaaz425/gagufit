@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback } from "react";
 import { canvasInsets } from "./layout";
 import { useQualitySettings } from "./quality";
-import { useEditor, useRoom, warnedFurnitureIds } from "./store";
+import { useEditor, useRoom, warnedFurnitureTones } from "./store";
 
 const Room3D = dynamic(() => import("./view3d/Room3D"), {
   ssr: false,
@@ -35,7 +35,7 @@ export function View3D({ compact }: { compact: boolean }) {
       <Room3D
         room={room}
         selectedId={selection?.kind === "furniture" ? selection.id : null}
-        warningIds={warnedFurnitureIds(room)}
+        warningTones={warnedFurnitureTones(room)}
         quality={quality}
         insets={canvasInsets({
           desktop: !compact,

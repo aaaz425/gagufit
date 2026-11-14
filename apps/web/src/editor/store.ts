@@ -11,6 +11,7 @@ import {
   FURNITURE_PRESETS,
 } from "@gagufit/data";
 import { create } from "zustand";
+import { WARNING_TONE, type WarningTone } from "./labels";
 
 export type Selection = { kind: "furniture" | "opening"; id: string } | null;
 
@@ -170,18 +171,24 @@ export function warningsOf(room: Room): Warning[] {
   return warnings;
 }
 
-const warnedIdsCache = new WeakMap<Room, ReadonlySet<string>>();
+const warnedTonesCache = new WeakMap<Room, ReadonlyMap<string, WarningTone>>();
 
-/** 경고에 걸린 가구 id */
-export function warnedFurnitureIds(room: Room): ReadonlySet<string> {
-  let ids = warnedIdsCache.get(room);
-  if (!ids) {
-    ids = new Set(
-      warningsOf(room).flatMap((w) =>
-        w.type === "overlap" ? w.furnitureIds : [w.furnitureId],
-      ),
-    );
-    warnedIdsCache.set(room, ids);
+/** 경고에 걸린 가구 id → 가장 강한 경고 */
+export function warnedFurnitureTones(
+  room: Room,
+): ReadonlyMap<string, WarningTone> {
+  let tones = warnedTonesCache.get(room);
+  if (!tones) {
+    const map = new Map<string, WarningTone>();
+    for (const w of warningsOf(room)) {
+      const tone = WARNING_TONE[w.type];
+      const ids = w.type === "overlap" ? w.furnitureIds : [w.furnitureId];
+      for (const id of ids) {
+        if (map.get(id) !== "danger") map.set(id, tone);
+      }
+    }
+    tones = map;
+    warnedTonesCache.set(room, tones);
   }
-  return ids;
+  return tones;
 }

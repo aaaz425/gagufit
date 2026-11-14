@@ -15,6 +15,8 @@ colors:
   border: "#E9E5DF"
   danger: "#C8343A"
   danger-soft: "#FCEBEC"
+  caution: "#A8500A"
+  caution-soft: "#FEF1E3"
   scene-floor: "#F1E8DA"
   scene-wall: "#3D3A36"
   scene-furniture: "#D4C3AA"
@@ -79,6 +81,7 @@ shadow:
 - `canvas` 기본 배경, `surface` 패널·카드 영역 구분, `border` 구분선
 - `danger` - 겹침·벽 밖 이탈 경고, 삭제
   - 경고 외의 장식에 빨간 계열 금지 - 경고가 묻힘
+- `caution` - 약한 경고(가구 앞쪽 막힘), 흰 바탕 5.5:1·`caution-soft` 위 5.0:1
 - `scene-*` - 2D 탑뷰·3D 씬 기본색
   - 3D는 three.js 재질에 같은 값 사용 - 웹 코드 상수로 공유
 - 대비 - 본문·버튼 글자 4.5:1 이상, `primary` 위 흰 글자 5.1:1
@@ -129,7 +132,7 @@ shadow:
 - 세그먼트 - 2D·3D 전환, `surface` 바탕에 선택 항목 `primary-soft` + `primary` 굵은 글자(칩 on과 동일), 칸 너비 같고 선택 표시는 `base` 200ms `ease-enter`로 옮겨 미끄러짐, 2D·3D는 전체가 버튼 하나인 토글(어느 쪽을 눌러도 반대로)
 - 선택 툴바 - 선택한 가구 위 떠 있는 `full` 모양, 44px 아이콘 버튼 묶음, 90° 회전 `primary-soft` 배경 + `primary` 아이콘, 삭제만 `danger`
 - 가구 항목 - 썸네일 + 이름 + 치수 + `primary` circle-plus
-- 경고 안내 - 속성 패널 안, `danger-soft` 배경 + 이유 한 줄
+- 경고 안내 - 속성 패널 안, `danger-soft`(약한 경고는 `caution-soft`) 배경 + 이유 한 줄
 - 설정 행 - 라벨·설명 + 오른쪽 토글·값·화살표, `border` 구분
 - 메뉴 - `canvas` + `border` + `floating`, 항목 40px, 삭제만 `danger`
 - 토스트 - `ink` 바탕 흰 글자 + `primary-inverse` 동작, 화면 아래 가운데
@@ -142,7 +145,7 @@ shadow:
   - 탭 옆 접기 버튼은 두지 않음
 - 바텀시트 - 모바일 패널, 손잡이 표시, 위로 끌어 확장
 - 모달 - 템플릿 선택, 모바일은 전체 화면
-- 경고 배지 - 상단 바 경고 개수, `danger-soft` 배경 `danger` 글자
+- 경고 배지 - 상단 바 경고 개수, `danger-soft` 배경 `danger` 글자(약한 경고만이면 `caution-soft`·`caution`)
 - 토글 - 켜짐 `primary`, 꺼짐 `border`
 
 ## 상호작용 상태
@@ -198,6 +201,7 @@ shadow:
 - 선택 - `primary` 바깥 외곽선 3px + `selection` 4px 번짐 + 회전 핸들
   - 크림색 가구 위에서도 보이게 하는 보완, 두께 줄이지 않기
 - 경고 - `danger` 외곽선 2px + `danger` 28% 덧칠(몸체 색 유지), 선택과 겹치면 경고 우선
+  - 약한 경고 - `caution` 점선 외곽선 2px, 덧칠 없음, 강한 경고가 있으면 그쪽 우선
 - 드래그 중 - 벽까지 거리 치수 가이드, `ink-muted` 가는 선 + caption 숫자
 - 품질 끄기 - 그림자·후처리 없이도 가구 구분되게 외곽선 유지
 - 바닥 패턴 - 재질별 옅은 선·점(마루 널 15cm, 타일 줄눈 60·30cm, 장판·카펫 점), 줄 불투명도 16% 이하
@@ -238,7 +242,7 @@ shadow:
 - 가구 윤곽선 - 품질 설정과 무관하게 항상 얇은 `ink-muted` 색 선, 꺼도 가구끼리·바닥과 구분
 - 방 마감 - 걸레받이(문 자리 제외), 창문 틀·유리·턱, 문 틀·문짝·손잡이
 - 품질 끄기 - 고해상도 끄면 DPR 1·텍스처 512px, 그림자·후처리 없음
-- 선택 - `primary` 외곽선 화면 3px(경고면 `danger`) + 가구 발자국 둘레 바닥에 `primary` 테두리 4cm·옅은 번짐 8cm, 바닥 표시는 다른 가구 아래로 들어가면 가려짐, 러그는 바닥 표시만
+- 선택 - `primary` 외곽선 화면 3px(경고면 `danger`·`caution`) + 가구 발자국 둘레 바닥에 `primary` 테두리 4cm·옅은 번짐 8cm, 바닥 표시는 다른 가구 아래로 들어가면 가려짐, 러그는 바닥 표시만
 - 문 열림 영역 - 바닥에 부채꼴 표시, 2D와 같은 색
 
 ## 재질·색

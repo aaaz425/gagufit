@@ -20,6 +20,7 @@ import {
 import { prefersReducedMotion, useInitialIds } from "@/motion";
 import type { Insets } from "../layout";
 import type { QualitySettings } from "../quality";
+import type { WarningTone } from "../labels";
 import { SCENE_COLORS } from "../scene-colors";
 import { FurnitureMesh } from "./furniture-mesh";
 import { m } from "./geometry";
@@ -30,7 +31,7 @@ type OrbitControlsImpl = ComponentRef<typeof OrbitControls>;
 export type Room3DProps = {
   room: Room;
   selectedId: string | null;
-  warningIds: ReadonlySet<string>;
+  warningTones: ReadonlyMap<string, WarningTone>;
   quality: QualitySettings;
   /** 캔버스 위 패널에 가려진 영역 px - 맞춤·버튼이 비켜감 */
   insets: Insets;
@@ -186,7 +187,7 @@ function CameraRig({ room, controls, resetKey, insets }: CameraRigProps) {
 export default function Room3D({
   room,
   selectedId,
-  warningIds,
+  warningTones,
   quality,
   insets,
   onSelect,
@@ -253,7 +254,7 @@ export default function Room3D({
               furniture={f}
               preset={preset}
               selected={f.id === selectedId}
-              warning={warningIds.has(f.id)}
+              warning={warningTones.get(f.id)}
               realShadows={quality.shadows}
               animate={animate}
               enter={!initialIds.has(f.id)}

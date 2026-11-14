@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { currentRoom, useEditor, useRoom, warnedFurnitureIds } from "../store";
+import {
+  currentRoom,
+  useEditor,
+  useRoom,
+  warnedFurnitureTones,
+} from "../store";
 import { canvasInsets, fitPadding, PANEL_TAB_BOTTOM } from "../layout";
 import { SelectionToolbar } from "../SelectionToolbar";
 import { EmptyHint } from "./EmptyHint";
@@ -120,7 +125,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     setView(zoomAt(v, anchor, v.scale * k));
   };
 
-  const warned = warnedFurnitureIds(room);
+  const warned = warnedFurnitureTones(room);
   const selectedFurniture =
     selection?.kind === "furniture"
       ? room.furniture.find((f) => f.id === selection.id)

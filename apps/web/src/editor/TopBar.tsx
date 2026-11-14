@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { usePresence } from "@/motion";
-import { warningBadgeLabel } from "./labels";
+import { strongestTone, warningBadgeLabel } from "./labels";
 import { SettingsPopover } from "./SettingsPopover";
 import {
   currentRoom,
@@ -75,7 +75,11 @@ export function TopBar({ compact }: { compact: boolean }) {
         {warnings.length > 0 && (
           <span
             aria-label={warningBadgeLabel(warnings)}
-            className="flex items-center gap-1 rounded-full bg-danger-soft px-3 py-1 text-xs font-bold whitespace-nowrap text-danger tabular-nums"
+            className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap tabular-nums ${
+              strongestTone(warnings) === "danger"
+                ? "bg-danger-soft text-danger"
+                : "bg-caution-soft text-caution"
+            }`}
           >
             <TriangleAlert size={14} aria-hidden />
             {compact ? warnings.length : warningBadgeLabel(warnings)}

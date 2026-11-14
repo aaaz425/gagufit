@@ -31,6 +31,8 @@ const presets = Object.fromEntries(
     preset("dot", 2, 2),
     preset("bar", 200, 4),
     preset("stick", 120, 4),
+    { ...preset("sofa", 100, 100), category: "sofa" as const },
+    { ...preset("bed", 100, 100), category: "bed" as const },
     preset("rug", 100, 100, "floor"),
   ].map((p) => [p.id, p]),
 );
@@ -289,5 +291,36 @@ describe("checkRoom 공통", () => {
       presets,
     );
     expect(warnings).toEqual([{ type: "overlap", furnitureIds: ["a", "b"] }]);
+  });
+});
+
+describe("checkRoom 앞쪽 막힘", () => {
+  // 방 300×400 - 회전 0이면 앞이 아래쪽 벽(y=400)
+  const check = (id: string, y: number, rotation = 0, x = 100) =>
+    checkRoom(room([item("a", id, { x, y }, rotation)]), presets);
+  const blocked = [{ type: "frontBlocked", furnitureId: "a" }];
+
+  it("앞면 가운데가 벽에서 50cm 미만이면 경고", () => {
+    expect(check("sofa", 301)).toEqual(blocked);
+    expect(check("sofa", 300)).toEqual([]);
+  });
+
+  it("앞방향이 벽 바깥 방향과 45°까지만 해당", () => {
+    expect(check("sofa", 320, 45)).toEqual(blocked);
+    expect(check("sofa", 320, 46)).toEqual([]);
+  });
+
+  it("뒷면이 벽에 붙은 건 괜찮음", () => {
+    expect(check("sofa", 349, 180, 100)).toEqual([]);
+  });
+
+  it("대상 아닌 가구는 제외", () => {
+    expect(check("bed", 301)).toEqual([]);
+  });
+
+  it("벽 밖으로 나간 가구는 벽 밖 경고만", () => {
+    expect(check("sofa", 351)).toEqual([
+      { type: "outOfRoom", furnitureId: "a" },
+    ]);
   });
 });

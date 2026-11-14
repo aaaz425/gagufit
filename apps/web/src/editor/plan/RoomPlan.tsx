@@ -11,6 +11,7 @@ import {
 import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
 import { useId } from "react";
 import { useInitialIds } from "@/motion";
+import type { WarningTone } from "../labels";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
 import type { Selection } from "../store";
 import { FurnitureSymbol } from "./FurnitureSymbol";
@@ -58,7 +59,7 @@ export function RoomPlan({
   /** 화면 회전(도) - 그림자 방향 고정용 */
   angle?: number;
   selection: Selection;
-  warned: ReadonlySet<string>;
+  warned: ReadonlyMap<string, WarningTone>;
 }) {
   const wall = WALL_PX / scale;
   const scope = useId();
@@ -73,7 +74,7 @@ export function RoomPlan({
     <FurnitureShape
       key={f.id}
       furniture={f}
-      warned={warned.has(f.id)}
+      warned={warned.get(f.id)}
       selected={selection?.kind === "furniture" && selection.id === f.id}
       enter={!initialIds.has(f.id)}
       scale={scale}
@@ -143,7 +144,7 @@ function FurnitureShape({
   scope,
 }: {
   furniture: PlacedFurniture;
-  warned: boolean;
+  warned: WarningTone | undefined;
   selected: boolean;
   /** 추가 직후 등장 효과 */
   enter: boolean;
@@ -152,7 +153,7 @@ function FurnitureShape({
 }) {
   const preset = FURNITURE_PRESETS[f.presetId];
   const { width: w, depth: d } = f.size;
-  const outline = warned ? "danger" : "primary";
+  const outline = warned ?? "primary";
   return (
     <g transform={furnitureTransform(f, w, d)}>
       {/* 끌기·회전은 바깥 g의 transform 속성 - 등장 효과는 안쪽 g에서만 */}
@@ -167,7 +168,7 @@ function FurnitureShape({
           color={FURNITURE_COLORS[f.color].hex}
           texture={textureOf(preset?.material, scope)}
         />
-        {warned && (
+        {warned === "danger" && (
           <rect
             width={w}
             height={d}
@@ -175,6 +176,18 @@ function FurnitureShape({
             fill={tint("danger", 28)}
             stroke="var(--color-danger)"
             strokeWidth={2}
+            {...px}
+          />
+        )}
+        {warned === "caution" && (
+          <rect
+            width={w}
+            height={d}
+            rx={4}
+            fill="none"
+            stroke="var(--color-caution)"
+            strokeWidth={2}
+            strokeDasharray="6 4"
             {...px}
           />
         )}
