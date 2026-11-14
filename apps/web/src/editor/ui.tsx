@@ -116,10 +116,7 @@ export function Segment<T extends string>({
   /** 어느 쪽을 눌러도 다음 항목으로 - 전체가 버튼 하나, label은 다음 동작 */
   toggle?: boolean;
 }) {
-  const index = Math.max(
-    0,
-    options.findIndex((o) => o.value === value),
-  );
+  const index = options.findIndex((o) => o.value === value);
   const cls = `relative grid auto-cols-fr grid-flow-col rounded-full bg-surface p-1 ${full ? "w-full" : ""}`;
   const slider = (
     <span
@@ -144,13 +141,15 @@ export function Segment<T extends string>({
         type="button"
         aria-label={label}
         onClick={() => onChange(next.value)}
-        className={`${cls} ${TOUCH_44} cursor-pointer`}
+        className={`${cls} ${TOUCH_44} group`}
       >
         {slider}
         {options.map((o, i) => (
           <span
             key={o.value}
-            className={`min-h-8 ${itemCls(i === index, o.unavailable)}`}
+            className={`min-h-8 ${itemCls(i === index, o.unavailable)} ${
+              i !== index && !o.unavailable ? "group-hover:text-ink" : ""
+            }`}
           >
             {o.label}
           </span>
