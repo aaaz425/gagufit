@@ -126,8 +126,8 @@ shadow:
 - 상단 내비 - 글자 링크를 1px `border` 세로선으로 구분, 현재 화면만 `ink` 700
 - 방 카드 - 탑뷰 썸네일 + 이름 + 수정일, `raised`, 누르면 편집기
 - 새 방 카드 - `primary` 1.5px 외곽선, `primary-soft` 원 안 plus
-- 세그먼트 - 2D·3D 전환, `surface` 바탕에 선택 항목 `canvas` + `raised`
-- 선택 툴바 - 선택한 가구 위 떠 있는 `full` 모양, 44px 아이콘 버튼 묶음, 삭제만 `danger`
+- 세그먼트 - 2D·3D 전환, `surface` 바탕에 선택 항목 `primary-soft` + `primary` 굵은 글자(칩 on과 동일), 칸 너비 같고 선택 표시는 `base` 200ms `ease-enter`로 옮겨 미끄러짐, 2D·3D는 전체가 버튼 하나인 토글(어느 쪽을 눌러도 반대로)
+- 선택 툴바 - 선택한 가구 위 떠 있는 `full` 모양, 44px 아이콘 버튼 묶음, 90° 회전 `primary-soft` 배경 + `primary` 아이콘, 삭제만 `danger`
 - 가구 항목 - 썸네일 + 이름 + 치수 + `primary` circle-plus
 - 경고 안내 - 속성 패널 안, `danger-soft` 배경 + 이유 한 줄
 - 설정 행 - 라벨·설명 + 오른쪽 토글·값·화살표, `border` 구분
