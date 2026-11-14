@@ -19926,7 +19926,17 @@
                       "width": 120,
                       "height": 160,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -19942,7 +19952,17 @@
                       "name": "이불",
                       "fill": "$scene-furniture-soft",
                       "width": 120,
-                      "height": 116
+                      "height": 116,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -19958,7 +19978,17 @@
                       "name": "머리판",
                       "fill": "$scene-furniture-line",
                       "width": 120,
-                      "height": 8
+                      "height": 8,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -19971,7 +20001,17 @@
                       "width": 46,
                       "height": 22,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -19984,7 +20024,17 @@
                       "width": 46,
                       "height": 22,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -19995,6 +20045,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 112,
                       "height": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "dxJVl",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 120,
+                      "height": 160
                     }
                   ]
                 },
@@ -20037,7 +20120,17 @@
                       "width": 96,
                       "height": 48,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20074,7 +20167,50 @@
                       "width": 40,
                       "height": 9,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "uG3Ox",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 96,
+                      "height": 48
                     }
                   ]
                 },
@@ -20117,7 +20253,17 @@
                       "width": 36,
                       "height": 36,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20130,7 +20276,17 @@
                       "width": 24,
                       "height": 22,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "path",
@@ -20150,7 +20306,50 @@
                       "height": 9,
                       "stroke": "$scene-furniture-line",
                       "strokeWidth": 1,
-                      "strokeLinejoin": "round"
+                      "strokeLinejoin": "round",
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 8,
+                      "id": "QmmBS",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 36,
+                      "height": 36
                     }
                   ]
                 },
@@ -20193,7 +20392,17 @@
                       "width": 144,
                       "height": 68,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20204,7 +20413,17 @@
                       "name": "등받이",
                       "fill": "$scene-furniture-line",
                       "width": 144,
-                      "height": 18
+                      "height": 18,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20215,7 +20434,17 @@
                       "name": "팔걸이",
                       "fill": "$scene-furniture-line",
                       "width": 14,
-                      "height": 68
+                      "height": 68,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20226,7 +20455,17 @@
                       "name": "팔걸이",
                       "fill": "$scene-furniture-line",
                       "width": 14,
-                      "height": 68
+                      "height": 68,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20239,7 +20478,17 @@
                       "width": 59,
                       "height": 44,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20252,7 +20501,50 @@
                       "width": 49,
                       "height": 44,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "E1nHI",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 144,
+                      "height": 68
                     }
                   ]
                 },
@@ -20295,7 +20587,17 @@
                       "width": 64,
                       "height": 64,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20349,6 +20651,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 5,
                       "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "U79nWm",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 64,
+                      "height": 64
                     }
                   ]
                 },
@@ -20391,7 +20726,17 @@
                       "width": 80,
                       "height": 48,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20432,6 +20777,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 80,
                       "height": 4
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "HKW2k",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 80,
+                      "height": 48
                     }
                   ]
                 },
@@ -20474,7 +20852,17 @@
                       "width": 64,
                       "height": 36,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20518,6 +20906,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 6,
                       "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "lpsFN",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 64,
+                      "height": 36
                     }
                   ]
                 },
@@ -20560,7 +20981,17 @@
                       "width": 64,
                       "height": 24,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20624,6 +21055,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 64,
                       "height": 4
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "yrHiC",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 64,
+                      "height": 24
                     }
                   ]
                 },
@@ -20786,7 +21250,17 @@
                       "width": 96,
                       "height": 32,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20797,7 +21271,17 @@
                       "name": "TV",
                       "fill": "$scene-wall",
                       "width": 72,
-                      "height": 5
+                      "height": 5,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20819,6 +21303,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 96,
                       "height": 4
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "iC3YS",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 96,
+                      "height": 32
                     }
                   ]
                 },
@@ -20861,7 +21378,17 @@
                       "width": 32,
                       "height": 32,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "ellipse",
@@ -20874,6 +21401,39 @@
                       "height": 14,
                       "stroke": "$scene-furniture-line",
                       "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "AW9ib",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 32,
+                      "height": 32
                     }
                   ]
                 },
@@ -20916,7 +21476,17 @@
                       "width": 64,
                       "height": 32,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20927,7 +21497,17 @@
                       "name": "거울",
                       "fill": "#BFD9E6",
                       "width": 44,
-                      "height": 4
+                      "height": 4,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -20938,6 +21518,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 64,
                       "height": 4
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "DhrKx",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 64,
+                      "height": 32
                     }
                   ]
                 },
@@ -20980,7 +21593,17 @@
                       "width": 48,
                       "height": 52,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -21002,6 +21625,39 @@
                       "fill": "$scene-furniture-line",
                       "width": 3,
                       "height": 10
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "wDn1k",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 48,
+                      "height": 52
                     }
                   ]
                 },
@@ -21044,7 +21700,17 @@
                       "width": 48,
                       "height": 48,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
                     },
                     {
                       "type": "rectangle",
@@ -21060,7 +21726,17 @@
                       "name": "조작부",
                       "fill": "$scene-furniture-line",
                       "width": 48,
-                      "height": 9
+                      "height": 9,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "ellipse",
@@ -21072,7 +21748,17 @@
                       "width": 28,
                       "height": 28,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 2
+                      "strokeWidth": 2,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3640",
+                        "offset": {
+                          "x": 1,
+                          "y": 1.5
+                        },
+                        "blur": 2
+                      }
                     },
                     {
                       "type": "ellipse",
@@ -21085,6 +21771,39 @@
                       "height": 18,
                       "stroke": "$scene-furniture-line",
                       "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "RMaXz",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 48,
+                      "height": 48
                     }
                   ]
                 },
@@ -21181,7 +21900,50 @@
                       "width": 48,
                       "height": 48,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#3D3A3629",
+                        "offset": {
+                          "x": 3,
+                          "y": 4
+                        },
+                        "blur": 4
+                      }
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "ibK1S",
+                      "x": 0,
+                      "y": 0,
+                      "name": "명암",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 225,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF61",
+                            "position": 0
+                          },
+                          {
+                            "color": "#FFFFFF00",
+                            "position": 0.5
+                          },
+                          {
+                            "color": "#3D3A3624",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 48,
+                      "height": 48
                     }
                   ]
                 },

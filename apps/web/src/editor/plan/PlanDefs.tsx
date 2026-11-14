@@ -137,19 +137,28 @@ const TEXTURES: Record<
   },
 };
 
+/** 그림자 품질 켬 - 패브릭은 점 대신 린넨 직조 */
+const WEAVE: (typeof TEXTURES)[PlanTexture] = {
+  size: [6, 6],
+  minScale: 0.6,
+  draw: () => <path d="M0 3H6M3 0V6" />,
+};
+
 /** 가구 질감 패턴 정의 - 가구 로컬 좌표(cm)에서 반복 */
 export function TextureDefs({
   scale,
   scope,
+  rich = false,
 }: {
   scale: number;
   scope: string;
+  rich?: boolean;
 }) {
   const w = 1 / scale;
   return (
     <defs>
       {(Object.keys(TEXTURES) as PlanTexture[]).flatMap((t) => {
-        const spec = TEXTURES[t];
+        const spec = rich && t === "fabric" ? WEAVE : TEXTURES[t];
         const fade = Math.min(
           1,
           Math.max(0, (scale - spec.minScale) / spec.minScale),

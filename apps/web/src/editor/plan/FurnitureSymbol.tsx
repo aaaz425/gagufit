@@ -1,9 +1,10 @@
 import type { FurnitureCategory, Size } from "@gagufit/core";
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import type { TextureRef } from "./texture";
 import { symbolPalette, type SymbolPalette } from "./symbol-palette";
 
 // 가구 평면 기호 - (0,0)~(w,d) cm, 위쪽이 등·벽 쪽, 선 굵기는 화면 px
+// 빛은 왼쪽 위 - 하이라이트·명암은 몸체 색 위 반투명 겹침만, rich일 때만 부품 그림자(블러)
 
 /** 몸체 모서리 */
 const R = 4;
@@ -37,11 +38,80 @@ function Rect(props: {
   );
 }
 
-const body = ({ w, d }: Box, p: SymbolPalette) => (
-  <>
-    <Rect w={w} h={d} r={R} fill={p.body} stroke={p.line} strokeWidth={1} />
-    {p.texture && <Rect w={w} h={d} r={R} fill={p.texture} />}
-  </>
+type Ctx = {
+  /** SVG id 접두 */
+  u: string;
+  /** 블러 그림자 사용 - 품질 설정 */
+  rich: boolean;
+};
+
+const SHADOW = "var(--color-scene-wall)";
+
+/** 입체 부품 - 명암·하이라이트·가는 선, rich면 부품 아래 부드러운 그림자 */
+function Part(props: {
+  c: Ctx;
+  p: SymbolPalette;
+  x?: number;
+  y?: number;
+  w: number;
+  h: number;
+  r?: number;
+  fill: string;
+  z?: number;
+  /** 몸체 외곽선은 진하게 */
+  strong?: boolean;
+  textured?: boolean;
+}) {
+  const { c, p, w, h, fill, z = 0 } = props;
+  const x = props.x ?? 0;
+  const y = props.y ?? 0;
+  const r = props.r ?? R;
+  const rr = Math.max(Math.min(r, w / 2, h / 2), 0);
+  return (
+    <g>
+      {c.rich && z > 0 && (
+        <rect
+          x={x + z * 0.5}
+          y={y + z * 0.8}
+          width={Math.max(w, 0)}
+          height={Math.max(h, 0)}
+          rx={r}
+          fill={SHADOW}
+          opacity={0.28}
+          filter={`url(#${c.u}b)`}
+        />
+      )}
+      <Rect x={x} y={y} w={w} h={h} r={r} fill={fill} />
+      {props.textured && p.texture && (
+        <Rect x={x} y={y} w={w} h={h} r={r} fill={p.texture} />
+      )}
+      <Rect x={x} y={y} w={w} h={h} r={r} fill={`url(#${c.u}s)`} />
+      <rect
+        x={x}
+        y={y}
+        width={Math.max(w, 0)}
+        height={Math.max(h, 0)}
+        rx={r}
+        fill="none"
+        stroke={p.line}
+        strokeWidth={1}
+        strokeOpacity={props.strong ? 1 : 0.55}
+        {...px}
+      />
+      <path
+        d={`M${x + rr} ${y + 0.4}H${x + w - rr}M${x + 0.4} ${y + rr}V${y + h - rr}`}
+        stroke="#fff"
+        strokeOpacity={0.55}
+        strokeWidth={1}
+        fill="none"
+        {...px}
+      />
+    </g>
+  );
+}
+
+const body = ({ w, d }: Box, p: SymbolPalette, c: Ctx, r = R) => (
+  <Part c={c} p={p} w={w} h={d} r={r} fill={p.body} strong textured />
 );
 
 /** 작은 크기에서 장식이 몸체를 넘지 않게 치수 비율로 제한 */
@@ -54,9 +124,9 @@ const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => (
 
 const DECOR: Record<
   FurnitureCategory,
-  (b: Box, p: SymbolPalette) => ReactNode
+  (b: Box, p: SymbolPalette, c: Ctx) => ReactNode
 > = {
-  bed: (b, p) => {
+  bed: (b, p, c) => {
     const pillows = b.w < 120 ? 1 : 2;
     const head = cap(12, b.d, 0.06);
     const gap = cap(10, b.w, 0.08);
@@ -67,20 +137,29 @@ const DECOR: Record<
     const blanket = cap(55, b.d, 0.3);
     return (
       <>
-        {body(b, p)}
-        <Rect y={blanket} w={b.w} h={b.d - blanket} r={R} fill={p.soft} />
-        <Rect w={b.w} h={head} r={R} fill={p.line} />
+        {body(b, p, c)}
+        <Part
+          c={c}
+          p={p}
+          y={blanket}
+          w={b.w}
+          h={b.d - blanket}
+          fill={p.soft}
+          z={1.5}
+        />
+        <Part c={c} p={p} w={b.w} h={head} fill={p.line} />
         {Array.from({ length: pillows }, (_, i) => (
-          <Rect
+          <Part
             key={i}
+            c={c}
+            p={p}
             x={edge + i * (pw + gap)}
             y={py}
             w={pw}
             h={ph}
             r={6}
             fill={p.hi}
-            stroke={p.line}
-            strokeWidth={1}
+            z={2}
           />
         ))}
         <line
@@ -95,14 +174,14 @@ const DECOR: Record<
       </>
     );
   },
-  desk: (b, p) => {
+  desk: (b, p, c) => {
     const inset = cap(4, Math.min(b.w, b.d), 0.15);
     const kw = cap(40, b.w, 0.35);
     const kh = cap(10, b.d, 0.15);
     const mw = cap(24, b.w, 0.25);
     return (
       <>
-        {body(b, p)}
+        {body(b, p, c)}
         <Rect
           x={inset}
           y={inset}
@@ -121,42 +200,37 @@ const DECOR: Record<
           r={2}
           fill={p.line}
         />
-        <Rect
+        <Part
+          c={c}
+          p={p}
           x={(b.w - kw) / 2}
           y={b.d - inset - cap(8, b.d, 0.1) - kh}
           w={kw}
           h={kh}
           r={2}
           fill={p.hi}
-          stroke={p.line}
-          strokeWidth={1}
+          z={1}
         />
       </>
     );
   },
-  chair: (b, p) => {
+  chair: (b, p, c) => {
     const bh = cap(10, b.d, 0.22);
     const inset = cap(7, Math.min(b.w, b.d), 0.16);
     const side = cap(10, b.w, 0.3);
     return (
       <>
-        <Rect
-          w={b.w}
-          h={b.d}
-          r={10}
-          fill={p.body}
-          stroke={p.line}
-          strokeWidth={1}
-        />
-        <Rect
+        {body(b, p, c, 10)}
+        <Part
+          c={c}
+          p={p}
           x={inset}
           y={bh + inset * 0.6}
           w={b.w - inset * 2}
           h={b.d - bh - inset * 1.6}
           r={6}
           fill={p.hi}
-          stroke={p.line}
-          strokeWidth={1}
+          z={1.5}
         />
         <path
           d={`M${side} 0H${b.w - side}V${bh * 0.6}Q${b.w / 2} ${bh * 1.6} ${side} ${bh * 0.6}Z`}
@@ -169,7 +243,7 @@ const DECOR: Record<
       </>
     );
   },
-  sofa: (b, p) => {
+  sofa: (b, p, c) => {
     const back = cap(22.5, b.d, 0.28);
     const arm = cap(17.5, b.w, 0.14);
     const seats = b.w < 190 ? 2 : 3;
@@ -178,31 +252,41 @@ const DECOR: Record<
     const sw = (b.w - arm * 2 - gap * (seats + 1)) / seats;
     return (
       <>
-        {body(b, p)}
-        <Rect w={b.w} h={back} r={rr} fill={p.line} />
-        <Rect w={arm} h={b.d} r={rr} fill={p.line} />
-        <Rect x={b.w - arm} w={arm} h={b.d} r={rr} fill={p.line} />
+        {body(b, p, c)}
+        <Part c={c} p={p} w={b.w} h={back} r={rr} fill={p.soft} z={2} />
+        <Part c={c} p={p} w={arm} h={b.d} r={rr} fill={p.soft} z={2} />
+        <Part
+          c={c}
+          p={p}
+          x={b.w - arm}
+          w={arm}
+          h={b.d}
+          r={rr}
+          fill={p.soft}
+          z={2}
+        />
         {Array.from({ length: seats }, (_, i) => (
-          <Rect
+          <Part
             key={i}
+            c={c}
+            p={p}
             x={arm + gap + i * (sw + gap)}
             y={back + gap}
             w={sw}
             h={b.d - back - gap * 2}
             r={R}
             fill={p.hi}
-            stroke={p.line}
-            strokeWidth={1}
+            z={1.5}
           />
         ))}
       </>
     );
   },
-  "dining-table": (b, p) => {
+  "dining-table": (b, p, c) => {
     const leg = cap(8, Math.min(b.w, b.d), 0.15);
     return (
       <>
-        {body(b, p)}
+        {body(b, p, c)}
         <Rect
           x={leg / 2}
           y={leg / 2}
@@ -228,7 +312,7 @@ const DECOR: Record<
       </>
     );
   },
-  wardrobe: (b, p) => {
+  wardrobe: (b, p, c) => {
     const doors = b.w >= 120 ? 3 : 2;
     const dividers = Array.from(
       { length: doors - 1 },
@@ -238,7 +322,7 @@ const DECOR: Record<
     const y = b.d - cap(12, b.d, 0.25);
     return (
       <>
-        {body(b, p)}
+        {body(b, p, c)}
         {front(b, p)}
         {dividers.map((x) => (
           <Rect key={x} x={x - 1.25} w={2.5} h={b.d} fill={p.line} />
@@ -258,9 +342,9 @@ const DECOR: Record<
       </>
     );
   },
-  drawer: (b, p) => (
+  drawer: (b, p, c) => (
     <>
-      {body(b, p)}
+      {body(b, p, c)}
       {front(b, p)}
       {[0.23, 0.5, 0.77].map((t) => (
         <Rect
@@ -275,13 +359,13 @@ const DECOR: Record<
       ))}
     </>
   ),
-  bookshelf: (b, p) => {
+  bookshelf: (b, p, c) => {
     const bays = [0, 1, 2];
     const bw = b.w / bays.length;
     const h = cap(6, b.d, 0.25);
     return (
       <>
-        {body(b, p)}
+        {body(b, p, c)}
         {front(b, p, 4)}
         {bays.slice(1).map((i) => (
           <Rect key={i} x={bw * i - 1.25} w={2.5} h={b.d} fill={p.line} />
@@ -326,22 +410,22 @@ const DECOR: Record<
       </>
     );
   },
-  "tv-stand": (b, p) => {
+  "tv-stand": (b, p, c) => {
     const sx = cap(15, b.w, 0.1);
     const sw = cap(20, b.w, 0.15);
     const sh = cap(6, b.d, 0.15);
     return (
       <>
-        {body(b, p)}
+        {body(b, p, c)}
         <Rect x={sx} y={4} w={b.w - sx * 2} h={sh} r={2} fill={p.screen} />
         <Rect x={(b.w - sw) / 2} y={4 + sh} w={sw} h={sh} r={1} fill={p.line} />
         {front(b, p)}
       </>
     );
   },
-  nightstand: (b, p) => (
+  nightstand: (b, p, c) => (
     <>
-      {body(b, p)}
+      {body(b, p, c)}
       <circle
         cx={b.w / 2}
         cy={b.d / 2}
@@ -353,30 +437,21 @@ const DECOR: Record<
       />
     </>
   ),
-  "dressing-table": (b, p) => (
+  "dressing-table": (b, p, c) => (
     <>
-      {body(b, p)}
-      <Rect
-        x={12.5}
-        y={2.5}
-        w={b.w - 25}
-        h={5}
-        r={2}
-        fill={p.hi}
-        stroke={p.line}
-        strokeWidth={1}
-      />
+      {body(b, p, c)}
+      <Part c={c} p={p} x={12.5} y={2.5} w={b.w - 25} h={5} r={2} fill={p.hi} />
       {front(b, p)}
     </>
   ),
-  fridge: (b, p) => {
+  fridge: (b, p, c) => {
     const fh = cap(7.5, b.d, 0.12);
     const side = b.w >= 80;
     const hh = cap(12, b.d, 0.2);
     const hy = b.d - fh - hh - cap(3, b.d, 0.05);
     return (
       <>
-        {body(b, p)}
+        {body(b, p, c)}
         {front(b, p, fh)}
         {side ? (
           <>
@@ -390,14 +465,14 @@ const DECOR: Record<
       </>
     );
   },
-  washer: (b, p) => {
+  washer: (b, p, c) => {
     const bar = cap(12, b.d, 0.2);
     const r = Math.min(b.w, b.d - bar) * 0.33;
     const cy = bar + (b.d - bar) / 2;
     return (
       <>
-        {body(b, p)}
-        <Rect w={b.w} h={bar} r={R} fill={p.line} />
+        {body(b, p, c)}
+        <Part c={c} p={p} w={b.w} h={bar} fill={p.line} />
         <circle
           cx={b.w / 2}
           cy={cy}
@@ -435,7 +510,7 @@ const DECOR: Record<
       />
     </>
   ),
-  etc: body,
+  etc: (b, p, c) => body(b, p, c),
 };
 
 /** 프리셋이 없으면 기타 모양 */
@@ -444,16 +519,37 @@ export function FurnitureSymbol({
   size,
   color,
   texture,
+  rich = false,
 }: {
   category?: FurnitureCategory;
   size: Pick<Size, "width" | "depth">;
   /** 고른 색 hex, 없으면 기본 베이지 */
   color?: string;
   texture?: TextureRef;
+  /** 부품 그림자(블러) - 편집기 그림자 품질 설정 */
+  rich?: boolean;
 }) {
-  return DECOR[category](
-    { w: size.width, d: size.depth },
-    symbolPalette(color, texture),
+  const u = useId().replace(/[^a-z0-9]/gi, "");
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${u}s`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity={0.38} />
+          <stop offset="0.5" stopColor="#fff" stopOpacity={0} />
+          <stop offset="1" style={{ stopColor: SHADOW }} stopOpacity={0.14} />
+        </linearGradient>
+        {rich && (
+          <filter id={`${u}b`} x="-30%" y="-30%" width="160%" height="170%">
+            <feGaussianBlur stdDeviation={1.4} />
+          </filter>
+        )}
+      </defs>
+      {DECOR[category](
+        { w: size.width, d: size.depth },
+        symbolPalette(color, texture),
+        { u, rich },
+      )}
+    </>
   );
 }
 

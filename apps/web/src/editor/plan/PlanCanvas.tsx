@@ -7,6 +7,7 @@ import {
   useRoom,
   warnedFurnitureTones,
 } from "../store";
+import { useQualitySettings } from "../quality";
 import { canvasInsets, fitPadding, PANEL_TAB_BOTTOM } from "../layout";
 import { SelectionToolbar } from "../SelectionToolbar";
 import { EmptyHint } from "./EmptyHint";
@@ -34,6 +35,7 @@ function currentInsets(desktop: boolean) {
 
 export function PlanCanvas({ compact }: { compact: boolean }) {
   const room = useRoom();
+  const [quality] = useQualitySettings();
   const selection = useEditor((s) => s.selection);
   const sheet = useEditor((s) => s.sheet);
   const dragging = useEditor((s) => s.dragging);
@@ -170,6 +172,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
               selection={selection}
               warned={warned}
               angle={view.angle}
+              rich={quality.shadows}
             />
             {selectedOpening && (
               <>
