@@ -26,6 +26,7 @@ const HINT_KEY = "gagufit:drag-hint-seen";
 
 /** 길게 누르기 안내는 처음 한 번만 */
 function showDragHintOnce() {
+  if (useEditor.getState().toast) return;
   try {
     if (localStorage.getItem(HINT_KEY)) return;
     localStorage.setItem(HINT_KEY, "1");
@@ -181,11 +182,7 @@ export function usePlanGestures({
       setCursor(getComputedStyle(e.target as Element).cursor);
       setDragging(true);
     } else if (hit?.kind === "furniture" || hit?.kind === "opening") {
-      const selected = useEditor.getState().selection;
-      if (
-        e.pointerType === "touch" &&
-        !(selected?.kind === hit.kind && selected.id === hit.id)
-      ) {
+      if (e.pointerType === "touch") {
         gesture.current = {
           type: "press",
           hit,
@@ -220,9 +217,25 @@ export function usePlanGestures({
     if (!pointers.current.has(e.pointerId)) return;
     const at = local(e);
     pointers.current.set(e.pointerId, at);
-    const g = gesture.current;
+    let g = gesture.current;
     const v = viewRef.current;
     if (!g || !v) return;
+
+    // 선택된 대상은 길게 누르기 없이 움직이면 바로 끌기
+    if (g.type === "press") {
+      const sel = useEditor.getState().selection;
+      if (
+        sel?.kind === g.hit.kind &&
+        sel.id === g.hit.id &&
+        Math.hypot(at.x - g.start.x, at.y - g.start.y) >= MOVE_SLOP
+      ) {
+        clearTimeout(g.timer);
+        gesture.current = startDrag(g.hit, g.start);
+        if (!gesture.current) return;
+        setDragging(true);
+        g = gesture.current;
+      }
+    }
 
     switch (g.type) {
       case "pinch": {
