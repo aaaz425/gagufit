@@ -102,7 +102,13 @@ const REFLECTIONS = (
   </Environment>
 );
 
-function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
+const Lights = memo(function Lights({
+  room,
+  shadows,
+}: {
+  room: Room;
+  shadows: boolean;
+}) {
   const sun = sunPosition(room);
   const half = m(Math.max(room.width, room.depth)) * 0.75;
   return (
@@ -131,7 +137,7 @@ function Lights({ room, shadows }: { room: Room; shadows: boolean }) {
       />
     </>
   );
-}
+});
 
 type CameraRigProps = {
   room: Room;
@@ -202,6 +208,29 @@ function CameraRig({ room, controls, resetKey, insets }: CameraRigProps) {
     invalidate();
   }, [camera, size, radius, resetKey, invalidate]);
   return null;
+}
+
+const NO_FURNITURE: Room["furniture"] = [];
+
+/**
+ * 벽·바닥·조명용 방 - 가구만 바뀌는 끌기 중에는 같은 객체를 돌려줘 다시 그리지 않음
+ * 가구 목록은 비움, 벽·조명은 가구를 쓰지 않음
+ */
+function useShellRoom(room: Room): Room {
+  return useMemo(
+    () => ({ ...room, furniture: NO_FURNITURE }),
+    // 가구 외 필드만 비교
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      room.name,
+      room.width,
+      room.depth,
+      room.height,
+      room.floorMaterial,
+      room.wallMaterial,
+      room.openings,
+    ],
+  );
 }
 
 /** 선택된 가구 상자의 화면 영역을 알림 - 매 프레임 투영, 1px 넘게 바뀔 때만 */
@@ -326,6 +355,7 @@ function Room3D({
     [onSelect],
   );
 
+  const shellRoom = useShellRoom(room);
   // 가구·벽은 방 평면 좌표 그대로 그리므로 왼쪽 위 모서리를 월드에 맞춤
   const origin = planToWorld(room, { x: 0, y: 0 });
   const initialIds = useInitialIds(room.furniture.map((f) => f.id));
@@ -361,11 +391,11 @@ function Room3D({
           if (e.type === "click") onSelect(null);
         }}
       >
-        <Lights room={room} shadows={quality.shadows} />
+        <Lights room={shellRoom} shadows={quality.shadows} />
         {REFLECTIONS}
         <group position={[origin[0], 0, origin[1]]}>
           <RoomShell
-            room={room}
+            room={shellRoom}
             hiRes={quality.hiDpi}
             onClick={handleEmptyClick}
           />
