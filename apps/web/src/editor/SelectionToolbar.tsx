@@ -70,7 +70,7 @@ export function SelectionToolbar({
       {kind === "furniture" && (
         <>
           <ToolButton label="90° 회전" onClick={rotateSelected90} tonal>
-            <RotateCw size={18} className="text-primary" />
+            <RotateCw size={18} />
           </ToolButton>
           <ToolButton label="복제" onClick={duplicateSelected}>
             <Copy size={18} className="text-ink" />
@@ -101,7 +101,7 @@ function ToolButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className={`flex size-11 items-center justify-center rounded-full ${tonal ? "bg-primary-soft" : "hover:bg-surface"}`}
+      className={`flex size-11 items-center justify-center rounded-full ${tonal ? "bg-primary-soft text-primary hover:bg-primary hover:text-white" : "hover:bg-surface"}`}
     >
       {children}
     </button>
