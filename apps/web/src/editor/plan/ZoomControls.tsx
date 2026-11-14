@@ -1,9 +1,9 @@
 "use client";
 
-import { Maximize, Minus, Plus } from "lucide-react";
+import { LocateFixed, Minus, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 
-/** 확대·축소·전체 보기 - onZoom은 배율 곱 */
+/** 확대·축소·처음 시점 복구 - onZoom은 배율 곱 */
 export function ZoomControls({
   left,
   onZoom,
@@ -21,8 +21,8 @@ export function ZoomControls({
       <ZoomButton label="축소" onClick={() => onZoom(1 / 1.25)}>
         <Minus size={16} />
       </ZoomButton>
-      <ZoomButton label="방 전체 보기" onClick={onFit}>
-        <Maximize size={16} />
+      <ZoomButton label="처음 시점으로" onClick={onFit}>
+        <LocateFixed size={16} />
       </ZoomButton>
       <ZoomButton label="확대" onClick={() => onZoom(1.25)}>
         <Plus size={16} />
