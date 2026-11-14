@@ -98,13 +98,14 @@ export function NumberField({
 export const TOUCH_44 =
   "relative after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']";
 
-/** 2D·3D, 문 종류 같은 둘 중 하나 고르기 */
+/** 2D·3D, 문 종류 같은 둘 중 하나 고르기 - 선택 표시가 옮겨 가며 미끄러짐, 칸 너비는 모두 같음 */
 export function Segment<T extends string>({
   options,
   value,
   onChange,
   label,
   full,
+  toggle,
 }: {
   /** unavailable - 흐리게 보이지만 눌러서 이유 안내 가능 */
   options: { value: T; label: string; unavailable?: boolean }[];
@@ -112,13 +113,54 @@ export function Segment<T extends string>({
   onChange: (value: T) => void;
   label: string;
   full?: boolean;
+  /** 어느 쪽을 눌러도 다음 항목으로 - 전체가 버튼 하나, label은 다음 동작 */
+  toggle?: boolean;
 }) {
+  const index = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  );
+  const cls = `relative grid auto-cols-fr grid-flow-col rounded-full bg-surface p-1 ${full ? "w-full" : ""}`;
+  const slider = (
+    <span
+      aria-hidden
+      className="absolute inset-y-1 left-1 rounded-full bg-primary-soft transition-transform duration-(--duration-base) ease-(--ease-enter)"
+      style={{
+        width: `calc((100% - 0.5rem) / ${options.length})`,
+        transform: `translateX(${index * 100}%)`,
+      }}
+    />
+  );
+  const itemCls = (on: boolean, unavailable?: boolean) =>
+    `relative z-10 flex items-center justify-center rounded-full px-4 text-sm ${
+      on
+        ? "font-bold text-primary"
+        : `font-medium ${unavailable ? "text-ink-subtle" : "text-ink-muted"}`
+    }`;
+  if (toggle) {
+    const next = options[(index + 1) % options.length];
+    return (
+      <button
+        type="button"
+        aria-label={label}
+        onClick={() => onChange(next.value)}
+        className={`${cls} ${TOUCH_44} cursor-pointer`}
+      >
+        {slider}
+        {options.map((o, i) => (
+          <span
+            key={o.value}
+            className={`min-h-8 ${itemCls(i === index, o.unavailable)}`}
+          >
+            {o.label}
+          </span>
+        ))}
+      </button>
+    );
+  }
   return (
-    <div
-      role="radiogroup"
-      aria-label={label}
-      className={`flex rounded-full bg-surface p-1 ${full ? "w-full" : ""}`}
-    >
+    <div role="radiogroup" aria-label={label} className={cls}>
+      {slider}
       {options.map((o) => {
         const on = o.value === value;
         return (
@@ -129,12 +171,8 @@ export function Segment<T extends string>({
             aria-checked={on}
             aria-disabled={o.unavailable || undefined}
             onClick={() => !on && onChange(o.value)}
-            className={`flex items-center justify-center rounded-full px-4 text-sm ${
-              full ? "min-h-11 flex-1" : `min-h-8 ${TOUCH_44}`
-            } ${
-              on
-                ? "bg-primary-soft font-bold text-primary"
-                : `font-medium ${o.unavailable ? "cursor-pointer text-ink-subtle" : "text-ink-muted hover:text-ink"}`
+            className={`${itemCls(on, o.unavailable)} ${full ? "min-h-11" : `min-h-8 ${TOUCH_44}`} ${
+              on ? "" : `${o.unavailable ? "cursor-pointer" : "hover:text-ink"}`
             }`}
           >
             {o.label}
