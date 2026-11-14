@@ -79,19 +79,19 @@ const EDGE_MATERIAL = new LineBasicMaterial({ color: SCENE_COLORS.inkMuted });
 /** 원기둥을 앞쪽으로 눕힌 지름 1·두께 1 기준 - 세탁기 문 */
 const DISC = new CylinderGeometry(0.5, 0.5, 1, 32).rotateX(Math.PI / 2);
 
-const warningMaterial = (color: string) =>
+const warningMaterial = (color: string, opacity: number) =>
   new MeshBasicMaterial({
     color,
     transparent: true,
-    opacity: 0.4,
+    opacity,
     depthWrite: false,
     polygonOffset: true,
     polygonOffsetFactor: -1,
     polygonOffsetUnits: -1,
   });
 const WARNING_MATERIALS = {
-  danger: warningMaterial(SCENE_COLORS.danger),
-  caution: warningMaterial(SCENE_COLORS.caution),
+  danger: warningMaterial(SCENE_COLORS.danger, 0.4),
+  caution: warningMaterial(SCENE_COLORS.caution, 0.2),
 };
 
 /** 프리셋이 없는 가구 - core 판정과 같이 일반 가구로 보고 상자로 그림 */
@@ -390,7 +390,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
                 <Outlines
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선
-                  color={warning ? SCENE_COLORS[warning] : SCENE_COLORS.primary}
+                  color={SCENE_COLORS[warning ?? "primary"]}
                 />
               )}
             </mesh>

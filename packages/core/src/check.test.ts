@@ -296,8 +296,8 @@ describe("checkRoom 공통", () => {
 
 describe("checkRoom 앞쪽 막힘", () => {
   // 방 300×400 - 회전 0이면 앞이 아래쪽 벽(y=400)
-  const check = (id: string, y: number, rotation = 0, x = 100) =>
-    checkRoom(room([item("a", id, { x, y }, rotation)]), presets);
+  const check = (id: string, y: number, rotation = 0) =>
+    checkRoom(room([item("a", id, { x: 100, y }, rotation)]), presets);
   const blocked = [{ type: "frontBlocked", furnitureId: "a" }];
 
   it("앞면 가운데가 벽에서 50cm 미만이면 경고", () => {
@@ -311,7 +311,7 @@ describe("checkRoom 앞쪽 막힘", () => {
   });
 
   it("뒷면이 벽에 붙은 건 괜찮음", () => {
-    expect(check("sofa", 349, 180, 100)).toEqual([]);
+    expect(check("sofa", 349, 180)).toEqual([]);
   });
 
   it("대상 아닌 가구는 제외", () => {

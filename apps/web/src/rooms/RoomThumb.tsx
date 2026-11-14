@@ -1,7 +1,6 @@
 import type { Room } from "@gagufit/core";
+import type { WarningTone } from "@/editor/labels";
 import { RoomPlan } from "@/editor/plan/RoomPlan";
-
-import type { WarningTone } from "../editor/labels";
 
 const EMPTY: ReadonlyMap<string, WarningTone> = new Map();
 /** 벽 바깥 여백 cm */
