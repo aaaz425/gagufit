@@ -44,13 +44,13 @@ const body = ({ w, d }: Box, p: SymbolPalette) => (
   </>
 );
 
-/** 앞쪽 띠 */
-const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => (
-  <Rect y={d - h} w={w} h={h} fill={p.line} />
-);
-
 /** 작은 크기에서 장식이 몸체를 넘지 않게 치수 비율로 제한 */
 const cap = (v: number, dim: number, f: number) => Math.min(v, dim * f);
+
+/** 앞쪽 띠 */
+const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => (
+  <Rect y={d - cap(h, d, 0.2)} w={w} h={cap(h, d, 0.2)} fill={p.line} />
+);
 
 const DECOR: Record<
   FurnitureCategory,
@@ -83,12 +83,14 @@ const DECOR: Record<
             strokeWidth={1}
           />
         ))}
-        <Rect
-          x={cap(4, b.w, 0.1)}
-          y={blanket + cap(10, b.d, 0.05)}
-          w={b.w - cap(8, b.w, 0.2)}
-          h={1.5}
-          fill={p.line}
+        <line
+          x1={cap(4, b.w, 0.1)}
+          x2={b.w - cap(4, b.w, 0.1)}
+          y1={blanket + cap(10, b.d, 0.05)}
+          y2={blanket + cap(10, b.d, 0.05)}
+          stroke={p.line}
+          strokeWidth={1}
+          {...px}
         />
       </>
     );
@@ -135,7 +137,7 @@ const DECOR: Record<
   chair: (b, p) => {
     const bh = cap(10, b.d, 0.22);
     const inset = cap(7, Math.min(b.w, b.d), 0.16);
-    const side = cap(5, b.w, 0.1);
+    const side = cap(10, b.w, 0.3);
     return (
       <>
         <Rect
@@ -160,7 +162,7 @@ const DECOR: Record<
           d={`M${side} 0H${b.w - side}V${bh * 0.6}Q${b.w / 2} ${bh * 1.6} ${side} ${bh * 0.6}Z`}
           fill={p.line}
           stroke={p.line}
-          strokeWidth={2}
+          strokeWidth={1}
           strokeLinejoin="round"
           {...px}
         />
@@ -233,10 +235,11 @@ const DECOR: Record<
       (_, i) => (b.w * (i + 1)) / doors,
     );
     const off = cap(6, b.w, 0.06);
-    const y = b.d - cap(10, b.d, 0.2);
+    const y = b.d - cap(12, b.d, 0.25);
     return (
       <>
         {body(b, p)}
+        {front(b, p)}
         {dividers.map((x) => (
           <Rect key={x} x={x - 1.25} w={2.5} h={b.d} fill={p.line} />
         ))}
@@ -274,19 +277,20 @@ const DECOR: Record<
   ),
   bookshelf: (b, p) => {
     const bays = [0, 1, 2];
-    const bw = b.w / 3;
+    const bw = b.w / bays.length;
     const h = cap(6, b.d, 0.25);
     return (
       <>
         {body(b, p)}
-        {[1, 2].map((i) => (
+        {front(b, p, 4)}
+        {bays.slice(1).map((i) => (
           <Rect key={i} x={bw * i - 1.25} w={2.5} h={b.d} fill={p.line} />
         ))}
         {bays.map((i) => (
           <Rect
             key={i}
             x={bw * i + bw * 0.15}
-            y={b.d - h - cap(4, b.d, 0.1)}
+            y={b.d - h - cap(8, b.d, 0.3)}
             w={bw * 0.7}
             h={h}
             r={1}
@@ -325,25 +329,12 @@ const DECOR: Record<
   "tv-stand": (b, p) => {
     const sx = cap(15, b.w, 0.1);
     const sw = cap(20, b.w, 0.15);
+    const sh = cap(6, b.d, 0.15);
     return (
       <>
         {body(b, p)}
-        <Rect
-          x={sx}
-          y={4}
-          w={b.w - sx * 2}
-          h={cap(6, b.d, 0.15)}
-          r={2}
-          fill={p.screen}
-        />
-        <Rect
-          x={(b.w - sw) / 2}
-          y={4 + cap(6, b.d, 0.15)}
-          w={sw}
-          h={cap(6, b.d, 0.15)}
-          r={1}
-          fill={p.line}
-        />
+        <Rect x={sx} y={4} w={b.w - sx * 2} h={sh} r={2} fill={p.screen} />
+        <Rect x={(b.w - sw) / 2} y={4 + sh} w={sw} h={sh} r={1} fill={p.line} />
         {front(b, p)}
       </>
     );

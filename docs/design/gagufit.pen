@@ -19994,7 +19994,7 @@
                       "name": "접힌 선",
                       "fill": "$scene-furniture-line",
                       "width": 112,
-                      "height": 1.5
+                      "height": 1
                     }
                   ]
                 },
@@ -20135,7 +20135,7 @@
                     {
                       "type": "path",
                       "id": "zm30Y",
-                      "x": 4,
+                      "x": 8,
                       "y": 0,
                       "name": "등받이",
                       "geometry": "M0 0h28v4q-14 8-28 0z",
@@ -20146,10 +20146,10 @@
                         12
                       ],
                       "fill": "$scene-furniture-line",
-                      "width": 28,
+                      "width": 20,
                       "height": 9,
                       "stroke": "$scene-furniture-line",
-                      "strokeWidth": 2,
+                      "strokeWidth": 1,
                       "strokeLinejoin": "round"
                     }
                   ]
@@ -20407,7 +20407,7 @@
                       "type": "ellipse",
                       "id": "Z48ve",
                       "x": 32,
-                      "y": 39,
+                      "y": 34,
                       "name": "손잡이",
                       "fill": "$scene-furniture-line",
                       "width": 4,
@@ -20417,10 +20417,20 @@
                       "type": "ellipse",
                       "id": "NnMOy",
                       "x": 44,
-                      "y": 39,
+                      "y": 34,
                       "name": "손잡이",
                       "fill": "$scene-furniture-line",
                       "width": 4,
+                      "height": 4
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "S5Up7P",
+                      "x": 0,
+                      "y": 44,
+                      "name": "앞면",
+                      "fill": "$scene-furniture-line",
+                      "width": 80,
                       "height": 4
                     }
                   ]
@@ -20577,7 +20587,7 @@
                       "cornerRadius": 1,
                       "id": "znJNa",
                       "x": 3,
-                      "y": 15,
+                      "y": 11,
                       "name": "책등",
                       "fill": "$scene-furniture-line",
                       "width": 16,
@@ -20588,7 +20598,7 @@
                       "cornerRadius": 1,
                       "id": "tuwn6",
                       "x": 24,
-                      "y": 15,
+                      "y": 11,
                       "name": "책등",
                       "fill": "$scene-furniture-line",
                       "width": 16,
@@ -20599,11 +20609,21 @@
                       "cornerRadius": 1,
                       "id": "U6EF5a",
                       "x": 45,
-                      "y": 15,
+                      "y": 11,
                       "name": "책등",
                       "fill": "$scene-furniture-line",
                       "width": 16,
                       "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "xVaXj",
+                      "x": 0,
+                      "y": 20,
+                      "name": "앞면",
+                      "fill": "$scene-furniture-line",
+                      "width": 64,
+                      "height": 4
                     }
                   ]
                 },
