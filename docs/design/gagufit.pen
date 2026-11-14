@@ -19930,41 +19930,71 @@
                     },
                     {
                       "type": "rectangle",
-                      "cornerRadius": 5,
-                      "id": "s0tEkx",
-                      "x": 10,
-                      "y": 8,
-                      "name": "베개",
-                      "fill": "#FFFFFF80",
-                      "width": 46,
-                      "height": 24
-                    },
-                    {
-                      "type": "rectangle",
-                      "cornerRadius": 5,
-                      "id": "YSnqi",
-                      "x": 64,
-                      "y": 8,
-                      "name": "베개",
-                      "fill": "#FFFFFF80",
-                      "width": 46,
-                      "height": 24
-                    },
-                    {
-                      "type": "rectangle",
                       "cornerRadius": [
                         0,
                         0,
                         4,
                         4
                       ],
-                      "id": "yXOX9",
+                      "id": "DBaqB",
                       "x": 0,
                       "y": 44,
                       "name": "이불",
                       "fill": "$scene-furniture-soft",
                       "width": 120,
                       "height": 116
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": [
+                        4,
+                        4,
+                        0,
+                        0
+                      ],
+                      "id": "XuAfa",
+                      "x": 0,
+                      "y": 0,
+                      "name": "머리판",
+                      "fill": "$scene-furniture-line",
+                      "width": 120,
+                      "height": 8
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 5,
+                      "id": "ZCTMB",
+                      "x": 10,
+                      "y": 14,
+                      "name": "베개",
+                      "fill": "#FFFFFF80",
+                      "width": 46,
+                      "height": 22,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 5,
+                      "id": "E1UDc",
+                      "x": 64,
+                      "y": 14,
+                      "name": "베개",
+                      "fill": "#FFFFFF80",
+                      "width": 46,
+                      "height": 22,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "IdQy1",
+                      "x": 4,
+                      "y": 54,
+                      "name": "접힌 선",
+                      "fill": "$scene-furniture-line",
+                      "width": 112,
+                      "height": 1.5
                     }
                   ]
                 },
@@ -20011,24 +20041,40 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "LLKHj",
-                      "x": 0,
-                      "y": 42,
-                      "name": "앞선",
-                      "fill": "$scene-furniture-line",
-                      "width": 96,
-                      "height": 2
+                      "cornerRadius": 2,
+                      "id": "X9P1PV",
+                      "x": 3,
+                      "y": 3,
+                      "name": "상판 테두리",
+                      "fill": "#00000000",
+                      "width": 90,
+                      "height": 42,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
                     },
                     {
                       "type": "rectangle",
                       "cornerRadius": 2,
-                      "id": "R2oiL",
-                      "x": 30,
-                      "y": 6,
-                      "name": "모니터",
+                      "id": "Lk37n",
+                      "x": 36,
+                      "y": 7,
+                      "name": "모니터 받침",
                       "fill": "$scene-furniture-line",
-                      "width": 36,
+                      "width": 24,
                       "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "JcFDq",
+                      "x": 28,
+                      "y": 30,
+                      "name": "키보드",
+                      "fill": "#FFFFFF80",
+                      "width": 40,
+                      "height": 9,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
                     }
                   ]
                 },
@@ -20075,14 +20121,36 @@
                     },
                     {
                       "type": "rectangle",
-                      "cornerRadius": 3,
-                      "id": "D9xKY",
+                      "cornerRadius": 5,
+                      "id": "SgV0V",
+                      "x": 6,
+                      "y": 10,
+                      "name": "좌판",
+                      "fill": "#FFFFFF80",
+                      "width": 24,
+                      "height": 22,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "path",
+                      "id": "zm30Y",
                       "x": 4,
                       "y": 0,
                       "name": "등받이",
+                      "geometry": "M0 0h28v4q-14 8-28 0z",
+                      "viewBox": [
+                        0,
+                        0,
+                        28,
+                        12
+                      ],
                       "fill": "$scene-furniture-line",
                       "width": 28,
-                      "height": 7
+                      "height": 9,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 2,
+                      "strokeLinejoin": "round"
                     }
                   ]
                 },
@@ -20129,13 +20197,8 @@
                     },
                     {
                       "type": "rectangle",
-                      "cornerRadius": [
-                        4,
-                        4,
-                        0,
-                        0
-                      ],
-                      "id": "qvCrN",
+                      "cornerRadius": 10,
+                      "id": "iH5Sl",
                       "x": 0,
                       "y": 0,
                       "name": "등받이",
@@ -20145,13 +20208,8 @@
                     },
                     {
                       "type": "rectangle",
-                      "cornerRadius": [
-                        4,
-                        0,
-                        0,
-                        4
-                      ],
-                      "id": "bQyCF",
+                      "cornerRadius": 10,
+                      "id": "xkeA8",
                       "x": 0,
                       "y": 0,
                       "name": "팔걸이",
@@ -20161,13 +20219,8 @@
                     },
                     {
                       "type": "rectangle",
-                      "cornerRadius": [
-                        0,
-                        4,
-                        4,
-                        0
-                      ],
-                      "id": "COjce",
+                      "cornerRadius": 10,
+                      "id": "i2S5Z",
                       "x": 130,
                       "y": 0,
                       "name": "팔걸이",
@@ -20177,13 +20230,29 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "SUExr",
-                      "x": 71,
-                      "y": 18,
-                      "name": "쿠션 선",
-                      "fill": "$scene-furniture-line",
-                      "width": 2,
-                      "height": 50
+                      "cornerRadius": 4,
+                      "id": "BhOv2",
+                      "x": 17,
+                      "y": 21,
+                      "name": "쿠션",
+                      "fill": "#FFFFFF80",
+                      "width": 59,
+                      "height": 44,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "A3PbMc",
+                      "x": 78,
+                      "y": 21,
+                      "name": "쿠션",
+                      "fill": "#FFFFFF80",
+                      "width": 49,
+                      "height": 44,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
                     }
                   ]
                 },
@@ -20231,13 +20300,55 @@
                     {
                       "type": "rectangle",
                       "cornerRadius": 3,
-                      "id": "XbDFV",
-                      "x": 6,
-                      "y": 6,
-                      "name": "상판",
-                      "fill": "#FFFFFF80",
-                      "width": 52,
-                      "height": 52
+                      "id": "qbZhN",
+                      "x": 3,
+                      "y": 3,
+                      "name": "상판 테두리",
+                      "fill": "#00000000",
+                      "width": 58,
+                      "height": 58,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "tdKpG",
+                      "x": 3.5,
+                      "y": 3.5,
+                      "name": "다리",
+                      "fill": "$scene-furniture-line",
+                      "width": 5,
+                      "height": 5
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "l1VXF",
+                      "x": 3.5,
+                      "y": 55.5,
+                      "name": "다리",
+                      "fill": "$scene-furniture-line",
+                      "width": 5,
+                      "height": 5
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "ZyTYo",
+                      "x": 55.5,
+                      "y": 3.5,
+                      "name": "다리",
+                      "fill": "$scene-furniture-line",
+                      "width": 5,
+                      "height": 5
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "TAwzq",
+                      "x": 55.5,
+                      "y": 55.5,
+                      "name": "다리",
+                      "fill": "$scene-furniture-line",
+                      "width": 5,
+                      "height": 5
                     }
                   ]
                 },
@@ -20284,7 +20395,7 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "W5Vi1",
+                      "id": "A1AjFL",
                       "x": 39,
                       "y": 0,
                       "name": "문 선",
@@ -20293,13 +20404,23 @@
                       "height": 48
                     },
                     {
-                      "type": "rectangle",
-                      "id": "WtGFM",
-                      "x": 0,
-                      "y": 44,
-                      "name": "앞면",
+                      "type": "ellipse",
+                      "id": "Z48ve",
+                      "x": 32,
+                      "y": 39,
+                      "name": "손잡이",
                       "fill": "$scene-furniture-line",
-                      "width": 80,
+                      "width": 4,
+                      "height": 4
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "NnMOy",
+                      "x": 44,
+                      "y": 39,
+                      "name": "손잡이",
+                      "fill": "$scene-furniture-line",
+                      "width": 4,
                       "height": 4
                     }
                   ]
@@ -20433,18 +20554,8 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "LHnjJ",
-                      "x": 0,
-                      "y": 21,
-                      "name": "앞면",
-                      "fill": "$scene-furniture-line",
-                      "width": 64,
-                      "height": 3
-                    },
-                    {
-                      "type": "rectangle",
-                      "id": "eXYRb",
-                      "x": 20,
+                      "id": "C6ZChe",
+                      "x": 21,
                       "y": 0,
                       "name": "칸막이",
                       "fill": "$scene-furniture-line",
@@ -20453,13 +20564,46 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "bqbFw",
+                      "id": "hOyJw",
                       "x": 42,
                       "y": 0,
                       "name": "칸막이",
                       "fill": "$scene-furniture-line",
                       "width": 2,
                       "height": 24
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 1,
+                      "id": "znJNa",
+                      "x": 3,
+                      "y": 15,
+                      "name": "책등",
+                      "fill": "$scene-furniture-line",
+                      "width": 16,
+                      "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 1,
+                      "id": "tuwn6",
+                      "x": 24,
+                      "y": 15,
+                      "name": "책등",
+                      "fill": "$scene-furniture-line",
+                      "width": 16,
+                      "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 1,
+                      "id": "U6EF5a",
+                      "x": 45,
+                      "y": 15,
+                      "name": "책등",
+                      "fill": "$scene-furniture-line",
+                      "width": 16,
+                      "height": 5
                     }
                   ]
                 },
@@ -20627,7 +20771,7 @@
                     {
                       "type": "rectangle",
                       "cornerRadius": 2,
-                      "id": "DBqyr",
+                      "id": "eKr2g",
                       "x": 12,
                       "y": 3,
                       "name": "TV",
@@ -20637,7 +20781,18 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "VIjKi",
+                      "cornerRadius": 1,
+                      "id": "mkbNh",
+                      "x": 40,
+                      "y": 8,
+                      "name": "받침",
+                      "fill": "$scene-furniture-line",
+                      "width": 16,
+                      "height": 5
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "v1P498",
                       "x": 0,
                       "y": 28,
                       "name": "앞면",
@@ -20809,24 +20964,24 @@
                     },
                     {
                       "type": "rectangle",
-                      "id": "oXFgJ",
+                      "id": "aNqha",
                       "x": 0,
-                      "y": 46,
+                      "y": 44,
                       "name": "앞면",
                       "fill": "$scene-furniture-line",
                       "width": 48,
-                      "height": 6
+                      "height": 8
                     },
                     {
                       "type": "rectangle",
                       "cornerRadius": 1,
-                      "id": "K3uD3",
+                      "id": "dQift",
                       "x": 36,
-                      "y": 40,
+                      "y": 30,
                       "name": "손잡이",
                       "fill": "$scene-furniture-line",
-                      "width": 6,
-                      "height": 4
+                      "width": 3,
+                      "height": 10
                     }
                   ]
                 },
@@ -20872,11 +21027,27 @@
                       "strokeWidth": 1
                     },
                     {
+                      "type": "rectangle",
+                      "cornerRadius": [
+                        4,
+                        4,
+                        0,
+                        0
+                      ],
+                      "id": "zvtq4",
+                      "x": 0,
+                      "y": 0,
+                      "name": "조작부",
+                      "fill": "$scene-furniture-line",
+                      "width": 48,
+                      "height": 9
+                    },
+                    {
                       "type": "ellipse",
-                      "id": "VobJH",
+                      "id": "U2z9J",
                       "x": 10,
-                      "y": 10,
-                      "name": "문",
+                      "y": 14,
+                      "name": "드럼",
                       "fill": "#FFFFFF80",
                       "width": 28,
                       "height": 28,
@@ -20884,14 +21055,16 @@
                       "strokeWidth": 2
                     },
                     {
-                      "type": "rectangle",
-                      "id": "kyugC",
-                      "x": 0,
-                      "y": 44,
-                      "name": "앞면",
-                      "fill": "$scene-furniture-line",
-                      "width": 48,
-                      "height": 4
+                      "type": "ellipse",
+                      "id": "Xdflx",
+                      "x": 15,
+                      "y": 19,
+                      "name": "드럼 안쪽",
+                      "fill": "#00000000",
+                      "width": 18,
+                      "height": 18,
+                      "stroke": "$scene-furniture-line",
+                      "strokeWidth": 1
                     }
                   ]
                 },

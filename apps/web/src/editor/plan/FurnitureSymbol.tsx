@@ -49,84 +49,212 @@ const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => (
   <Rect y={d - h} w={w} h={h} fill={p.line} />
 );
 
+/** 작은 크기에서 장식이 몸체를 넘지 않게 치수 비율로 제한 */
+const cap = (v: number, dim: number, f: number) => Math.min(v, dim * f);
+
 const DECOR: Record<
   FurnitureCategory,
   (b: Box, p: SymbolPalette) => ReactNode
 > = {
   bed: (b, p) => {
     const pillows = b.w < 120 ? 1 : 2;
-    const pw = (b.w - 12.5 * 2 - 10 * (pillows - 1)) / pillows;
+    const head = cap(12, b.d, 0.06);
+    const gap = cap(10, b.w, 0.08);
+    const edge = cap(12.5, b.w, 0.1);
+    const pw = (b.w - edge * 2 - gap * (pillows - 1)) / pillows;
+    const py = head + cap(6, b.d, 0.03);
+    const ph = cap(30, b.d, 0.15);
+    const blanket = cap(55, b.d, 0.3);
     return (
       <>
         {body(b, p)}
+        <Rect y={blanket} w={b.w} h={b.d - blanket} r={R} fill={p.soft} />
+        <Rect w={b.w} h={head} r={R} fill={p.line} />
         {Array.from({ length: pillows }, (_, i) => (
           <Rect
             key={i}
-            x={12.5 + i * (pw + 10)}
-            y={10}
+            x={edge + i * (pw + gap)}
+            y={py}
             w={pw}
-            h={30}
+            h={ph}
             r={6}
             fill={p.hi}
             stroke={p.line}
             strokeWidth={1}
           />
         ))}
-        <Rect y={55} w={b.w} h={b.d - 55} r={R} fill={p.soft} />
+        <Rect
+          x={cap(4, b.w, 0.1)}
+          y={blanket + cap(10, b.d, 0.05)}
+          w={b.w - cap(8, b.w, 0.2)}
+          h={1.5}
+          fill={p.line}
+        />
       </>
     );
   },
-  desk: (b, p) => (
-    <>
-      {body(b, p)}
-      <Rect y={b.d - 7.5} w={b.w} h={2.5} fill={p.line} />
-      <Rect x={(b.w - 45) / 2} y={7.5} w={45} h={6} r={2} fill={p.line} />
-    </>
-  ),
-  chair: (b, p) => (
-    <>
-      <Rect
-        w={b.w}
-        h={b.d}
-        r={10}
-        fill={p.body}
-        stroke={p.line}
-        strokeWidth={1}
-      />
-      <Rect x={5} w={b.w - 10} h={9} r={4} fill={p.line} />
-    </>
-  ),
-  sofa: (b, p) => (
-    <>
-      {body(b, p)}
-      <Rect w={b.w} h={22.5} r={R} fill={p.line} />
-      <Rect w={17.5} h={b.d} r={R} fill={p.line} />
-      <Rect x={b.w - 17.5} w={17.5} h={b.d} r={R} fill={p.line} />
-      <Rect x={b.w / 2 - 1.25} y={22.5} w={2.5} h={b.d - 22.5} fill={p.line} />
-    </>
-  ),
-  "dining-table": (b, p) => (
-    <>
-      {body(b, p)}
-      <Rect
-        x={7.5}
-        y={7.5}
-        w={b.w - 15}
-        h={b.d - 15}
-        r={3}
-        fill={p.hi}
-        stroke={p.line}
-        strokeWidth={1}
-      />
-    </>
-  ),
-  wardrobe: (b, p) => (
-    <>
-      {body(b, p)}
-      <Rect x={b.w / 2 - 1.25} w={2.5} h={b.d} fill={p.line} />
-      {front(b, p)}
-    </>
-  ),
+  desk: (b, p) => {
+    const inset = cap(4, Math.min(b.w, b.d), 0.15);
+    const kw = cap(40, b.w, 0.35);
+    const kh = cap(10, b.d, 0.15);
+    const mw = cap(24, b.w, 0.25);
+    return (
+      <>
+        {body(b, p)}
+        <Rect
+          x={inset}
+          y={inset}
+          w={b.w - inset * 2}
+          h={b.d - inset * 2}
+          r={2}
+          fill="none"
+          stroke={p.line}
+          strokeWidth={1}
+        />
+        <Rect
+          x={(b.w - mw) / 2}
+          y={cap(10, b.d, 0.15)}
+          w={mw}
+          h={cap(6, b.d, 0.1)}
+          r={2}
+          fill={p.line}
+        />
+        <Rect
+          x={(b.w - kw) / 2}
+          y={b.d - inset - cap(8, b.d, 0.1) - kh}
+          w={kw}
+          h={kh}
+          r={2}
+          fill={p.hi}
+          stroke={p.line}
+          strokeWidth={1}
+        />
+      </>
+    );
+  },
+  chair: (b, p) => {
+    const bh = cap(10, b.d, 0.22);
+    const inset = cap(7, Math.min(b.w, b.d), 0.16);
+    const side = cap(5, b.w, 0.1);
+    return (
+      <>
+        <Rect
+          w={b.w}
+          h={b.d}
+          r={10}
+          fill={p.body}
+          stroke={p.line}
+          strokeWidth={1}
+        />
+        <Rect
+          x={inset}
+          y={bh + inset * 0.6}
+          w={b.w - inset * 2}
+          h={b.d - bh - inset * 1.6}
+          r={6}
+          fill={p.hi}
+          stroke={p.line}
+          strokeWidth={1}
+        />
+        <path
+          d={`M${side} 0H${b.w - side}V${bh * 0.6}Q${b.w / 2} ${bh * 1.6} ${side} ${bh * 0.6}Z`}
+          fill={p.line}
+          stroke={p.line}
+          strokeWidth={2}
+          strokeLinejoin="round"
+          {...px}
+        />
+      </>
+    );
+  },
+  sofa: (b, p) => {
+    const back = cap(22.5, b.d, 0.28);
+    const arm = cap(17.5, b.w, 0.14);
+    const seats = b.w < 190 ? 2 : 3;
+    const gap = 3;
+    const rr = cap(10, Math.min(b.w, b.d), 0.2);
+    const sw = (b.w - arm * 2 - gap * (seats + 1)) / seats;
+    return (
+      <>
+        {body(b, p)}
+        <Rect w={b.w} h={back} r={rr} fill={p.line} />
+        <Rect w={arm} h={b.d} r={rr} fill={p.line} />
+        <Rect x={b.w - arm} w={arm} h={b.d} r={rr} fill={p.line} />
+        {Array.from({ length: seats }, (_, i) => (
+          <Rect
+            key={i}
+            x={arm + gap + i * (sw + gap)}
+            y={back + gap}
+            w={sw}
+            h={b.d - back - gap * 2}
+            r={R}
+            fill={p.hi}
+            stroke={p.line}
+            strokeWidth={1}
+          />
+        ))}
+      </>
+    );
+  },
+  "dining-table": (b, p) => {
+    const leg = cap(8, Math.min(b.w, b.d), 0.15);
+    return (
+      <>
+        {body(b, p)}
+        <Rect
+          x={leg / 2}
+          y={leg / 2}
+          w={b.w - leg}
+          h={b.d - leg}
+          r={3}
+          fill="none"
+          stroke={p.line}
+          strokeWidth={1}
+        />
+        {[leg, b.w - leg].flatMap((x) =>
+          [leg, b.d - leg].map((y) => (
+            <circle
+              key={`${x}-${y}`}
+              cx={x}
+              cy={y}
+              r={cap(3.5, Math.min(b.w, b.d), 0.07)}
+              fill={p.line}
+              {...px}
+            />
+          )),
+        )}
+      </>
+    );
+  },
+  wardrobe: (b, p) => {
+    const doors = b.w >= 120 ? 3 : 2;
+    const dividers = Array.from(
+      { length: doors - 1 },
+      (_, i) => (b.w * (i + 1)) / doors,
+    );
+    const off = cap(6, b.w, 0.06);
+    const y = b.d - cap(10, b.d, 0.2);
+    return (
+      <>
+        {body(b, p)}
+        {dividers.map((x) => (
+          <Rect key={x} x={x - 1.25} w={2.5} h={b.d} fill={p.line} />
+        ))}
+        {dividers.flatMap((x) =>
+          [x - off, x + off].map((cx) => (
+            <circle
+              key={cx}
+              cx={cx}
+              cy={y}
+              r={cap(2.5, Math.min(b.w, b.d), 0.06)}
+              fill={p.line}
+              {...px}
+            />
+          )),
+        )}
+      </>
+    );
+  },
   drawer: (b, p) => (
     <>
       {body(b, p)}
@@ -144,14 +272,30 @@ const DECOR: Record<
       ))}
     </>
   ),
-  bookshelf: (b, p) => (
-    <>
-      {body(b, p)}
-      {front(b, p, 4)}
-      <Rect x={b.w / 3 - 1.25} w={2.5} h={b.d} fill={p.line} />
-      <Rect x={(b.w * 2) / 3 - 1.25} w={2.5} h={b.d} fill={p.line} />
-    </>
-  ),
+  bookshelf: (b, p) => {
+    const bays = [0, 1, 2];
+    const bw = b.w / 3;
+    const h = cap(6, b.d, 0.25);
+    return (
+      <>
+        {body(b, p)}
+        {[1, 2].map((i) => (
+          <Rect key={i} x={bw * i - 1.25} w={2.5} h={b.d} fill={p.line} />
+        ))}
+        {bays.map((i) => (
+          <Rect
+            key={i}
+            x={bw * i + bw * 0.15}
+            y={b.d - h - cap(4, b.d, 0.1)}
+            w={bw * 0.7}
+            h={h}
+            r={1}
+            fill={p.line}
+          />
+        ))}
+      </>
+    );
+  },
   hanger: (b, p) => {
     const hooks = Math.max(2, Math.round(b.w / 16));
     return (
@@ -178,13 +322,32 @@ const DECOR: Record<
       </>
     );
   },
-  "tv-stand": (b, p) => (
-    <>
-      {body(b, p)}
-      <Rect x={15} y={4} w={b.w - 30} h={6} r={2} fill={p.screen} />
-      {front(b, p)}
-    </>
-  ),
+  "tv-stand": (b, p) => {
+    const sx = cap(15, b.w, 0.1);
+    const sw = cap(20, b.w, 0.15);
+    return (
+      <>
+        {body(b, p)}
+        <Rect
+          x={sx}
+          y={4}
+          w={b.w - sx * 2}
+          h={cap(6, b.d, 0.15)}
+          r={2}
+          fill={p.screen}
+        />
+        <Rect
+          x={(b.w - sw) / 2}
+          y={4 + cap(6, b.d, 0.15)}
+          w={sw}
+          h={cap(6, b.d, 0.15)}
+          r={1}
+          fill={p.line}
+        />
+        {front(b, p)}
+      </>
+    );
+  },
   nightstand: (b, p) => (
     <>
       {body(b, p)}
@@ -215,28 +378,56 @@ const DECOR: Record<
       {front(b, p)}
     </>
   ),
-  fridge: (b, p) => (
-    <>
-      {body(b, p)}
-      {front(b, p, 7.5)}
-      <Rect x={b.w * 0.75} y={b.d - 15} w={7.5} h={5} r={1} fill={p.line} />
-    </>
-  ),
-  washer: (b, p) => (
-    <>
-      {body(b, p)}
-      <circle
-        cx={b.w / 2}
-        cy={b.d / 2}
-        r={Math.min(b.w, b.d) * 0.29}
-        fill={p.hi}
-        stroke={p.line}
-        strokeWidth={2}
-        {...px}
-      />
-      {front(b, p)}
-    </>
-  ),
+  fridge: (b, p) => {
+    const fh = cap(7.5, b.d, 0.12);
+    const side = b.w >= 80;
+    const hh = cap(12, b.d, 0.2);
+    const hy = b.d - fh - hh - cap(3, b.d, 0.05);
+    return (
+      <>
+        {body(b, p)}
+        {front(b, p, fh)}
+        {side ? (
+          <>
+            <Rect x={b.w / 2 - 1.25} w={2.5} h={b.d} fill={p.line} />
+            <Rect x={b.w / 2 - 8} y={hy} w={3.5} h={hh} r={1} fill={p.line} />
+            <Rect x={b.w / 2 + 4.5} y={hy} w={3.5} h={hh} r={1} fill={p.line} />
+          </>
+        ) : (
+          <Rect x={b.w * 0.75} y={hy} w={3.5} h={hh} r={1} fill={p.line} />
+        )}
+      </>
+    );
+  },
+  washer: (b, p) => {
+    const bar = cap(12, b.d, 0.2);
+    const r = Math.min(b.w, b.d - bar) * 0.33;
+    const cy = bar + (b.d - bar) / 2;
+    return (
+      <>
+        {body(b, p)}
+        <Rect w={b.w} h={bar} r={R} fill={p.line} />
+        <circle
+          cx={b.w / 2}
+          cy={cy}
+          r={r}
+          fill={p.hi}
+          stroke={p.line}
+          strokeWidth={2}
+          {...px}
+        />
+        <circle
+          cx={b.w / 2}
+          cy={cy}
+          r={r * 0.62}
+          fill="none"
+          stroke={p.line}
+          strokeWidth={1}
+          {...px}
+        />
+      </>
+    );
+  },
   rug: (b, p) => (
     <>
       <Rect w={b.w} h={b.d} r={R} fill={p.rug} />
