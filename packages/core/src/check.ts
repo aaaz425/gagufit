@@ -1,13 +1,38 @@
 import { EPSILON, furnitureCorners, polygonsOverlap } from "./geometry";
-import { doorPassageCorners, wallFrame } from "./room";
+import { doorPassageCorners, roomCorners, wallFrame } from "./room";
 import type {
+  FurnitureCategory,
   FurniturePreset,
   HingedDoor,
+  PlacedFurniture,
   Room,
   SlidingDoor,
   Vec2,
   Warning,
 } from "./types";
+
+/** 앞면을 쓰는 가구 - 벽에 붙이면 열거나 앉기 불편 */
+const HAS_FRONT: Readonly<Record<FurnitureCategory, boolean>> = {
+  sofa: true,
+  chair: true,
+  desk: true,
+  "dressing-table": true,
+  wardrobe: true,
+  drawer: true,
+  fridge: true,
+  washer: true,
+  bookshelf: true,
+  "tv-stand": true,
+  bed: false,
+  "dining-table": false,
+  hanger: false,
+  nightstand: false,
+  rug: false,
+  etc: false,
+};
+
+/** 앞면 가운데에서 벽까지 이 거리 미만이면 막힘 */
+const FRONT_CLEARANCE = 50;
 
 /** 프리셋 없는 가구는 normal 층으로 판정 */
 export function checkRoom(
@@ -21,6 +46,7 @@ export function checkRoom(
       !Object.hasOwn(presets, f.presetId) ||
       presets[f.presetId].layer === "normal",
     corners: furnitureCorners(f),
+    front: frontOf(f, presets),
   }));
   const doors = room.openings.filter(
     (o): o is HingedDoor | SlidingDoor => o.kind !== "window",
@@ -28,8 +54,11 @@ export function checkRoom(
   const warnings: Warning[] = [];
 
   items.forEach((item, i) => {
-    if (item.corners.some((c) => !insideRoom(room, c))) {
+    const out = item.corners.some((c) => !insideRoom(room, c));
+    if (out) {
       warnings.push({ type: "outOfRoom", furnitureId: item.id });
+    } else if (item.front && frontBlocked(room, item.front)) {
+      warnings.push({ type: "frontBlocked", furnitureId: item.id });
     }
     if (!item.normal) return;
     for (const door of doors) {
@@ -48,6 +77,37 @@ export function checkRoom(
     }
   });
   return warnings;
+}
+
+type Front = { center: Vec2; dir: Vec2 };
+
+function frontOf(
+  f: PlacedFurniture,
+  presets: Readonly<Record<string, FurniturePreset>>,
+): Front | null {
+  if (!Object.hasOwn(presets, f.presetId)) return null;
+  if (!HAS_FRONT[presets[f.presetId].category]) return null;
+  // 회전 0에서 +y, 회전은 furnitureCorners와 같은 방향
+  const rad = (f.rotation * Math.PI) / 180;
+  const dir = { x: Math.sin(rad), y: Math.cos(rad) };
+  const half = f.size.depth / 2;
+  return {
+    center: { x: f.position.x + dir.x * half, y: f.position.y + dir.y * half },
+    dir,
+  };
+}
+
+/** 앞방향이 벽 바깥 방향과 ±45° 안인 벽이 가까움 */
+function frontBlocked(room: Room, front: Front): boolean {
+  return roomCorners(room).some((_, wall) => {
+    const { start, inward } = wallFrame(room, wall);
+    const facing = -(front.dir.x * inward.x + front.dir.y * inward.y);
+    if (facing < Math.SQRT1_2 - EPSILON) return false;
+    const gap =
+      (front.center.x - start.x) * inward.x +
+      (front.center.y - start.y) * inward.y;
+    return gap < FRONT_CLEARANCE - EPSILON;
+  });
 }
 
 function insideRoom(room: Room, p: Vec2): boolean {

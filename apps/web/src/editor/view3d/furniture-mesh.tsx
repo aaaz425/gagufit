@@ -33,6 +33,7 @@ import {
   type Group,
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import type { WarningTone } from "../labels";
 import { SCENE_COLORS } from "../scene-colors";
 import { m, rad } from "./geometry";
 import { furnitureParts, type Part, type PartTone } from "./furniture-parts";
@@ -78,15 +79,20 @@ const EDGE_MATERIAL = new LineBasicMaterial({ color: SCENE_COLORS.inkMuted });
 /** 원기둥을 앞쪽으로 눕힌 지름 1·두께 1 기준 - 세탁기 문 */
 const DISC = new CylinderGeometry(0.5, 0.5, 1, 32).rotateX(Math.PI / 2);
 
-const WARNING_MATERIAL = new MeshBasicMaterial({
-  color: SCENE_COLORS.danger,
-  transparent: true,
-  opacity: 0.4,
-  depthWrite: false,
-  polygonOffset: true,
-  polygonOffsetFactor: -1,
-  polygonOffsetUnits: -1,
-});
+const warningMaterial = (color: string, opacity: number) =>
+  new MeshBasicMaterial({
+    color,
+    transparent: true,
+    opacity,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
+  });
+const WARNING_MATERIALS = {
+  danger: warningMaterial(SCENE_COLORS.danger, 0.4),
+  caution: warningMaterial(SCENE_COLORS.caution, 0.2),
+};
 
 /** 프리셋이 없는 가구 - core 판정과 같이 일반 가구로 보고 상자로 그림 */
 const FALLBACK_LOOK: Pick<FurniturePreset, "category" | "material" | "layer"> =
@@ -220,6 +226,10 @@ const FLOOR_MARKS = {
     ring: floorMark(SCENE_COLORS.danger, 1),
     glow: floorMark(SCENE_COLORS.danger, 0.2),
   },
+  caution: {
+    ring: floorMark(SCENE_COLORS.caution, 1),
+    glow: floorMark(SCENE_COLORS.caution, 0.2),
+  },
 };
 
 function partScale(part: Part): [number, number, number] {
@@ -259,7 +269,7 @@ type Props = {
   /** 없으면 기본 상자 */
   preset: FurniturePreset | undefined;
   selected: boolean;
-  warning: boolean;
+  warning: WarningTone | undefined;
   /** 진짜 그림자를 켰는지 - 접지 그림자 농도만 달라짐 */
   realShadows: boolean;
   /** 등장 효과 켬 - 끄면 바로 보임 */
@@ -350,14 +360,14 @@ export const FurnitureMesh = memo(function FurnitureMesh({
         <>
           <mesh
             geometry={floorMarks.glow}
-            material={FLOOR_MARKS[warning ? "danger" : "primary"].glow}
+            material={FLOOR_MARKS[warning ?? "primary"].glow}
             position-y={0.004}
             renderOrder={2}
             raycast={() => null}
           />
           <mesh
             geometry={floorMarks.ring}
-            material={FLOOR_MARKS[warning ? "danger" : "primary"].ring}
+            material={FLOOR_MARKS[warning ?? "primary"].ring}
             position-y={0.005}
             renderOrder={3}
             raycast={() => null}
@@ -380,7 +390,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
                 <Outlines
                   thickness={SELECTION_PX * dpr}
                   // 2D와 같이 경고 우선
-                  color={warning ? SCENE_COLORS.danger : SCENE_COLORS.primary}
+                  color={SCENE_COLORS[warning ?? "primary"]}
                 />
               )}
             </mesh>
@@ -396,7 +406,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
             {warning && (
               <mesh
                 geometry={geometry}
-                material={WARNING_MATERIAL}
+                material={WARNING_MATERIALS[warning]}
                 renderOrder={2}
               />
             )}

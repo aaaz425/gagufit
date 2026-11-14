@@ -1,7 +1,8 @@
 import type { Room } from "@gagufit/core";
+import type { WarningTone } from "@/editor/labels";
 import { RoomPlan } from "@/editor/plan/RoomPlan";
 
-const EMPTY: ReadonlySet<string> = new Set();
+const EMPTY: ReadonlyMap<string, WarningTone> = new Map();
 /** 벽 바깥 여백 cm */
 const PAD = 24;
 /** 도면 그림에 넘기는 화면 px/cm 근사 - 썸네일 안 벽 두께·선 굵기 기준 */

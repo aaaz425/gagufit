@@ -3,6 +3,7 @@ export const SCENE_COLORS = {
   primary: "#0B7D61",
   inkMuted: "#5B616E",
   danger: "#C8343A",
+  caution: "#A8500A",
   canvas: "#FFFFFF",
   floor: "#F1E8DA",
   wall: "#3D3A36",

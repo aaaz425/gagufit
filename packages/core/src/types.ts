@@ -136,4 +136,5 @@ export type Room = {
 export type Warning =
   | { type: "overlap"; furnitureIds: [string, string] }
   | { type: "outOfRoom"; furnitureId: string }
-  | { type: "doorBlocked"; openingId: string; furnitureId: string };
+  | { type: "doorBlocked"; openingId: string; furnitureId: string }
+  | { type: "frontBlocked"; furnitureId: string };

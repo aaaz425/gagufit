@@ -82,6 +82,9 @@ export function warningText(room: Room, w: Warning, id: string): string {
       "와",
     )} 겹쳐요`;
   }
+  if (w.type === "frontBlocked") {
+    return `${furnitureName(room, id)} 앞쪽이 벽에 막혀 있어요`;
+  }
   if (w.type === "outOfRoom") {
     return `${josa(furnitureName(room, id), "이", "가")} 방 밖으로 나갔어요`;
   }
@@ -97,7 +100,25 @@ const WARNING_BADGE: Record<Warning["type"], string> = {
   overlap: "겹침",
   outOfRoom: "벽 밖",
   doorBlocked: "문 막힘",
+  frontBlocked: "앞 막힘",
 };
+
+/** caution은 약한 경고 - 표시만 덜 강조 */
+export type WarningTone = "danger" | "caution";
+
+export const WARNING_TONE: Record<Warning["type"], WarningTone> = {
+  overlap: "danger",
+  outOfRoom: "danger",
+  doorBlocked: "danger",
+  frontBlocked: "caution",
+};
+
+/** 강한 경고가 하나라도 있으면 danger */
+export function strongestTone(warnings: readonly Warning[]): WarningTone {
+  return warnings.some((w) => WARNING_TONE[w.type] === "danger")
+    ? "danger"
+    : "caution";
+}
 
 /** 상단 경고 배지 - 종류가 하나면 그 이름 */
 export function warningBadgeLabel(warnings: Warning[]): string {
