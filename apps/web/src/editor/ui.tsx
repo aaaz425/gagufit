@@ -133,7 +133,7 @@ export function Segment<T extends string>({
               full ? "min-h-11 flex-1" : `min-h-8 ${TOUCH_44}`
             } ${
               on
-                ? "bg-canvas font-bold text-ink shadow-raised"
+                ? "bg-primary-soft font-bold text-primary"
                 : `font-medium ${o.unavailable ? "cursor-pointer text-ink-subtle" : "text-ink-muted hover:text-ink"}`
             }`}
           >
