@@ -22,6 +22,21 @@ const LONG_PRESS_MS = 400;
 /** 이만큼 움직이면 누르기가 아닌 끌기 */
 const MOVE_SLOP = 8;
 
+const HINT_KEY = "gagufit:drag-hint-seen";
+
+/** 길게 누르기 안내는 처음 한 번만 */
+function showDragHintOnce() {
+  try {
+    if (localStorage.getItem(HINT_KEY)) return;
+    localStorage.setItem(HINT_KEY, "1");
+  } catch {
+    return;
+  }
+  useEditor
+    .getState()
+    .showToast({ message: "가구를 길게 누르면 옮길 수 있어요" });
+}
+
 type Hit = { kind: string; id: string } | null;
 
 type Gesture =
@@ -166,7 +181,11 @@ export function usePlanGestures({
       setCursor(getComputedStyle(e.target as Element).cursor);
       setDragging(true);
     } else if (hit?.kind === "furniture" || hit?.kind === "opening") {
-      if (e.pointerType === "touch") {
+      const selected = useEditor.getState().selection;
+      if (
+        e.pointerType === "touch" &&
+        !(selected?.kind === hit.kind && selected.id === hit.id)
+      ) {
         gesture.current = {
           type: "press",
           hit,
@@ -234,6 +253,7 @@ export function usePlanGestures({
       case "press": {
         if (Math.hypot(at.x - g.start.x, at.y - g.start.y) < MOVE_SLOP) return;
         clearTimeout(g.timer);
+        showDragHintOnce();
         gesture.current = {
           type: "pan",
           start: g.start,
