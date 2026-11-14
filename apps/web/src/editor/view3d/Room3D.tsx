@@ -36,7 +36,7 @@ import type { WarningTone } from "../labels";
 import { SCENE_COLORS } from "../scene-colors";
 import type { ScreenBox } from "../SelectionToolbar";
 import { FurnitureMesh } from "./furniture-mesh";
-import { m } from "./geometry";
+import { m, planToWorld } from "./geometry";
 import { RoomShell } from "./room-shell";
 import { useFurnitureDrag } from "./use-furniture-drag";
 
@@ -77,9 +77,11 @@ function sunPosition(room: Room): [number, number, number] {
   const { start, u } = wallFrame(room, opening.wall);
   const mid = opening.offset + opening.width / 2;
   // 방 가운데 원점 기준, 창문 바깥쪽 위
-  const x = m(start.x + u.x * mid - room.width / 2) + u.y * reach;
-  const z = m(start.y + u.y * mid - room.depth / 2) - u.x * reach;
-  return [x, reach * 1.2, z];
+  const [wx, wz] = planToWorld(room, {
+    x: start.x + u.x * mid,
+    y: start.y + u.y * mid,
+  });
+  return [wx + u.y * reach, reach * 1.2, wz - u.x * reach];
 }
 
 const SUN_COLOR = "#FFF3E0";
@@ -212,7 +214,11 @@ function SelectionAnchor({
   selectedId: string | null;
   onSelectionBox: Room3DProps["onSelectionBox"];
 }) {
-  const last = useRef<ScreenBox | null>(null);
+  const last = useRef<{ box: ScreenBox | null; w: number; h: number }>({
+    box: null,
+    w: 0,
+    h: 0,
+  });
   const corner = useMemo(() => new Vector3(), []);
   const furniture = selectedId
     ? room.furniture.find((f) => f.id === selectedId)
@@ -229,8 +235,13 @@ function SelectionAnchor({
       };
       for (const p of furnitureCorners(furniture)) {
         for (const y of [0, furniture.size.height]) {
-          // 방 가운데 원점 - 아래 group 이동과 같음
-          corner.set(m(p.x - room.width / 2), m(y), m(p.y - room.depth / 2));
+          const [wx, wz] = planToWorld(room, p);
+          corner.set(wx, m(y), wz);
+          // 카메라 뒤 꼭짓점이 있으면 투영이 뒤집혀 상자가 틀어짐 - 툴바 숨김
+          if (corner.clone().applyMatrix4(camera.matrixWorldInverse).z >= 0) {
+            box = null;
+            break;
+          }
           corner.project(camera);
           const x = ((corner.x + 1) / 2) * size.width;
           const sy = ((1 - corner.y) / 2) * size.height;
@@ -239,19 +250,22 @@ function SelectionAnchor({
           box.minY = Math.min(box.minY, sy);
           box.maxY = Math.max(box.maxY, sy);
         }
+        if (!box) break;
       }
     }
     const prev = last.current;
     const same =
-      prev === box ||
-      (prev &&
-        box &&
-        Math.abs(prev.minX - box.minX) < 1 &&
-        Math.abs(prev.maxX - box.maxX) < 1 &&
-        Math.abs(prev.minY - box.minY) < 1 &&
-        Math.abs(prev.maxY - box.maxY) < 1);
+      prev.w === size.width &&
+      prev.h === size.height &&
+      (prev.box === box ||
+        (prev.box &&
+          box &&
+          Math.abs(prev.box.minX - box.minX) < 1 &&
+          Math.abs(prev.box.maxX - box.maxX) < 1 &&
+          Math.abs(prev.box.minY - box.minY) < 1 &&
+          Math.abs(prev.box.maxY - box.maxY) < 1));
     if (same) return;
-    last.current = box;
+    last.current = { box, w: size.width, h: size.height };
     onSelectionBox(box, size);
   });
   return null;
@@ -286,8 +300,7 @@ function Room3D({
     controls,
     read: () => ({
       selectedId: selectedRef.current,
-      width: roomRef.current.width,
-      depth: roomRef.current.depth,
+      room: roomRef.current,
       position: (id) =>
         roomRef.current.furniture.find((f) => f.id === id)?.position,
     }),
@@ -313,6 +326,8 @@ function Room3D({
     [onSelect],
   );
 
+  // 가구·벽은 방 평면 좌표 그대로 그리므로 왼쪽 위 모서리를 월드에 맞춤
+  const origin = planToWorld(room, { x: 0, y: 0 });
   const initialIds = useInitialIds(room.furniture.map((f) => f.id));
   // 고해상도를 끈 저사양에서는 3D 움직임 생략
   const [reducedMotion] = useState(prefersReducedMotion);
@@ -348,7 +363,7 @@ function Room3D({
       >
         <Lights room={room} shadows={quality.shadows} />
         {REFLECTIONS}
-        <group position={[-m(room.width) / 2, 0, -m(room.depth) / 2]}>
+        <group position={[origin[0], 0, origin[1]]}>
           <RoomShell
             room={room}
             hiRes={quality.hiDpi}

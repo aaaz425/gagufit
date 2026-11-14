@@ -333,7 +333,8 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   );
   const dpr = useThree((s) => s.viewport.dpr);
   const [hovered, setHovered] = useState(false);
-  useCursor(hovered);
+  // 선택된 가구는 끌 수 있음 - 끄는 중 grabbing은 끌기 훅이 지정
+  useCursor(hovered, selected ? "grab" : "pointer");
   const hex = FURNITURE_COLORS[furniture.color].hex;
   const shadow = look.layer !== "floor";
   return (
