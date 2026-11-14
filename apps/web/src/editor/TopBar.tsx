@@ -125,7 +125,8 @@ export function ViewSwitch() {
   );
   return (
     <Segment
-      label="보기"
+      toggle
+      label={view === "2d" ? "3D로 보기" : "2D로 보기"}
       value={view}
       onChange={(next) => {
         if (next === "3d" && !webgl) {

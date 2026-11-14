@@ -8833,7 +8833,7 @@
                     {
                       "type": "frame",
                       "id": "C4BOC8",
-                      "name": "maximize",
+                      "name": "locate-fixed",
                       "width": 32,
                       "height": 32,
                       "justifyContent": "center",
@@ -8845,7 +8845,7 @@
                           "name": "아이콘",
                           "width": 16,
                           "height": 16,
-                          "icon": "maximize",
+                          "icon": "locate-fixed",
                           "library": "lucide",
                           "fill": "$ink"
                         }
@@ -14230,18 +14230,8 @@
                       "type": "frame",
                       "id": "hxF5P",
                       "name": "선택됨",
-                      "fill": "$canvas",
+                      "fill": "$primary-soft",
                       "cornerRadius": 999,
-                      "effect": {
-                        "type": "shadow",
-                        "shadowType": "outer",
-                        "color": "#1F23280F",
-                        "offset": {
-                          "x": 0,
-                          "y": 2
-                        },
-                        "blur": 8
-                      },
                       "padding": [
                         6,
                         16
@@ -14251,7 +14241,7 @@
                           "type": "text",
                           "id": "jafuj",
                           "name": "라벨",
-                          "fill": "$ink",
+                          "fill": "$primary",
                           "content": "2D",
                           "fontFamily": "$font",
                           "fontSize": 13,
@@ -14420,6 +14410,8 @@
                       "name": "rotate-cw",
                       "width": 44,
                       "height": 44,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 999,
                       "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
@@ -14431,7 +14423,7 @@
                           "height": 18,
                           "icon": "rotate-cw",
                           "library": "lucide",
-                          "fill": "$ink"
+                          "fill": "$primary"
                         }
                       ]
                     },
@@ -17578,7 +17570,7 @@
                     {
                       "type": "frame",
                       "id": "rr2d0",
-                      "name": "maximize",
+                      "name": "locate-fixed",
                       "width": 32,
                       "height": 32,
                       "justifyContent": "center",
@@ -17590,7 +17582,7 @@
                           "name": "아이콘",
                           "width": 16,
                           "height": 16,
-                          "icon": "maximize",
+                          "icon": "locate-fixed",
                           "library": "lucide",
                           "fill": "$ink"
                         }
@@ -23387,7 +23379,7 @@
                     {
                       "type": "frame",
                       "id": "Slue3",
-                      "name": "maximize",
+                      "name": "locate-fixed",
                       "width": 32,
                       "height": 32,
                       "justifyContent": "center",
@@ -23399,7 +23391,7 @@
                           "name": "아이콘",
                           "width": 16,
                           "height": 16,
-                          "icon": "maximize",
+                          "icon": "locate-fixed",
                           "library": "lucide",
                           "fill": "$ink"
                         }
