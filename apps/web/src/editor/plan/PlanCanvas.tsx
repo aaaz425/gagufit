@@ -20,7 +20,14 @@ import {
 } from "./RoomPlan";
 import { selectionBox } from "./selection-box";
 import { usePlanGestures } from "./usePlanGestures";
-import { fitView, toScreen, transformOf, zoomAt, type View } from "./view";
+import {
+  clampView,
+  fitView,
+  toScreen,
+  transformOf,
+  zoomAt,
+  type View,
+} from "./view";
 import { ZoomControls } from "./ZoomControls";
 
 /** 맞춤 기준 - 선택 시 열리는 패널·요약 바 자리까지 비움 */
@@ -54,7 +61,15 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const [view, setViewState] = useState<View | null>(null);
   const viewRef = useRef<View | null>(null);
 
+  // 이동·확대·회전 결과는 방이 화면 밖으로 나가지 않게 제한 - 휠 핸들러는 ref로 최신 값 참조
+  const limitRef = useRef<(v: View) => View>((v) => v);
+  useEffect(() => {
+    limitRef.current = (v) =>
+      size ? clampView(v, currentRoom(), size, insets) : v;
+  });
+
   const setView = (next: View) => {
+    next = limitRef.current(next);
     viewRef.current = next;
     setViewState(next);
   };
@@ -108,7 +123,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
       const rect = svg.getBoundingClientRect();
       const anchor = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       const k = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));
-      const next = zoomAt(v, anchor, v.scale * k);
+      const next = limitRef.current(zoomAt(v, anchor, v.scale * k));
       viewRef.current = next;
       setViewState(next);
     };

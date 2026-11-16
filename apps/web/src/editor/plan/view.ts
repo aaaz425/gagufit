@@ -47,6 +47,48 @@ export function zoomAt(
   };
 }
 
+/** 방이 보이는 영역과 항상 겹쳐야 하는 최소 크기 - 화면 px */
+export const MIN_VISIBLE = 96;
+
+function shift(min: number, max: number, lo: number, hi: number, keep: number) {
+  if (max < lo + keep) return lo + keep - max;
+  if (min > hi - keep) return hi - keep - min;
+  return 0;
+}
+
+/** 방(회전 반영 외접 상자)이 insets 바깥 보이는 영역과 MIN_VISIBLE 이상 겹치게 이동 */
+export function clampView(
+  view: View,
+  room: { width: number; depth: number },
+  size: { width: number; height: number },
+  insets: Insets,
+): View {
+  const corners = [
+    { x: 0, y: 0 },
+    { x: room.width, y: 0 },
+    { x: 0, y: room.depth },
+    { x: room.width, y: room.depth },
+  ].map((p) => toScreen(view, p));
+  const xs = corners.map((p) => p.x);
+  const ys = corners.map((p) => p.y);
+  const [minX, maxX] = [Math.min(...xs), Math.max(...xs)];
+  const [minY, maxY] = [Math.min(...ys), Math.max(...ys)];
+  const area = {
+    left: insets.left,
+    right: size.width - insets.right,
+    top: insets.top,
+    bottom: size.height - insets.bottom,
+  };
+  // 방이나 보이는 영역이 작으면 그 크기만큼만 요구
+  const keepX = Math.min(MIN_VISIBLE, maxX - minX, area.right - area.left);
+  const keepY = Math.min(MIN_VISIBLE, maxY - minY, area.bottom - area.top);
+  const dx = shift(minX, maxX, area.left, area.right, keepX);
+  const dy = shift(minY, maxY, area.top, area.bottom, keepY);
+  return dx === 0 && dy === 0
+    ? view
+    : { ...view, x: view.x + dx, y: view.y + dy };
+}
+
 /** pad 안쪽 영역 가운데에 방 전체가 보이게 */
 export function fitView(
   room: { width: number; depth: number },
