@@ -3,6 +3,7 @@
 import { ChevronLeft } from "lucide-react";
 import type { CSSProperties } from "react";
 import { COLLAPSED_PANEL_WIDTH, PANEL_WIDTH } from "../layout";
+import { useLeftOpen } from "../left-open";
 import { useEditor, type PanelTab } from "../store";
 import { FurniturePanel } from "./FurniturePanel";
 import { PropertiesPanel } from "./PropertiesPanel";
@@ -39,7 +40,7 @@ function PanelTabs() {
 
 export function LeftPanel() {
   const panel = useEditor((s) => s.panel);
-  const open = useEditor((s) => s.leftOpen);
+  const open = useLeftOpen();
   const setOpen = useEditor((s) => s.setLeftOpen);
   return (
     // 항상 PANEL_WIDTH - 접으면 왼쪽으로 밀어 오른쪽 COLLAPSED_PANEL_WIDTH만 띠로 남김, 여닫는 탭은 가장자리에 붙어 같이 움직임

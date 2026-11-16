@@ -49,6 +49,8 @@ export type Room3DProps = {
   quality: QualitySettings;
   /** 캔버스 위 패널에 가려진 영역 px - 맞춤·버튼이 비켜감 */
   insets: Insets;
+  /** 방 맞춤 기준 - 선택 시 패널 자리까지 뺀 영역 */
+  fitInsets: Insets;
   onSelect: (id: string | null) => void;
   /** 선택된 가구가 화면에서 차지하는 영역 - 시점이 바뀌어도 따라감, 선택이 없으면 null */
   onSelectionBox: (box: ScreenBox | null, canvas: ScreenSize) => void;
@@ -143,14 +145,14 @@ type CameraRigProps = {
   room: Room;
   controls: RefObject<OrbitControlsImpl | null>;
   resetKey: number;
-  insets: Insets;
+  fitInsets: Insets;
 };
 
 /**
  * 방 전체가 패널에 가리지 않은 영역 가운데 오게 비스듬히 - 처음·리셋·방 크기 변화 때만
  * 패널이 열리고 닫혀도 시점은 그대로
  */
-function CameraRig({ room, controls, resetKey, insets }: CameraRigProps) {
+function CameraRig({ room, controls, resetKey, fitInsets: insets }: CameraRigProps) {
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
@@ -310,6 +312,7 @@ function Room3D({
   warningTones,
   quality,
   insets,
+  fitInsets,
   onSelect,
   onSelectionBox,
   onDragStart,
@@ -434,7 +437,7 @@ function Room3D({
           room={room}
           controls={controls}
           resetKey={resetKey}
-          insets={insets}
+          fitInsets={fitInsets}
         />
         {quality.post && (
           <EffectComposer multisampling={0} enableNormalPass>

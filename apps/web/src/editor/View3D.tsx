@@ -6,6 +6,7 @@ import type { Room, Vec2 } from "@gagufit/core";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { updateFurniture } from "./actions";
 import { canvasInsets, PANEL_TAB_BOTTOM } from "./layout";
+import { leftOpenWhenSelected, useLeftOpen } from "./left-open";
 import { useQualitySettings } from "./quality";
 import { SelectionToolbar, type ScreenBox } from "./SelectionToolbar";
 import { currentRoom, useEditor, useRoom, warnedFurnitureTones } from "./store";
@@ -27,7 +28,7 @@ const Room3D = dynamic(() => import("./view3d/Room3D"), {
 export function View3D({ compact }: { compact: boolean }) {
   const room = useRoom();
   const selection = useEditor((s) => s.selection);
-  const leftOpen = useEditor((s) => s.leftOpen);
+  const leftOpen = useLeftOpen();
   const sheet = useEditor((s) => s.sheet);
   const dragging = useEditor((s) => s.dragging);
   const select = useEditor((s) => s.select);
@@ -75,6 +76,12 @@ export function View3D({ compact }: { compact: boolean }) {
       }),
     [compact, leftOpen, selection],
   );
+  // 맞춤은 2D처럼 선택 시 열리는 오른쪽 패널 자리까지 비움 - 패널이 열려도 방이 가려지지 않음
+  const fitInsets = canvasInsets({
+    desktop: !compact,
+    leftOpen: leftOpenWhenSelected(),
+    selected: true,
+  });
   const selectedId = selection?.kind === "furniture" ? selection.id : null;
   const warningTones = warnedFurnitureTones(room);
 
@@ -86,6 +93,7 @@ export function View3D({ compact }: { compact: boolean }) {
         warningTones={warningTones}
         quality={quality}
         insets={insets}
+        fitInsets={fitInsets}
         onSelect={onSelect}
         onSelectionBox={onSelectionBox}
         onDragStart={onDragStart}

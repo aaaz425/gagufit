@@ -32,6 +32,8 @@ type EditorState = {
   panel: PanelTab;
   /** 데스크톱 왼쪽 패널 펼침 */
   leftOpen: boolean;
+  /** 선택 중 사용자가 직접 연 상태 - 좁은 화면 자동 접기를 막음, 선택이 풀리면 해제 */
+  leftPinned: boolean;
   sheet: Sheet;
   toast: Toast | null;
   /** 도면에서 끄는 중 - 실행 취소 막음 */
@@ -63,6 +65,7 @@ export const useEditor = create<EditorState>()((set) => ({
   view: "2d",
   panel: "furniture",
   leftOpen: true,
+  leftPinned: false,
   sheet: null,
   toast: null,
   dragging: false,
@@ -73,6 +76,7 @@ export const useEditor = create<EditorState>()((set) => ({
       saveStatus: "saved",
       history: history.create(room),
       selection: null,
+      leftPinned: false,
       view: "2d",
       panel: "furniture",
       sheet: null,
@@ -106,6 +110,7 @@ export const useEditor = create<EditorState>()((set) => ({
       return {
         history: next,
         selection: keepSelection(next.present, s),
+        leftPinned: keepSelection(next.present, s) ? s.leftPinned : false,
         toast: null,
       };
     }),
@@ -116,17 +121,20 @@ export const useEditor = create<EditorState>()((set) => ({
       return {
         history: next,
         selection: keepSelection(next.present, s),
+        leftPinned: keepSelection(next.present, s) ? s.leftPinned : false,
         toast: null,
       };
     }),
   select: (selection) =>
     set((s) => ({
       selection,
+      leftPinned: selection ? s.leftPinned : false,
       sheet: s.sheet === "props" && !selection ? null : s.sheet,
     })),
   setView: (view) => set({ view }),
   setPanel: (panel) => set({ panel }),
-  setLeftOpen: (leftOpen) => set({ leftOpen }),
+  setLeftOpen: (leftOpen) =>
+    set((s) => ({ leftOpen, leftPinned: leftOpen && s.selection !== null })),
   setSheet: (sheet) => set({ sheet }),
   showToast: (toast) => set({ toast }),
   setDragging: (dragging) => set({ dragging }),

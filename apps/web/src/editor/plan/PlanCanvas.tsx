@@ -9,6 +9,7 @@ import {
 } from "../store";
 import { useQualitySettings } from "../quality";
 import { canvasInsets, fitPadding, PANEL_TAB_BOTTOM } from "../layout";
+import { leftOpenWhenSelected, useLeftOpen } from "../left-open";
 import { SelectionToolbar } from "../SelectionToolbar";
 import { EmptyHint } from "./EmptyHint";
 import {
@@ -32,10 +33,9 @@ import { ZoomControls } from "./ZoomControls";
 
 /** 맞춤 기준 - 선택 시 열리는 패널·요약 바 자리까지 비움 */
 function currentInsets(desktop: boolean) {
-  const s = useEditor.getState();
   return canvasInsets({
     desktop,
-    leftOpen: s.leftOpen,
+    leftOpen: leftOpenWhenSelected(),
     selected: true,
   });
 }
@@ -46,7 +46,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const selection = useEditor((s) => s.selection);
   const sheet = useEditor((s) => s.sheet);
   const dragging = useEditor((s) => s.dragging);
-  const leftOpen = useEditor((s) => s.leftOpen);
+  const leftOpen = useLeftOpen();
   const insets = canvasInsets({
     desktop: !compact,
     leftOpen,
