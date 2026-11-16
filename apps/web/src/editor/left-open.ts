@@ -39,13 +39,13 @@ export function useLeftOpen(): boolean {
   return leftPanelOpen({ leftOpen, pinned, selected, narrow });
 }
 
-/** 선택해서 오른쪽 패널이 열린 순간의 왼쪽 패널 상태 - 방 맞춤 기준 */
-export function leftOpenWhenSelected(): boolean {
+/** 지금 왼쪽 패널 상태 - 렌더 밖(맞춤·리셋)에서 읽음 */
+export function leftOpenNow(): boolean {
   const s = useEditor.getState();
   return leftPanelOpen({
     leftOpen: s.leftOpen,
     pinned: s.leftPinned,
-    selected: true,
+    selected: s.selection !== null,
     narrow: isNarrow(),
   });
 }

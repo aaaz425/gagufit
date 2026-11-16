@@ -49,8 +49,8 @@ export type Room3DProps = {
   quality: QualitySettings;
   /** 캔버스 위 패널에 가려진 영역 px - 맞춤·버튼이 비켜감 */
   insets: Insets;
-  /** 방 맞춤 기준 - 선택 시 패널 자리까지 뺀 영역 */
-  fitInsets: Insets;
+  /** 방 맞춤 기준 - 맞춤·리셋 순간에 부름 */
+  fitInsets: () => Insets;
   onSelect: (id: string | null) => void;
   /** 선택된 가구가 화면에서 차지하는 영역 - 시점이 바뀌어도 따라감, 선택이 없으면 null */
   onSelectionBox: (box: ScreenBox | null, canvas: ScreenSize) => void;
@@ -145,31 +145,31 @@ type CameraRigProps = {
   room: Room;
   controls: RefObject<OrbitControlsImpl | null>;
   resetKey: number;
-  fitInsets: Insets;
+  insets: Insets;
+  fitInsets: () => Insets;
 };
 
 /**
  * 방 전체가 패널에 가리지 않은 영역 가운데 오게 비스듬히 - 처음·리셋·방 크기 변화 때만
  * 패널이 열리고 닫혀도 시점은 그대로
  */
-function CameraRig({ room, controls, resetKey, fitInsets: insets }: CameraRigProps) {
+function CameraRig({
+  room,
+  controls,
+  resetKey,
+  insets,
+  fitInsets,
+}: CameraRigProps) {
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
   const radius = Math.hypot(m(room.width), m(room.depth), m(room.height)) / 2;
-  /** 맞춘 순간 보이는 영역 중심까지 화면 이동 px */
-  const shift = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    const fit = fitInsets();
     const margin = 2 * FIT_MARGIN;
-    const visibleW = Math.max(
-      1,
-      size.width - insets.left - insets.right - margin,
-    );
-    const visibleH = Math.max(
-      1,
-      size.height - insets.top - insets.bottom - margin,
-    );
+    const visibleW = Math.max(1, size.width - fit.left - fit.right - margin);
+    const visibleH = Math.max(1, size.height - fit.top - fit.bottom - margin);
     // 보이는 영역만큼 좁아진 화각
     const halfV = Math.atan(
       Math.tan((FOV * Math.PI) / 360) * (visibleH / size.height),
@@ -182,33 +182,29 @@ function CameraRig({ room, controls, resetKey, fitInsets: insets }: CameraRigPro
       target[1] + Math.sin(VIEW_ELEVATION) * distance,
       Math.cos(VIEW_AZIMUTH) * Math.cos(VIEW_ELEVATION) * distance,
     );
-    shift.current = {
-      x: (insets.left - insets.right) / 2,
-      y: (insets.top - insets.bottom) / 2,
-    };
     const c = controls.current;
     if (c) {
       c.target.set(...target);
       c.update();
     }
     invalidate();
-    // 창 크기·패널 변화마다 시점을 되돌리지 않게 size·insets는 제외
+    // 창 크기·패널 변화마다 시점을 되돌리지 않게 size·fitInsets는 제외
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camera, controls, radius, room.height, resetKey, invalidate]);
 
-  // 회전 중심은 방 가운데로 두고 투영만 옮김 - 창 크기가 바뀌면 다시 적용
+  // 회전 중심은 방 가운데로 두고 투영만 옮겨 패널에 가리지 않은 영역 가운데로 - 패널·창 크기가 바뀔 때마다
   useEffect(() => {
     const { width, height } = size;
     camera.setViewOffset(
       width,
       height,
-      -shift.current.x,
-      -shift.current.y,
+      -(insets.left - insets.right) / 2,
+      -(insets.top - insets.bottom) / 2,
       width,
       height,
     );
     invalidate();
-  }, [camera, size, radius, resetKey, invalidate]);
+  }, [camera, size, insets, invalidate]);
   return null;
 }
 
@@ -437,6 +433,7 @@ function Room3D({
           room={room}
           controls={controls}
           resetKey={resetKey}
+          insets={insets}
           fitInsets={fitInsets}
         />
         {quality.post && (

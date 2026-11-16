@@ -76,7 +76,6 @@ export const useEditor = create<EditorState>()((set) => ({
       saveStatus: "saved",
       history: history.create(room),
       selection: null,
-      leftPinned: false,
       view: "2d",
       panel: "furniture",
       sheet: null,
@@ -110,7 +109,6 @@ export const useEditor = create<EditorState>()((set) => ({
       return {
         history: next,
         selection: keepSelection(next.present, s),
-        leftPinned: keepSelection(next.present, s) ? s.leftPinned : false,
         toast: null,
       };
     }),
@@ -121,7 +119,6 @@ export const useEditor = create<EditorState>()((set) => ({
       return {
         history: next,
         selection: keepSelection(next.present, s),
-        leftPinned: keepSelection(next.present, s) ? s.leftPinned : false,
         toast: null,
       };
     }),

@@ -9,7 +9,7 @@ import {
 } from "../store";
 import { useQualitySettings } from "../quality";
 import { canvasInsets, fitPadding, PANEL_TAB_BOTTOM } from "../layout";
-import { leftOpenWhenSelected, useLeftOpen } from "../left-open";
+import { leftOpenNow, useLeftOpen } from "../left-open";
 import { SelectionToolbar } from "../SelectionToolbar";
 import { EmptyHint } from "./EmptyHint";
 import {
@@ -35,7 +35,7 @@ import { ZoomControls } from "./ZoomControls";
 function currentInsets(desktop: boolean) {
   return canvasInsets({
     desktop,
-    leftOpen: leftOpenWhenSelected(),
+    leftOpen: leftOpenNow(),
     selected: true,
   });
 }
