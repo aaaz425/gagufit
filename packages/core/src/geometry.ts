@@ -66,3 +66,38 @@ export function polygonsOverlap(
   }
   return true;
 }
+
+type Placement = Pick<PlacedFurniture, "rotation"> & {
+  size: Pick<Size, "width" | "depth">;
+};
+
+/** 중심에서 회전 외곽 상자 왼쪽 위까지 거리 */
+function topLeftOffset(f: Placement): Vec2 {
+  const corners = furnitureCorners({ ...f, position: { x: 0, y: 0 } });
+  return {
+    x: -Math.min(...corners.map((c) => c.x)),
+    y: -Math.min(...corners.map((c) => c.y)),
+  };
+}
+
+/** 회전 외곽 상자 왼쪽 위 = 왼쪽·위쪽 벽에서 떨어진 거리, 정수 반올림 */
+export function furnitureTopLeft(
+  f: Placement & Pick<PlacedFurniture, "position">,
+): Vec2 {
+  const o = topLeftOffset(f);
+  return {
+    // + 0은 -0을 0으로
+    x: Math.round(f.position.x - o.x) + 0,
+    y: Math.round(f.position.y - o.y) + 0,
+  };
+}
+
+/** furnitureTopLeft의 역변환 - 중심은 정수로 저장 */
+export function centerFromTopLeft(f: Placement, topLeft: Vec2): Vec2 {
+  const o = topLeftOffset(f);
+  // 절반 값은 내림 - 표시 반올림과 왕복 시 값 유지
+  return {
+    x: Math.ceil(topLeft.x + o.x - 0.5),
+    y: Math.ceil(topLeft.y + o.y - 0.5),
+  };
+}

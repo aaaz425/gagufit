@@ -18,7 +18,12 @@ export {
   setOpeningWidth,
   snapRotation,
 } from "./edit";
-export { furnitureCorners, polygonsOverlap } from "./geometry";
+export {
+  centerFromTopLeft,
+  furnitureCorners,
+  furnitureTopLeft,
+  polygonsOverlap,
+} from "./geometry";
 export * as history from "./history";
 export type { History } from "./history";
 export {
