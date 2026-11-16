@@ -14,11 +14,13 @@ function cosSin(deg: number): [number, number] {
   return [Math.cos(rad), Math.sin(rad)];
 }
 
+type Placement = Pick<PlacedFurniture, "rotation"> & {
+  size: Pick<Size, "width" | "depth">;
+};
+
 /** 회전 0일 때 왼쪽 위부터 시계 방향 */
 export function furnitureCorners(
-  furniture: Pick<PlacedFurniture, "position" | "rotation"> & {
-    size: Pick<Size, "width" | "depth">;
-  },
+  furniture: Placement & Pick<PlacedFurniture, "position">,
 ): Vec2[] {
   const [cos, sin] = cosSin(furniture.rotation);
   const { x, y } = furniture.position;
@@ -67,10 +69,6 @@ export function polygonsOverlap(
   return true;
 }
 
-type Placement = Pick<PlacedFurniture, "rotation"> & {
-  size: Pick<Size, "width" | "depth">;
-};
-
 /** 중심에서 회전 외곽 상자 왼쪽 위까지 거리 */
 function topLeftOffset(f: Placement): Vec2 {
   const corners = furnitureCorners({ ...f, position: { x: 0, y: 0 } });
@@ -86,9 +84,8 @@ export function furnitureTopLeft(
 ): Vec2 {
   const o = topLeftOffset(f);
   return {
-    // + 0은 -0을 0으로
-    x: Math.round(f.position.x - o.x) + 0,
-    y: Math.round(f.position.y - o.y) + 0,
+    x: Math.round(f.position.x - o.x),
+    y: Math.round(f.position.y - o.y),
   };
 }
 

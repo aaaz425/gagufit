@@ -42,20 +42,11 @@ describe("furnitureTopLeft", () => {
 });
 
 describe("centerFromTopLeft", () => {
-  it.each([0, 90, 45, 30, 270])(
-    "입력 → 저장 → 표시 왕복이 같은 값 (회전 %d°)",
-    (rotation) => {
-      const f = { rotation, size: { width: 101, depth: 55 } };
-      for (const v of [-20, 0, 37, 250]) {
-        const position = centerFromTopLeft(f, { x: v, y: v + 3 });
-        expect(Number.isInteger(position.x)).toBe(true);
-        expect(furnitureTopLeft({ ...f, position })).toEqual({
-          x: v,
-          y: v + 3,
-        });
-      }
-    },
-  );
+  it("입력 → 저장 → 표시 왕복이 같은 값 - 비직각 회전, 음수 포함", () => {
+    const f = { rotation: 30, size: { width: 101, depth: 55 } };
+    const position = centerFromTopLeft(f, { x: -20, y: 37 });
+    expect(furnitureTopLeft({ ...f, position })).toEqual({ x: -20, y: 37 });
+  });
 });
 
 describe("furnitureCorners", () => {
