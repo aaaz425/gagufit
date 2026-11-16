@@ -47,43 +47,28 @@ export function zoomAt(
   };
 }
 
-/** 방이 보이는 영역과 항상 겹쳐야 하는 최소 크기 - 화면 px */
+/** 캔버스 가장자리에서 방의 점이 안쪽으로 들어와야 하는 최소 거리 - 화면 px */
 export const MIN_VISIBLE = 96;
 
-function shift(min: number, max: number, lo: number, hi: number, keep: number) {
-  if (max < lo + keep) return lo + keep - max;
-  if (min > hi - keep) return hi - keep - min;
-  return 0;
-}
+const between = (v: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, v));
 
-/** 방(회전 반영 외접 상자)이 insets 바깥 보이는 영역과 MIN_VISIBLE 이상 겹치게 이동 */
+/** 화면 중심에서 가장 가까운 방 위의 점이 캔버스 안쪽 MIN_VISIBLE 안에 들어오게 이동 - 패널은 무시 */
 export function clampView(
   view: View,
   room: { width: number; depth: number },
   size: { width: number; height: number },
-  insets: Insets,
 ): View {
-  const corners = [
-    { x: 0, y: 0 },
-    { x: room.width, y: 0 },
-    { x: 0, y: room.depth },
-    { x: room.width, y: room.depth },
-  ].map((p) => toScreen(view, p));
-  const xs = corners.map((p) => p.x);
-  const ys = corners.map((p) => p.y);
-  const [minX, maxX] = [Math.min(...xs), Math.max(...xs)];
-  const [minY, maxY] = [Math.min(...ys), Math.max(...ys)];
-  const area = {
-    left: insets.left,
-    right: size.width - insets.right,
-    top: insets.top,
-    bottom: size.height - insets.bottom,
-  };
-  // 방이나 보이는 영역이 작으면 그 크기만큼만 요구
-  const keepX = Math.min(MIN_VISIBLE, maxX - minX, area.right - area.left);
-  const keepY = Math.min(MIN_VISIBLE, maxY - minY, area.bottom - area.top);
-  const dx = shift(minX, maxX, area.left, area.right, keepX);
-  const dy = shift(minY, maxY, area.top, area.bottom, keepY);
+  const center = { x: size.width / 2, y: size.height / 2 };
+  const c = toRoom(view, center);
+  const q = toScreen(view, {
+    x: between(c.x, 0, room.width),
+    y: between(c.y, 0, room.depth),
+  });
+  const keepX = Math.min(MIN_VISIBLE, center.x);
+  const keepY = Math.min(MIN_VISIBLE, center.y);
+  const dx = between(q.x, keepX, size.width - keepX) - q.x;
+  const dy = between(q.y, keepY, size.height - keepY) - q.y;
   return dx === 0 && dy === 0
     ? view
     : { ...view, x: view.x + dx, y: view.y + dy };

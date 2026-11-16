@@ -65,7 +65,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   const limitRef = useRef<(v: View) => View>((v) => v);
   useEffect(() => {
     limitRef.current = (v) =>
-      size ? clampView(v, currentRoom(), size, insets) : v;
+      size ? clampView(v, currentRoom(), size) : v;
   });
 
   const setView = (next: View) => {
