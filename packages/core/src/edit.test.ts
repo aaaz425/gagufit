@@ -37,6 +37,7 @@ const preset: FurniturePreset = {
   category: "bed",
   name: "싱글 침대",
   size: { width: 100, depth: 200, height: 40 },
+  minSize: { width: 1, depth: 1, height: 1 },
   material: "wood",
   defaultColor: "oak",
   layer: "normal",
@@ -314,5 +315,20 @@ describe("resizeFurniture", () => {
 
   it("바뀐 게 없으면 같은 room", () => {
     expect(resizeFurniture(base, "a", { width: 100 })).toBe(base);
+  });
+
+  describe("minSize", () => {
+    const minSize = { width: 40, depth: 30, height: 20 };
+
+    it("최소 아래는 최소로, 최소 값은 그대로", () => {
+      const low = resizeFurniture(base, "a", { width: 39, depth: 30 }, minSize);
+      expect(low.furniture[0].size).toMatchObject({ width: 40, depth: 30 });
+    });
+
+    it("저장된 값이 최소보다 작아도 안 건드린 항목은 그대로", () => {
+      const small = resizeFurniture(base, "a", { width: 10 });
+      const next = resizeFurniture(small, "a", { depth: 150 }, minSize);
+      expect(next.furniture[0].size).toMatchObject({ width: 10, depth: 150 });
+    });
   });
 });

@@ -117,19 +117,26 @@ function clampInt(v: number, min: number, max: number): number {
   return Math.min(Math.max(Math.round(v), min), max);
 }
 
-/** 정수로 반올림, FURNITURE_SIZE_LIMITS로 자름 - 바뀐 게 없으면 같은 room */
+const NO_MIN_SIZE: Size = {
+  width: FURNITURE_SIZE_LIMITS.min,
+  depth: FURNITURE_SIZE_LIMITS.min,
+  height: FURNITURE_SIZE_LIMITS.min,
+};
+
+/** 정수로 반올림, minSize~FURNITURE_SIZE_LIMITS.max로 자름 - 넘겨 받은 항목만 자르고 바뀐 게 없으면 같은 room */
 export function resizeFurniture(
   room: Room,
   furnitureId: string,
   size: Partial<Size>,
+  minSize: Size = NO_MIN_SIZE,
 ): Room {
   const source = room.furniture.find((f) => f.id === furnitureId);
   if (!source) throw new RangeError(`없는 가구: ${furnitureId}`);
-  const { min, max } = FURNITURE_SIZE_LIMITS;
+  const { max } = FURNITURE_SIZE_LIMITS;
   const next = { ...source.size };
   for (const key of ["width", "depth", "height"] as const) {
     const value = size[key];
-    if (value !== undefined) next[key] = clampInt(value, min, max);
+    if (value !== undefined) next[key] = clampInt(value, minSize[key], max);
   }
   if (sameValues(next, source.size)) return room;
   return {
