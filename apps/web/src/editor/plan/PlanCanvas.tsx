@@ -71,7 +71,12 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     next = limitRef.current(next);
     viewRef.current = next;
     setViewState(next);
+    if (useEditor.getState().planAngle !== next.angle)
+      useEditor.getState().setPlanAngle(next.angle);
   };
+
+  // 2D를 벗어나면 방 좌표와 같은 방향
+  useEffect(() => () => useEditor.getState().setPlanAngle(0), []);
 
   const { onPointerDown, onPointerMove, onPointerUp } = usePlanGestures({
     svgRef,
@@ -169,14 +174,20 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     >
       <svg
         ref={svgRef}
-        className="absolute inset-0 h-full w-full cursor-grab touch-none select-none"
+        className="absolute inset-0 h-full w-full cursor-grab touch-none select-none focus-visible:outline-offset-[-2px]"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onContextMenu={(e) => e.preventDefault()}
         role="application"
-        aria-label="방 평면도"
+        aria-label="평면도 - Tab으로 가구 선택"
+        tabIndex={0}
+        data-editor-canvas=""
+        // 클릭 뒤 Tab이 바로 가구 순환 - 포인터 캡처가 포커스를 막을 수 있어 직접 지정
+        onPointerDownCapture={(e) =>
+          e.currentTarget.focus({ preventScroll: true })
+        }
       >
         {view && (
           <g transform={transformOf(view)}>

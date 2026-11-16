@@ -19,11 +19,17 @@ export function toScreen(view: View, p: Vec2): Vec2 {
 }
 
 export function toRoom(view: View, p: Vec2): Vec2 {
-  const c = Math.cos(rad(view.angle));
-  const s = Math.sin(rad(view.angle));
-  const dx = (p.x - view.x) / view.scale;
-  const dy = (p.y - view.y) / view.scale;
-  return { x: dx * c + dy * s, y: -dx * s + dy * c };
+  return screenDeltaToRoom(view.angle, {
+    x: (p.x - view.x) / view.scale,
+    y: (p.y - view.y) / view.scale,
+  });
+}
+
+/** 화면에서 보이는 방향 벡터를 방 좌표 방향으로 - 화면이 angle만큼 회전해 있음 */
+export function screenDeltaToRoom(angle: number, d: Vec2): Vec2 {
+  const c = Math.cos(rad(angle));
+  const s = Math.sin(rad(angle));
+  return { x: d.x * c + d.y * s, y: -d.x * s + d.y * c };
 }
 
 export const clampScale = (scale: number) =>

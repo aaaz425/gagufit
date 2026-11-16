@@ -1,6 +1,7 @@
 import {
+  clampPosition,
+  lockAxis,
   moveOpening,
-  roundVec2,
   setOpeningEdge,
   snapRotation,
   type Room,
@@ -12,7 +13,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
-import { updateFurniture } from "../actions";
+import { startCopyDrag, updateFurniture } from "../actions";
 import { currentRoom, useEditor } from "../store";
 import { openingFrame } from "./RoomPlan";
 import { toRoom, zoomAt, type View } from "./view";
@@ -48,7 +49,16 @@ type Gesture =
       start: Vec2;
       timer: ReturnType<typeof setTimeout>;
     }
-  | { type: "furniture"; id: string; before: Room; offset: Vec2 }
+  | {
+      type: "furniture";
+      id: string;
+      before: Room;
+      offset: Vec2;
+      /** 끌기 시작 때 가구 위치 - Shift 축 고정 기준 */
+      origin: Vec2;
+      /** Alt로 시작 - 처음 움직일 때 복사본을 만들어 그걸 끎 */
+      copy: boolean;
+    }
   | { type: "rotate"; id: string; before: Room }
   | { type: "opening"; id: string; before: Room; offset: Vec2 }
   | { type: "width"; id: string; side: "left" | "right"; before: Room }
@@ -111,7 +121,11 @@ export function usePlanGestures({
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   };
 
-  const startDrag = (hit: NonNullable<Hit>, at: Vec2): Gesture | null => {
+  const startDrag = (
+    hit: NonNullable<Hit>,
+    at: Vec2,
+    copy = false,
+  ): Gesture | null => {
     const v = viewRef.current!;
     const r = currentRoom();
     const p = toRoom(v, at);
@@ -124,6 +138,8 @@ export function usePlanGestures({
         id: f.id,
         before: r,
         offset: { x: f.position.x - p.x, y: f.position.y - p.y },
+        origin: f.position,
+        copy,
       };
     }
     if (hit.kind === "opening") {
@@ -198,7 +214,7 @@ export function usePlanGestures({
           }, LONG_PRESS_MS),
         };
       } else {
-        gesture.current = startDrag(hit, at);
+        gesture.current = startDrag(hit, at, e.altKey);
         if (gesture.current) setCursor("grabbing");
         setDragging(gesture.current !== null);
       }
@@ -281,8 +297,16 @@ export function usePlanGestures({
     const r = currentRoom();
     const p = toRoom(v, at);
     if (g.type === "furniture") {
-      const position = roundVec2({ x: p.x + g.offset.x, y: p.y + g.offset.y });
-      preview(updateFurniture(r, g.id, { position }));
+      let position = { x: p.x + g.offset.x, y: p.y + g.offset.y };
+      if (e.shiftKey) position = lockAxis(g.origin, position);
+      position = clampPosition(r, position);
+      if (g.copy) {
+        // 제자리면 복사본을 만들지 않음 - 1px 떨림으로 겹친 복사본 방지
+        if (position.x === g.origin.x && position.y === g.origin.y) return;
+        g.copy = false;
+        g.id = startCopyDrag(g.id) ?? g.id;
+      }
+      preview(updateFurniture(currentRoom(), g.id, { position }));
     } else if (g.type === "rotate") {
       const f = r.furniture.find((item) => item.id === g.id);
       if (!f) return;

@@ -3,9 +3,13 @@ export { checkRoom } from "./check";
 export {
   addFurniture,
   addOpening,
+  clampPosition,
+  cycleFurnitureId,
   DUPLICATE_OFFSET,
   duplicateFurniture,
   FURNITURE_SIZE_LIMITS,
+  lockAxis,
+  MOVE_MARGIN,
   moveOpening,
   OPENING_MIN_WIDTH,
   resizeFurniture,

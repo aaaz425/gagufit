@@ -1,4 +1,4 @@
-import { roundVec2, type Vec2 } from "@gagufit/core";
+import { clampPosition, lockAxis, type Room, type Vec2 } from "@gagufit/core";
 import type { RootState, ThreeEvent } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { Plane, Raycaster, Vector2, Vector3 } from "three";
@@ -8,9 +8,6 @@ import { worldToPlan } from "./geometry";
 const LONG_PRESS_MS = 400;
 /** 길게 누르는 중 이만큼 움직이면 끌기가 아닌 시점 회전 px */
 const MOVE_SLOP = 8;
-/** 방 밖으로 끌 수 있는 거리 cm - 벽 규칙이 아니라 지평선 근처에서 화면 밖으로 튀는 것 방지 */
-const OUTSIDE_MARGIN = 100;
-
 type Session = {
   pointerId: number;
   id: string;
@@ -20,6 +17,10 @@ type Session = {
   height: number;
   /** 잡은 곳에서 가구 중심까지 평면 cm - 끌기가 시작되면 채움 */
   offset: Vec2 | null;
+  /** 끌기 시작 때 가구 위치 - Shift 축 고정 기준 */
+  origin: Vec2 | null;
+  /** Alt로 시작 - 처음 움직일 때 복사본을 만들어 그걸 끎 */
+  copy: boolean;
   dragging: boolean;
   /** 끌기 전 body 커서 */
   cursor: string;
@@ -32,11 +33,13 @@ type Options = {
   /** 최신 값을 읽음 - 끄는 동안 바뀌어도 세션은 유지 */
   read: () => {
     selectedId: string | null;
-    room: { width: number; depth: number };
+    room: Room;
     position: (id: string) => Vec2 | undefined;
   };
   onSelect: (id: string) => void;
   onDragStart: () => void;
+  /** 복사본을 만들어 id를 돌려줌 - 만들지 못하면 null */
+  onCopy: (id: string) => string | null;
   onDragMove: (id: string, position: Vec2) => void;
   onDragEnd: () => void;
 };
@@ -96,6 +99,7 @@ function createController(opts: RefObject<Options>) {
       return;
     }
     s.offset = { x: current.x - at.x, y: current.y - at.y };
+    s.origin = current;
     s.dragging = true;
     const controls = opts.current.controls.current;
     if (controls) controls.enabled = false;
@@ -133,12 +137,13 @@ function createController(opts: RefObject<Options>) {
     }
     const at = planAt(e.clientX, e.clientY, s.height);
     if (!at || !s.offset) return;
-    const { width, depth } = opts.current.read().room;
-    const p = roundVec2({ x: at.x + s.offset.x, y: at.y + s.offset.y });
-    opts.current.onDragMove(s.id, {
-      x: Math.min(Math.max(p.x, -OUTSIDE_MARGIN), width + OUTSIDE_MARGIN),
-      y: Math.min(Math.max(p.y, -OUTSIDE_MARGIN), depth + OUTSIDE_MARGIN),
-    });
+    if (s.copy) {
+      s.copy = false;
+      s.id = opts.current.onCopy(s.id) ?? s.id;
+    }
+    let p = { x: at.x + s.offset.x, y: at.y + s.offset.y };
+    if (e.shiftKey && s.origin) p = lockAxis(s.origin, p);
+    opts.current.onDragMove(s.id, clampPosition(opts.current.read().room, p));
   };
   const onWindowUp = (e: PointerEvent) => {
     touches.delete(e.pointerId);
@@ -180,6 +185,8 @@ function createController(opts: RefObject<Options>) {
         start: { x: native.clientX, y: native.clientY },
         height: e.point.y,
         offset: null,
+        origin: null,
+        copy: native.altKey,
         dragging: false,
         cursor: "",
       };

@@ -37,6 +37,8 @@ type EditorState = {
   /** 도면에서 끄는 중 - 실행 취소 막음 */
   dragging: boolean;
   saveStatus: SaveStatus;
+  /** 2D 화면 회전 도 - 방향키가 화면 기준으로 움직이게, 2D가 아니면 0 */
+  planAngle: number;
 
   load: (room: Room) => void;
   /** 기록 한 단계 */
@@ -55,6 +57,9 @@ type EditorState = {
   showToast: (toast: Toast | null) => void;
   setDragging: (dragging: boolean) => void;
   setSaveStatus: (status: SaveStatus) => void;
+  setPlanAngle: (angle: number) => void;
+  /** 방향키 이동 - merge면 앞 기록에 합침 */
+  nudge: (next: Room, merge: boolean) => void;
 };
 
 export const useEditor = create<EditorState>()((set) => ({
@@ -67,6 +72,7 @@ export const useEditor = create<EditorState>()((set) => ({
   toast: null,
   dragging: false,
   saveStatus: "saved",
+  planAngle: 0,
 
   load: (room) =>
     set({
@@ -85,7 +91,21 @@ export const useEditor = create<EditorState>()((set) => ({
     set((s) =>
       next === s.history.present
         ? {}
-        : { history: history.push(s.history, next), toast: null },
+        : {
+            history: history.push(s.history, next),
+            toast: null,
+          },
+    ),
+  nudge: (next, merge) =>
+    set((s) =>
+      next === s.history.present
+        ? {}
+        : {
+            history: merge
+              ? history.replace(s.history, next)
+              : history.push(s.history, next),
+            toast: null,
+          },
     ),
   preview: (next) =>
     set((s) =>
@@ -97,7 +117,10 @@ export const useEditor = create<EditorState>()((set) => ({
     set((s) =>
       before === s.history.present
         ? {}
-        : { history: history.commit(s.history, before), toast: null },
+        : {
+            history: history.commit(s.history, before),
+            toast: null,
+          },
     ),
   undo: () =>
     set((s) => {
@@ -131,6 +154,7 @@ export const useEditor = create<EditorState>()((set) => ({
   showToast: (toast) => set({ toast }),
   setDragging: (dragging) => set({ dragging }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
+  setPlanAngle: (planAngle) => set({ planAngle }),
 }));
 
 /** 되돌린 뒤 없는 대상이면 선택 해제 */

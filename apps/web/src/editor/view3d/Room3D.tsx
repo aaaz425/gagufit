@@ -54,6 +54,7 @@ export type Room3DProps = {
   onSelectionBox: (box: ScreenBox | null, canvas: ScreenSize) => void;
   /** 끌기는 시작·이동·끝 - 이동 위치는 평면 cm 정수 */
   onDragStart: () => void;
+  onCopy: (id: string) => string | null;
   onDragMove: (id: string, position: Vec2) => void;
   onDragEnd: () => void;
 };
@@ -313,6 +314,7 @@ function Room3D({
   onSelect,
   onSelectionBox,
   onDragStart,
+  onCopy,
   onDragMove,
   onDragEnd,
 }: Room3DProps) {
@@ -335,6 +337,7 @@ function Room3D({
     }),
     onSelect,
     onDragStart,
+    onCopy,
     onDragMove,
     onDragEnd,
   });
@@ -376,7 +379,16 @@ function Room3D({
   );
 
   return (
-    <div className="relative h-full w-full bg-linear-to-b from-canvas to-surface">
+    <div
+      className="relative h-full w-full bg-linear-to-b from-canvas to-surface focus-visible:outline-offset-[-2px]"
+      role="application"
+      aria-label="3D 방 - Tab으로 가구 선택"
+      tabIndex={0}
+      data-editor-canvas=""
+      onPointerDownCapture={(e) =>
+        e.currentTarget.focus({ preventScroll: true })
+      }
+    >
       <Canvas
         frameloop="demand"
         // 색을 덜 바꾸는 톤 매핑 - 가구·벽 색이 본래 색에 가깝게
