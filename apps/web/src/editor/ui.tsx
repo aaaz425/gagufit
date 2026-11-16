@@ -43,6 +43,7 @@ export function NumberField({
   min = 0,
   max,
   onCommit,
+  onClampMin,
 }: {
   label: string;
   unit: string;
@@ -50,6 +51,8 @@ export function NumberField({
   min?: number;
   max?: number;
   onCommit: (value: number) => void;
+  /** 입력이 min보다 작아 min으로 고쳐질 때 */
+  onClampMin?: () => void;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
 
@@ -64,6 +67,7 @@ export function NumberField({
     setDraft(null);
     if (draft.trim() === "" || !Number.isFinite(n)) return;
     let v = Math.round(n);
+    if (v < min) onClampMin?.();
     v = Math.max(v, min);
     if (max !== undefined) v = Math.min(v, max);
     if (v !== value) onCommit(v);

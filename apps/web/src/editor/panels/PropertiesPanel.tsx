@@ -147,6 +147,7 @@ function FurnitureProps({
   showActions?: boolean;
 }) {
   const update = useEditor((s) => s.update);
+  const showToast = useEditor((s) => s.showToast);
   const preset = FURNITURE_PRESETS[f.presetId];
   const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
   const size = (key: "width" | "depth" | "height") => (value: number) =>
@@ -200,6 +201,11 @@ function FurnitureProps({
             max={FURNITURE_SIZE_LIMITS.max}
             value={f.size[key]}
             onCommit={size(key)}
+            onClampMin={() =>
+              showToast({
+                message: `${preset?.name ?? "가구"} ${label}는 ${minSize[key]}cm부터 가능해요`,
+              })
+            }
           />
         ))}
       </div>
