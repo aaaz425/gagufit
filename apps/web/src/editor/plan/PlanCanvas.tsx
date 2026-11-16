@@ -64,8 +64,7 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
   // 이동·확대·회전 결과는 방이 화면 밖으로 나가지 않게 제한 - 휠 핸들러는 ref로 최신 값 참조
   const limitRef = useRef<(v: View) => View>((v) => v);
   useEffect(() => {
-    limitRef.current = (v) =>
-      size ? clampView(v, currentRoom(), size) : v;
+    limitRef.current = (v) => (size ? clampView(v, currentRoom(), size) : v);
   });
 
   const setView = (next: View) => {
