@@ -117,10 +117,27 @@ const body = ({ w, d }: Box, p: SymbolPalette, c: Ctx, r = R) => (
 /** 작은 크기에서 장식이 몸체를 넘지 않게 치수 비율로 제한 */
 const cap = (v: number, dim: number, f: number) => Math.min(v, dim * f);
 
-/** 앞쪽 띠 */
-const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => (
-  <Rect y={d - cap(h, d, 0.2)} w={w} h={cap(h, d, 0.2)} fill={p.line} />
-);
+/** 앞쪽 띠 - 몸체 아래쪽 둥근 모서리 안에 들어가게 같은 타원 모서리로 자름 */
+const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => {
+  const hh = cap(h, d, 0.2);
+  // 몸체 Rect의 rx·ry는 R을 변마다 따로 반으로 제한함
+  const rx = Math.min(R, w / 2);
+  const ry = Math.min(R, d / 2);
+  const dy = ry - hh;
+  const inset = dy > 0 ? rx - rx * Math.sqrt(1 - (dy / ry) ** 2) : 0;
+  const top = d - hh;
+  return (
+    <path
+      d={
+        dy > 0
+          ? `M${inset} ${top}H${w - inset}A${rx} ${ry} 0 0 1 ${w - rx} ${d}H${rx}A${rx} ${ry} 0 0 1 ${inset} ${top}Z`
+          : `M0 ${top}H${w}V${d - ry}A${rx} ${ry} 0 0 1 ${w - rx} ${d}H${rx}A${rx} ${ry} 0 0 1 0 ${d - ry}Z`
+      }
+      fill={p.line}
+      {...px}
+    />
+  );
+};
 
 const DECOR: Record<
   FurnitureCategory,
