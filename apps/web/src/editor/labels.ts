@@ -66,7 +66,7 @@ function josa(word: string, first: string, second: string): string {
   return `${word}${code % 28 ? first : second}`;
 }
 
-function furnitureName(room: Room, id: string): string {
+export function furnitureName(room: Room, id: string): string {
   const f = room.furniture.find((item) => item.id === id);
   return (f && FURNITURE_PRESETS[f.presetId]?.name) ?? "가구";
 }

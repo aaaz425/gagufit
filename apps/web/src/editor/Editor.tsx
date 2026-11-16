@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { cycleFurnitureId } from "@gagufit/core";
 import { deleteSelected, nudgeSelected } from "./actions";
+import { furnitureName } from "./labels";
 import { canvasInsets } from "./layout";
 import { LeftPanel, RightPanel } from "./panels/DesktopPanels";
 import { MobileBottom } from "./panels/MobileBottom";
@@ -115,6 +116,8 @@ const ARROW: Record<string, [number, number]> = {
   ArrowUp: [0, -1],
   ArrowDown: [0, 1],
 };
+/** Tab 정류장 - 2D·3D 캔버스 */
+const CANVAS_SELECTOR = "[data-editor-canvas]";
 const ARROW_OWNERS = '[role="slider"], [role="tablist"], [role="radiogroup"]';
 
 function useShortcuts() {
@@ -143,20 +146,21 @@ function useShortcuts() {
       } else if (e.key === "Escape") {
         useEditor.getState().select(null);
       } else if (e.key === "Tab" && !mod && !e.altKey) {
-        // 키보드 이동을 막지 않게 포커스가 바탕이나 도면일 때만
-        if (!(
-          t === document.body ||
-          (t instanceof Element && t.closest("svg, canvas"))
-        ))
-          return;
+        // 캔버스에 포커스가 있을 때만 - 그 밖은 기본 Tab 순서
+        if (!(t instanceof Element && t.matches(CANVAS_SELECTOR))) return;
         const s = useEditor.getState();
         if (s.dragging) {
           e.preventDefault();
           return;
         }
+        const list = s.history.present.furniture;
+        const sel = s.selection?.kind === "furniture" ? s.selection.id : null;
+        const i = list.findIndex((f) => f.id === sel);
+        // 처음·끝에서는 기본 Tab으로 캔버스를 빠져나감
+        if (e.shiftKey ? i === 0 : i === list.length - 1) return;
         const id = cycleFurnitureId(
           s.history.present,
-          s.selection?.kind === "furniture" ? s.selection.id : null,
+          sel,
           e.shiftKey ? -1 : 1,
         );
         if (!id) return;
@@ -191,6 +195,13 @@ function EditorScreen({
   const selected = useEditor((s) => s.selection !== null);
   useShortcuts();
 
+  const announce = useEditor((s) => {
+    const sel = s.selection;
+    return sel?.kind === "furniture"
+      ? `${furnitureName(s.history.present, sel.id)} 선택됨`
+      : "";
+  });
+
   const canvas =
     view === "2d" ? (
       <PlanCanvas compact={!desktop} />
@@ -205,6 +216,9 @@ function EditorScreen({
         <TopBar compact={false} />
         <main className="relative min-h-0 flex-1">
           {canvas}
+          <p className="sr-only" aria-live="polite">
+            {announce}
+          </p>
           <LeftPanel />
           <RightPanel />
           <Toast bottom={24} />
@@ -218,6 +232,9 @@ function EditorScreen({
       <TopBar compact />
       <main className="relative min-h-0 flex-1">
         {canvas}
+        <p className="sr-only" aria-live="polite">
+          {announce}
+        </p>
         <MobileBottom />
         <Toast bottom={insets.bottom + 16} />
       </main>
