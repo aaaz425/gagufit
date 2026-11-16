@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  centerFromTopLeft,
   FURNITURE_SIZE_LIMITS,
+  furnitureTopLeft,
   OPENING_MIN_WIDTH,
   resizeFurniture,
   setOpeningKind,
@@ -149,6 +151,10 @@ function FurnitureProps({
     update(resizeFurniture(room, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
+  // X·Y는 회전 외곽 상자 왼쪽 위 기준 - 저장은 중심
+  const topLeft = furnitureTopLeft(f);
+  const moveTo = (p: typeof topLeft) =>
+    set({ position: centerFromTopLeft(f, p) });
   const warnings = warningsOf(room)
     .filter((w) =>
       w.type === "overlap"
@@ -201,15 +207,15 @@ function FurnitureProps({
           label="X"
           unit="cm"
           min={-10000}
-          value={f.position.x}
-          onCommit={(x) => set({ position: { ...f.position, x } })}
+          value={topLeft.x}
+          onCommit={(x) => moveTo({ ...topLeft, x })}
         />
         <NumberField
           label="Y"
           unit="cm"
           min={-10000}
-          value={f.position.y}
-          onCommit={(y) => set({ position: { ...f.position, y } })}
+          value={topLeft.y}
+          onCommit={(y) => moveTo({ ...topLeft, y })}
         />
       </div>
       <SectionTitle>회전</SectionTitle>
