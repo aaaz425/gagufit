@@ -35,6 +35,38 @@ export function roundVec2(p: Vec2): Vec2 {
   return { x: Math.round(p.x), y: Math.round(p.y) };
 }
 
+/** 가구 중심이 방 밖으로 나갈 수 있는 거리 cm - 지평선 근처에서 화면 밖으로 튀는 것 방지 */
+export const MOVE_MARGIN = 100;
+
+/** 정수로 반올림, 방 크기 + MOVE_MARGIN 안으로 자름 */
+export function clampPosition(room: Room, p: Vec2): Vec2 {
+  const q = roundVec2(p);
+  return {
+    x: Math.min(Math.max(q.x, -MOVE_MARGIN), room.width + MOVE_MARGIN),
+    y: Math.min(Math.max(q.y, -MOVE_MARGIN), room.depth + MOVE_MARGIN),
+  };
+}
+
+/** from에서 가로·세로 중 더 많이 움직인 축만 남김 - 같으면 가로 */
+export function lockAxis(from: Vec2, to: Vec2): Vec2 {
+  return Math.abs(to.x - from.x) >= Math.abs(to.y - from.y)
+    ? { x: to.x, y: from.y }
+    : { x: from.x, y: to.y };
+}
+
+/** 가구 순환 선택 - 선택이 없거나 가구가 아니면 앞으로는 첫째, 뒤로는 마지막, 가구가 없으면 null */
+export function cycleFurnitureId(
+  room: Room,
+  currentId: string | null,
+  step: 1 | -1,
+): string | null {
+  const list = room.furniture;
+  if (list.length === 0) return null;
+  const i = list.findIndex((f) => f.id === currentId);
+  if (i < 0) return list[step === 1 ? 0 : list.length - 1].id;
+  return list[(i + step + list.length) % list.length].id;
+}
+
 /** 방 중앙에 회전 0으로 추가 */
 export function addFurniture(
   room: Room,
@@ -61,6 +93,7 @@ export function duplicateFurniture(
   room: Room,
   furnitureId: string,
   id: string,
+  offset = DUPLICATE_OFFSET,
 ): Room {
   const source = room.furniture.find((f) => f.id === furnitureId);
   if (!source) throw new RangeError(`없는 가구: ${furnitureId}`);
@@ -72,8 +105,8 @@ export function duplicateFurniture(
         ...source,
         id,
         position: {
-          x: source.position.x + DUPLICATE_OFFSET,
-          y: source.position.y + DUPLICATE_OFFSET,
+          x: source.position.x + offset,
+          y: source.position.y + offset,
         },
       },
     ],

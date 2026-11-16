@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   addFurniture,
   addOpening,
+  clampPosition,
+  cycleFurnitureId,
   DUPLICATE_OFFSET,
   duplicateFurniture,
   FURNITURE_SIZE_LIMITS,
+  lockAxis,
+  MOVE_MARGIN,
   moveOpening,
   OPENING_MIN_WIDTH,
   resizeFurniture,
@@ -77,8 +81,58 @@ describe("duplicateFurniture", () => {
     });
   });
 
+  it("offset 0이면 같은 자리에 복제", () => {
+    const base = addFurniture(room, preset, "a");
+    const next = duplicateFurniture(base, "a", "b", 0);
+    expect(next.furniture[1].position).toEqual(base.furniture[0].position);
+  });
+
   it("없는 가구는 throw", () => {
     expect(() => duplicateFurniture(room, "x", "b")).toThrow(RangeError);
+  });
+});
+
+describe("clampPosition", () => {
+  it("정수로 반올림하고 방 밖 여유까지만 허용", () => {
+    expect(clampPosition(room, { x: 10.6, y: 20.4 })).toEqual({ x: 11, y: 20 });
+    expect(clampPosition(room, { x: -500, y: 900 })).toEqual({
+      x: -MOVE_MARGIN,
+      y: room.depth + MOVE_MARGIN,
+    });
+  });
+});
+
+describe("lockAxis", () => {
+  const from = { x: 100, y: 100 };
+  it("더 많이 움직인 축만 남김", () => {
+    expect(lockAxis(from, { x: 150, y: 120 })).toEqual({ x: 150, y: 100 });
+    expect(lockAxis(from, { x: 90, y: 40 })).toEqual({ x: 100, y: 40 });
+  });
+
+  it("같으면 가로", () => {
+    expect(lockAxis(from, { x: 120, y: 80 })).toEqual({ x: 120, y: 100 });
+  });
+});
+
+describe("cycleFurnitureId", () => {
+  const withThree = ["a", "b", "c"].reduce(
+    (r, id) => addFurniture(r, preset, id),
+    room,
+  );
+
+  it("다음·이전으로 돌고 끝에서 처음으로 이어짐", () => {
+    expect(cycleFurnitureId(withThree, "a", 1)).toBe("b");
+    expect(cycleFurnitureId(withThree, "c", 1)).toBe("a");
+    expect(cycleFurnitureId(withThree, "a", -1)).toBe("c");
+  });
+
+  it("선택이 없으면 앞으로는 첫째, 뒤로는 마지막", () => {
+    expect(cycleFurnitureId(withThree, null, 1)).toBe("a");
+    expect(cycleFurnitureId(withThree, null, -1)).toBe("c");
+  });
+
+  it("가구가 없으면 null", () => {
+    expect(cycleFurnitureId(room, null, 1)).toBeNull();
   });
 });
 
