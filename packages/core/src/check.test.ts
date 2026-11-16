@@ -19,6 +19,7 @@ function preset(
     category: layer === "floor" ? "rug" : "etc",
     name: id,
     size: { width, depth, height: 50 },
+    minSize: { width: 1, depth: 1, height: 1 },
     material: "wood",
     defaultColor: "white",
     layer,

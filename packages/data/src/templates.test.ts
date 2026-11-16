@@ -22,3 +22,13 @@ describe("방 템플릿", () => {
     }
   });
 });
+
+describe("가구 프리셋", () => {
+  it("기본 크기는 최소 크기 이상", () => {
+    for (const p of Object.values(FURNITURE_PRESETS)) {
+      expect(p.size.width).toBeGreaterThanOrEqual(p.minSize.width);
+      expect(p.size.depth).toBeGreaterThanOrEqual(p.minSize.depth);
+      expect(p.size.height).toBeGreaterThanOrEqual(p.minSize.height);
+    }
+  });
+});

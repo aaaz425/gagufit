@@ -37,6 +37,7 @@ const preset: FurniturePreset = {
   category: "bed",
   name: "싱글 침대",
   size: { width: 100, depth: 200, height: 40 },
+  minSize: { width: 1, depth: 1, height: 1 },
   material: "wood",
   defaultColor: "oak",
   layer: "normal",
@@ -301,10 +302,15 @@ describe("resizeRoom", () => {
 });
 
 describe("resizeFurniture", () => {
+  const minSize = { width: 40, depth: 30, height: 20 };
+  const presets = { [preset.id]: { ...preset, minSize } };
   const base = addFurniture(room, preset, "a");
 
   it("정수로 반올림하고 범위로 자름", () => {
-    const next = resizeFurniture(base, "a", { width: 80.6, depth: 5000 });
+    const next = resizeFurniture(base, presets, "a", {
+      width: 80.6,
+      depth: 5000,
+    });
     expect(next.furniture[0].size).toEqual({
       width: 81,
       depth: FURNITURE_SIZE_LIMITS.max,
@@ -313,6 +319,31 @@ describe("resizeFurniture", () => {
   });
 
   it("바뀐 게 없으면 같은 room", () => {
-    expect(resizeFurniture(base, "a", { width: 100 })).toBe(base);
+    expect(resizeFurniture(base, presets, "a", { width: 100 })).toBe(base);
+  });
+
+  it("최소 아래는 최소로, 최소 값은 그대로", () => {
+    const low = resizeFurniture(base, presets, "a", { width: 39, depth: 30 });
+    expect(low.furniture[0].size).toMatchObject({ width: 40, depth: 30 });
+  });
+
+  it("저장된 값이 최소보다 작아도 안 건드린 항목은 그대로", () => {
+    const small = {
+      ...base,
+      furniture: [
+        { ...base.furniture[0], size: { width: 10, depth: 20, height: 40 } },
+      ],
+    };
+    const next = resizeFurniture(small, presets, "a", { depth: 150 });
+    expect(next.furniture[0].size).toMatchObject({ width: 10, depth: 150 });
+  });
+
+  it("없는 프리셋·상속 키는 기본 최소 1", () => {
+    const inherited = {
+      ...base,
+      furniture: [{ ...base.furniture[0], presetId: "toString" }],
+    };
+    const next = resizeFurniture(inherited, presets, "a", { width: 0 });
+    expect(next.furniture[0].size.width).toBe(FURNITURE_SIZE_LIMITS.min);
   });
 });

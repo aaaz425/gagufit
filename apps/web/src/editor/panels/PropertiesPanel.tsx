@@ -4,6 +4,7 @@ import {
   centerFromTopLeft,
   FURNITURE_SIZE_LIMITS,
   furnitureTopLeft,
+  minSizeOf,
   OPENING_MIN_WIDTH,
   resizeFurniture,
   setOpeningKind,
@@ -146,9 +147,11 @@ function FurnitureProps({
   showActions?: boolean;
 }) {
   const update = useEditor((s) => s.update);
+  const showToast = useEditor((s) => s.showToast);
   const preset = FURNITURE_PRESETS[f.presetId];
+  const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
   const size = (key: "width" | "depth" | "height") => (value: number) =>
-    update(resizeFurniture(room, f.id, { [key]: value }));
+    update(resizeFurniture(room, FURNITURE_PRESETS, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
   // X·Y는 회전 외곽 상자 왼쪽 위 기준 - 저장은 중심
@@ -194,10 +197,15 @@ function FurnitureProps({
             key={key}
             label={label}
             unit="cm"
-            min={FURNITURE_SIZE_LIMITS.min}
+            min={minSize[key]}
             max={FURNITURE_SIZE_LIMITS.max}
             value={f.size[key]}
             onCommit={size(key)}
+            onClampMin={() =>
+              showToast({
+                message: `${preset?.name ?? "가구"} ${label}는 ${minSize[key]}cm부터 가능해요`,
+              })
+            }
           />
         ))}
       </div>

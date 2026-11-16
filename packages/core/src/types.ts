@@ -104,6 +104,8 @@ export type FurniturePreset = {
   name: string;
   /** 회전 0일 때 width는 x, depth는 y 방향 */
   size: Size;
+  /** 크기 조절 하한 - 이미 저장된 더 작은 값은 그대로 */
+  minSize: Size;
   material: FurnitureMaterial;
   defaultColor: FurnitureColorId;
   layer: FurnitureLayer;
