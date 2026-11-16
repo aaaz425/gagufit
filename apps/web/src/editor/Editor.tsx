@@ -4,7 +4,8 @@ import { useRoomQuery, type RoomRecord } from "@gagufit/api";
 import { CloudOff, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { deleteSelected } from "./actions";
+import { cycleFurnitureId } from "@gagufit/core";
+import { deleteSelected, nudgeSelected } from "./actions";
 import { canvasInsets } from "./layout";
 import { LeftPanel, RightPanel } from "./panels/DesktopPanels";
 import { MobileBottom } from "./panels/MobileBottom";
@@ -107,6 +108,15 @@ function NotFound() {
   );
 }
 
+/** 방향키 화면 방향 - 오른쪽·아래가 양수 */
+const ARROW: Record<string, [number, number]> = {
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0],
+  ArrowUp: [0, -1],
+  ArrowDown: [0, 1],
+};
+const ARROW_OWNERS = '[role="slider"], [role="tablist"], [role="radiogroup"]';
+
 function useShortcuts() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -132,6 +142,26 @@ function useShortcuts() {
         deleteSelected();
       } else if (e.key === "Escape") {
         useEditor.getState().select(null);
+      } else if (e.key === "Tab" && !mod && !e.altKey) {
+        const s = useEditor.getState();
+        if (s.dragging) return;
+        const id = cycleFurnitureId(
+          s.history.present,
+          s.selection?.kind === "furniture" ? s.selection.id : null,
+          e.shiftKey ? -1 : 1,
+        );
+        if (!id) return;
+        e.preventDefault();
+        s.select({ kind: "furniture", id });
+      } else if (e.key in ARROW && !mod && !e.altKey) {
+        const s = useEditor.getState();
+        if (s.selection?.kind !== "furniture" || s.dragging) return;
+        // 슬라이더·탭 등은 방향키를 자기 조작에 씀
+        if (t instanceof Element && t.closest(ARROW_OWNERS)) return;
+        e.preventDefault();
+        const step = e.shiftKey ? 10 : 1;
+        const [x, y] = ARROW[e.key];
+        nudgeSelected(x * step, y * step);
       }
     };
     window.addEventListener("keydown", onKey);

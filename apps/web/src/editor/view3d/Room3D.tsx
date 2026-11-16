@@ -54,6 +54,7 @@ export type Room3DProps = {
   onSelectionBox: (box: ScreenBox | null, canvas: ScreenSize) => void;
   /** 끌기는 시작·이동·끝 - 이동 위치는 평면 cm 정수 */
   onDragStart: () => void;
+  onCopy: (id: string) => string | null;
   onDragMove: (id: string, position: Vec2) => void;
   onDragEnd: () => void;
 };
@@ -313,6 +314,7 @@ function Room3D({
   onSelect,
   onSelectionBox,
   onDragStart,
+  onCopy,
   onDragMove,
   onDragEnd,
 }: Room3DProps) {
@@ -335,6 +337,7 @@ function Room3D({
     }),
     onSelect,
     onDragStart,
+    onCopy,
     onDragMove,
     onDragEnd,
   });

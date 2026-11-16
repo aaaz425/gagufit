@@ -4,7 +4,7 @@ import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import type { Room, Vec2 } from "@gagufit/core";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { updateFurniture } from "./actions";
+import { startCopyDrag, updateFurniture } from "./actions";
 import { canvasInsets, PANEL_TAB_BOTTOM } from "./layout";
 import { useQualitySettings } from "./quality";
 import { SelectionToolbar, type ScreenBox } from "./SelectionToolbar";
@@ -55,6 +55,7 @@ export function View3D({ compact }: { compact: boolean }) {
     before.current = currentRoom();
     setDragging(true);
   }, [setDragging]);
+  const onCopy = useCallback((id: string) => startCopyDrag(id), []);
   const onDragMove = useCallback(
     (id: string, position: Vec2) =>
       preview(updateFurniture(currentRoom(), id, { position })),
@@ -89,6 +90,7 @@ export function View3D({ compact }: { compact: boolean }) {
         onSelect={onSelect}
         onSelectionBox={onSelectionBox}
         onDragStart={onDragStart}
+        onCopy={onCopy}
         onDragMove={onDragMove}
         onDragEnd={onDragEnd}
       />

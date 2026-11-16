@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { clampView, MIN_VISIBLE, toRoom, type View } from "./view";
+import {
+  clampView,
+  MIN_VISIBLE,
+  screenDeltaToRoom,
+  toRoom,
+  type View,
+} from "./view";
 
 const room = { width: 400, depth: 400 };
 const size = { width: 1000, height: 800 };
@@ -38,5 +44,17 @@ describe("clampView", () => {
   it("방이 아주 작게 줄어도 화면 안에 남음", () => {
     const tiny = { x: 5000, y: 0, scale: 0.2, angle: 0 };
     expect(roomVisible(clampView(tiny, room, size))).toBe(true);
+  });
+});
+
+describe("screenDeltaToRoom", () => {
+  it("회전 없으면 그대로", () => {
+    expect(screenDeltaToRoom(0, { x: 1, y: 0 })).toEqual({ x: 1, y: 0 });
+  });
+
+  it("화면이 시계 방향 90° 돌아 있으면 화면 오른쪽은 방의 위쪽", () => {
+    const d = screenDeltaToRoom(90, { x: 1, y: 0 });
+    expect(d.x).toBeCloseTo(0);
+    expect(d.y).toBeCloseTo(-1);
   });
 });
