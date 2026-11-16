@@ -45,6 +45,8 @@ function createController(opts: RefObject<Options>) {
   let session: Session | null = null;
   /** 닿아 있는 터치 - 마우스는 하나뿐이라 세지 않음 */
   const touches = new Set<number>();
+  /** 시점 컨트롤 재개 대기 - 끄는 손가락을 컨트롤이 못 봐서, 지금 켜면 둘째 손가락 하나로 시작해 화면이 튐 */
+  let resumeControls = false;
   const raycaster = new Raycaster();
   const ndc = new Vector2();
   const hit = new Vector3();
@@ -65,14 +67,20 @@ function createController(opts: RefObject<Options>) {
     return worldToPlan(opts.current.read().room, hit.x, hit.z);
   };
 
+  const enableControls = () => {
+    resumeControls = false;
+    const controls = opts.current.controls.current;
+    if (controls) controls.enabled = true;
+  };
+
   const finish = () => {
     const s = session;
     session = null;
     if (!s) return;
     clearTimeout(s.timer);
     if (!s.dragging) return;
-    const controls = opts.current.controls.current;
-    if (controls) controls.enabled = true;
+    if ([...touches].some((id) => id !== s.pointerId)) resumeControls = true;
+    else enableControls();
     document.body.style.cursor = s.cursor;
     opts.current.onDragEnd();
   };
@@ -127,6 +135,8 @@ function createController(opts: RefObject<Options>) {
   };
   const onWindowUp = (e: PointerEvent) => {
     touches.delete(e.pointerId);
+    // 손가락을 모두 뗀 뒤 다음 터치부터 컨트롤이 처음부터 봄
+    if (resumeControls && touches.size === 0) enableControls();
     if (session?.pointerId === e.pointerId) finish();
   };
 
@@ -144,6 +154,7 @@ function createController(opts: RefObject<Options>) {
         // 끄는 중 화면이 사라지면 그때까지 움직인 것 기록
         finish();
         touches.clear();
+        if (resumeControls) enableControls();
       };
     },
     pointerDown(e: ThreeEvent<PointerEvent>, id: string) {
