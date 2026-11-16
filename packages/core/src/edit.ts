@@ -35,7 +35,7 @@ export function roundVec2(p: Vec2): Vec2 {
   return { x: Math.round(p.x), y: Math.round(p.y) };
 }
 
-/** 가구 중심이 방 밖으로 나갈 수 있는 거리 cm - 지평선 근처에서 화면 밖으로 튀는 것 방지 */
+/** 끌기·방향키로 가구 중심을 방 밖에 둘 수 있는 거리 cm */
 export const MOVE_MARGIN = 100;
 
 /** 정수로 반올림, 방 크기 + MOVE_MARGIN 안으로 자름 */

@@ -143,8 +143,17 @@ function useShortcuts() {
       } else if (e.key === "Escape") {
         useEditor.getState().select(null);
       } else if (e.key === "Tab" && !mod && !e.altKey) {
+        // 키보드 이동을 막지 않게 포커스가 바탕이나 도면일 때만
+        if (!(
+          t === document.body ||
+          (t instanceof Element && t.closest("svg, canvas"))
+        ))
+          return;
         const s = useEditor.getState();
-        if (s.dragging) return;
+        if (s.dragging) {
+          e.preventDefault();
+          return;
+        }
         const id = cycleFurnitureId(
           s.history.present,
           s.selection?.kind === "furniture" ? s.selection.id : null,

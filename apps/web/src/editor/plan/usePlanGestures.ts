@@ -1,7 +1,7 @@
 import {
+  clampPosition,
   lockAxis,
   moveOpening,
-  roundVec2,
   setOpeningEdge,
   snapRotation,
   type Room,
@@ -297,12 +297,15 @@ export function usePlanGestures({
     const r = currentRoom();
     const p = toRoom(v, at);
     if (g.type === "furniture") {
+      let position = { x: p.x + g.offset.x, y: p.y + g.offset.y };
+      if (e.shiftKey) position = lockAxis(g.origin, position);
+      position = clampPosition(r, position);
       if (g.copy) {
+        // 제자리면 복사본을 만들지 않음 - 1px 떨림으로 겹친 복사본 방지
+        if (position.x === g.origin.x && position.y === g.origin.y) return;
         g.copy = false;
         g.id = startCopyDrag(g.id) ?? g.id;
       }
-      let position = roundVec2({ x: p.x + g.offset.x, y: p.y + g.offset.y });
-      if (e.shiftKey) position = lockAxis(g.origin, position);
       preview(updateFurniture(currentRoom(), g.id, { position }));
     } else if (g.type === "rotate") {
       const f = r.furniture.find((item) => item.id === g.id);

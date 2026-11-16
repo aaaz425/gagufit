@@ -39,8 +39,6 @@ type EditorState = {
   saveStatus: SaveStatus;
   /** 2D 화면 회전 도 - 방향키가 화면 기준으로 움직이게, 2D가 아니면 0 */
   planAngle: number;
-  /** 마지막 방향키 이동 시각 ms - 이어지는 입력은 기록 한 단계로 묶음 */
-  nudgedAt: number | null;
 
   load: (room: Room) => void;
   /** 기록 한 단계 */
@@ -60,11 +58,9 @@ type EditorState = {
   setDragging: (dragging: boolean) => void;
   setSaveStatus: (status: SaveStatus) => void;
   setPlanAngle: (angle: number) => void;
-  /** 방향키 이동 - NUDGE_MERGE_MS 안에 이어지면 앞 기록에 합침 */
-  nudge: (next: Room) => void;
+  /** 방향키 이동 - merge면 앞 기록에 합침 */
+  nudge: (next: Room, merge: boolean) => void;
 };
-
-const NUDGE_MERGE_MS = 600;
 
 export const useEditor = create<EditorState>()((set) => ({
   history: history.create<Room>(emptyRoom()),
@@ -77,7 +73,6 @@ export const useEditor = create<EditorState>()((set) => ({
   dragging: false,
   saveStatus: "saved",
   planAngle: 0,
-  nudgedAt: null,
 
   load: (room) =>
     set({
@@ -89,7 +84,6 @@ export const useEditor = create<EditorState>()((set) => ({
       sheet: null,
       toast: null,
       dragging: false,
-      nudgedAt: null,
     }),
   // 바뀐 게 없으면 기록 안 함 - 편집 함수가 같은 room을 돌려줌
   // 새 편집이 생기면 삭제 토스트의 실행 취소 대상이 달라져 닫음
@@ -100,22 +94,19 @@ export const useEditor = create<EditorState>()((set) => ({
         : {
             history: history.push(s.history, next),
             toast: null,
-            nudgedAt: null,
           },
     ),
-  nudge: (next) =>
-    set((s) => {
-      if (next === s.history.present) return {};
-      const now = Date.now();
-      const merge = s.nudgedAt !== null && now - s.nudgedAt < NUDGE_MERGE_MS;
-      return {
-        history: merge
-          ? history.replace(s.history, next)
-          : history.push(s.history, next),
-        toast: null,
-        nudgedAt: now,
-      };
-    }),
+  nudge: (next, merge) =>
+    set((s) =>
+      next === s.history.present
+        ? {}
+        : {
+            history: merge
+              ? history.replace(s.history, next)
+              : history.push(s.history, next),
+            toast: null,
+          },
+    ),
   preview: (next) =>
     set((s) =>
       next === s.history.present
@@ -129,7 +120,6 @@ export const useEditor = create<EditorState>()((set) => ({
         : {
             history: history.commit(s.history, before),
             toast: null,
-            nudgedAt: null,
           },
     ),
   undo: () =>
@@ -140,7 +130,6 @@ export const useEditor = create<EditorState>()((set) => ({
         history: next,
         selection: keepSelection(next.present, s),
         toast: null,
-        nudgedAt: null,
       };
     }),
   redo: () =>
@@ -151,13 +140,11 @@ export const useEditor = create<EditorState>()((set) => ({
         history: next,
         selection: keepSelection(next.present, s),
         toast: null,
-        nudgedAt: null,
       };
     }),
   select: (selection) =>
     set((s) => ({
       selection,
-      nudgedAt: null,
       sheet: s.sheet === "props" && !selection ? null : s.sheet,
     })),
   setView: (view) => set({ view }),

@@ -71,7 +71,8 @@ export function PlanCanvas({ compact }: { compact: boolean }) {
     next = limitRef.current(next);
     viewRef.current = next;
     setViewState(next);
-    useEditor.getState().setPlanAngle(next.angle);
+    if (useEditor.getState().planAngle !== next.angle)
+      useEditor.getState().setPlanAngle(next.angle);
   };
 
   // 2D를 벗어나면 방 좌표와 같은 방향

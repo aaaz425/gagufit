@@ -115,6 +115,10 @@ export function deleteSelected() {
   editor().showToast({ message: "삭제했어요", undo: true });
 }
 
+/** 마지막 방향키 이동 - 같은 가구를 그 결과 위에서 이어 움직일 때만 기록에 합침 */
+let last: { room: Room; id: string; at: number } | null = null;
+const NUDGE_MERGE_MS = 600;
+
 /** 선택 가구를 화면에서 보이는 방향으로 옮김 - dx·dy cm, 오른쪽·아래가 양수 */
 export function nudgeSelected(dx: number, dy: number) {
   const sel = editor().selection;
@@ -127,7 +131,15 @@ export function nudgeSelected(dx: number, dy: number) {
     x: f.position.x + d.x,
     y: f.position.y + d.y,
   });
-  editor().nudge(updateFurniture(r, f.id, { position }));
+  const next = updateFurniture(r, f.id, { position });
+  const now = Date.now();
+  const merge =
+    last !== null &&
+    last.room === r &&
+    last.id === f.id &&
+    now - last.at < NUDGE_MERGE_MS;
+  editor().nudge(next, merge);
+  if (next !== r) last = { room: next, id: f.id, at: now };
 }
 
 /** Alt 끌기 - 제자리에 복사본을 만들어 선택하고 id를 돌려줌, 기록은 끌기 끝의 commit이 한 번에 */
