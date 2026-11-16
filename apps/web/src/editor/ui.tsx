@@ -55,6 +55,11 @@ export function NumberField({
 
   const finish = () => {
     if (draft === null) return;
+    // 안 바꾸고 나가면 저장된 값을 min으로 올리지 않음
+    if (draft === String(value)) {
+      setDraft(null);
+      return;
+    }
     const n = Number(draft.trim());
     setDraft(null);
     if (draft.trim() === "" || !Number.isFinite(n)) return;

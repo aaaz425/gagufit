@@ -117,22 +117,27 @@ function clampInt(v: number, min: number, max: number): number {
   return Math.min(Math.max(Math.round(v), min), max);
 }
 
-const NO_MIN_SIZE: Size = {
-  width: FURNITURE_SIZE_LIMITS.min,
-  depth: FURNITURE_SIZE_LIMITS.min,
-  height: FURNITURE_SIZE_LIMITS.min,
-};
+/** 프리셋 최소 크기 - 없는 프리셋이면 FURNITURE_SIZE_LIMITS.min */
+export function minSizeOf(
+  presets: Readonly<Record<string, FurniturePreset>>,
+  presetId: string,
+): Size {
+  if (Object.hasOwn(presets, presetId)) return presets[presetId].minSize;
+  const { min } = FURNITURE_SIZE_LIMITS;
+  return { width: min, depth: min, height: min };
+}
 
-/** 정수로 반올림, minSize~FURNITURE_SIZE_LIMITS.max로 자름 - 넘겨 받은 항목만 자르고 바뀐 게 없으면 같은 room */
+/** 넘겨 받은 항목만 정수로 반올림해 최소~최대로 자름 - 바뀐 게 없으면 같은 room */
 export function resizeFurniture(
   room: Room,
+  presets: Readonly<Record<string, FurniturePreset>>,
   furnitureId: string,
   size: Partial<Size>,
-  minSize: Size = NO_MIN_SIZE,
 ): Room {
   const source = room.furniture.find((f) => f.id === furnitureId);
   if (!source) throw new RangeError(`없는 가구: ${furnitureId}`);
   const { max } = FURNITURE_SIZE_LIMITS;
+  const minSize = minSizeOf(presets, source.presetId);
   const next = { ...source.size };
   for (const key of ["width", "depth", "height"] as const) {
     const value = size[key];

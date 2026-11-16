@@ -9,6 +9,7 @@ export {
   duplicateFurniture,
   FURNITURE_SIZE_LIMITS,
   lockAxis,
+  minSizeOf,
   MOVE_MARGIN,
   moveOpening,
   OPENING_MIN_WIDTH,

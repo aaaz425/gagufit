@@ -4,6 +4,7 @@ import {
   centerFromTopLeft,
   FURNITURE_SIZE_LIMITS,
   furnitureTopLeft,
+  minSizeOf,
   OPENING_MIN_WIDTH,
   resizeFurniture,
   setOpeningKind,
@@ -147,8 +148,9 @@ function FurnitureProps({
 }) {
   const update = useEditor((s) => s.update);
   const preset = FURNITURE_PRESETS[f.presetId];
+  const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
   const size = (key: "width" | "depth" | "height") => (value: number) =>
-    update(resizeFurniture(room, f.id, { [key]: value }, preset?.minSize));
+    update(resizeFurniture(room, FURNITURE_PRESETS, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
   // X·Y는 회전 외곽 상자 왼쪽 위 기준 - 저장은 중심
@@ -194,7 +196,7 @@ function FurnitureProps({
             key={key}
             label={label}
             unit="cm"
-            min={preset?.minSize[key] ?? FURNITURE_SIZE_LIMITS.min}
+            min={minSize[key]}
             max={FURNITURE_SIZE_LIMITS.max}
             value={f.size[key]}
             onCommit={size(key)}
