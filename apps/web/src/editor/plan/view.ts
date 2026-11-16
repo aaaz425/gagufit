@@ -47,6 +47,33 @@ export function zoomAt(
   };
 }
 
+/** 캔버스 가장자리에서 방의 점이 안쪽으로 들어와야 하는 최소 거리 - 화면 px */
+export const MIN_VISIBLE = 96;
+
+const between = (v: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, v));
+
+/** 화면 중심에서 가장 가까운 방 위의 점이 캔버스 안쪽 MIN_VISIBLE 안에 들어오게 이동 - 패널은 무시 */
+export function clampView(
+  view: View,
+  room: { width: number; depth: number },
+  size: { width: number; height: number },
+): View {
+  const center = { x: size.width / 2, y: size.height / 2 };
+  const c = toRoom(view, center);
+  const q = toScreen(view, {
+    x: between(c.x, 0, room.width),
+    y: between(c.y, 0, room.depth),
+  });
+  const keepX = Math.min(MIN_VISIBLE, center.x);
+  const keepY = Math.min(MIN_VISIBLE, center.y);
+  const dx = between(q.x, keepX, size.width - keepX) - q.x;
+  const dy = between(q.y, keepY, size.height - keepY) - q.y;
+  return dx === 0 && dy === 0
+    ? view
+    : { ...view, x: view.x + dx, y: view.y + dy };
+}
+
 /** pad 안쪽 영역 가운데에 방 전체가 보이게 */
 export function fitView(
   room: { width: number; depth: number },
