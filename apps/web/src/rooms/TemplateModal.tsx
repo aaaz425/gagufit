@@ -24,7 +24,12 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
     });
 
   return (
-    <Modal title="어떤 방에서 시작할까요?" onClose={onClose} fullOnMobile>
+    <Modal
+      title="어떤 방에서 시작할까요?"
+      onClose={onClose}
+      fullOnMobile
+      locked={busy}
+    >
       <div
         role="radiogroup"
         aria-label="방 템플릿"
@@ -63,7 +68,7 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
           </p>
         )}
         <ModalActions>
-          <ModalCancel />
+          <ModalCancel disabled={busy} />
           <button
             type="button"
             onClick={start}
