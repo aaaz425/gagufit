@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useId,
@@ -18,15 +19,21 @@ export function Modal({
   title,
   onClose,
   fullOnMobile,
+  locked,
   children,
 }: {
   title: string;
   onClose: () => void;
   fullOnMobile?: boolean;
+  /** 작업 중 - 닫기 막음 */
+  locked?: boolean;
   children: ReactNode;
 }) {
   const titleId = useId();
-  const [exiting, close] = useExit(onClose);
+  const [exiting, exitNow] = useExit(onClose);
+  const close = useCallback(() => {
+    if (!locked) exitNow();
+  }, [locked, exitNow]);
   const exit = exiting || undefined;
 
   useEffect(() => {
@@ -85,10 +92,15 @@ export const BUTTON_PRIMARY = `${BUTTON_BASE} bg-primary text-white enabled:hove
 export const BUTTON_DANGER = `${BUTTON_BASE} bg-danger text-white enabled:hover:bg-danger-soft enabled:hover:text-danger`;
 
 /** 퇴장 효과를 거쳐 닫는 취소 버튼 - Modal 안에서만 */
-export function ModalCancel() {
+export function ModalCancel({ disabled }: { disabled?: boolean }) {
   const close = useModalClose();
   return (
-    <button type="button" onClick={close} className={BUTTON_SECONDARY}>
+    <button
+      type="button"
+      onClick={close}
+      disabled={disabled}
+      className={BUTTON_SECONDARY}
+    >
       취소
     </button>
   );

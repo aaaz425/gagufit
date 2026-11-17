@@ -2,6 +2,7 @@
 
 import { useCreateRoom } from "@gagufit/api";
 import { ROOM_TEMPLATES, roomFromTemplate } from "@gagufit/data";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BUTTON_PRIMARY, Modal, ModalActions, ModalCancel } from "./Modal";
@@ -14,13 +15,21 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
   const create = useCreateRoom();
   const [picked, setPicked] = useState(TEMPLATES[0].id);
 
+  // 생성 성공 뒤에도 편집기로 이동하는 동안 유지
+  const busy = create.isPending || create.isSuccess;
+
   const start = () =>
     create.mutate(roomFromTemplate(ROOM_TEMPLATES[picked]), {
       onSuccess: (id) => router.replace(`/rooms/${id}`),
     });
 
   return (
-    <Modal title="어떤 방에서 시작할까요?" onClose={onClose} fullOnMobile>
+    <Modal
+      title="어떤 방에서 시작할까요?"
+      onClose={onClose}
+      fullOnMobile
+      locked={busy}
+    >
       <div
         role="radiogroup"
         aria-label="방 템플릿"
@@ -35,6 +44,7 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
               role="radio"
               aria-checked={on}
               onClick={() => setPicked(t.id)}
+              disabled={busy}
               className={`flex flex-col gap-2 rounded-md p-2 text-left ${
                 on
                   ? "border-2 border-primary bg-primary-soft"
@@ -59,14 +69,17 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
           </p>
         )}
         <ModalActions>
-          <ModalCancel />
+          <ModalCancel disabled={busy} />
           <button
             type="button"
             onClick={start}
-            disabled={create.isPending || create.isSuccess}
-            className={BUTTON_PRIMARY}
+            disabled={busy}
+            className={`${BUTTON_PRIMARY} gap-2`}
           >
-            이 방으로 시작
+            {busy && (
+              <LoaderCircle size={16} className="animate-spin" aria-hidden />
+            )}
+            {busy ? "방 만드는 중" : "이 방으로 시작"}
           </button>
         </ModalActions>
       </div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { cycleFurnitureId } from "@gagufit/core";
 import { deleteSelected, nudgeSelected } from "./actions";
+import { EditorLoading } from "./EditorLoading";
 import { furnitureName } from "./labels";
 import { canvasInsets } from "./layout";
 import { LeftPanel, RightPanel } from "./panels/DesktopPanels";
@@ -57,7 +58,7 @@ export function Editor({ roomId }: { roomId: string }) {
   if (baseline) return <EditorScreen roomId={roomId} baseline={baseline} />;
   if (query.isError) return <LoadError onRetry={() => query.refetch()} />;
   if (fresh && record === null) return <NotFound />;
-  return <div className="h-dvh bg-surface" />;
+  return <EditorLoading />;
 }
 
 function LoadError({ onRetry }: { onRetry: () => void }) {
