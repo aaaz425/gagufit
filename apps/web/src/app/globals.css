@@ -151,6 +151,10 @@ body {
   .motion-side {
     animation: motion-side var(--duration-slow) var(--ease-enter);
   }
+  /* 편집기 오른쪽 패널 - 선택하면 들어옴, 해제하면 바로 사라짐 */
+  .motion-side-in {
+    animation: motion-side-r var(--duration-slow) var(--ease-enter);
+  }
   /* 패널 배경 강조 - 붙였다 animationend에서 뗌 */
   .motion-highlight {
     animation: motion-highlight calc(var(--duration-slow) * 5) var(--ease-enter);
@@ -225,6 +229,11 @@ body {
 @keyframes motion-side {
   from {
     transform: translateX(-100%);
+  }
+}
+@keyframes motion-side-r {
+  from {
+    transform: translateX(100%);
   }
 }
 @keyframes motion-highlight {

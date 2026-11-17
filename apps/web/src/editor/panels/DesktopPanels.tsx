@@ -96,13 +96,17 @@ export function RightPanel() {
   if (!selection) return null;
   return (
     <aside
-      // 대상이 바뀌면 새로 그려 스크롤을 맨 위로
-      key={selection.id}
       aria-label="속성"
-      className="absolute inset-y-0 right-0 z-10 overflow-y-auto border-l border-border bg-canvas p-4"
+      className="motion-side-in absolute inset-y-0 right-0 z-10 border-l border-border bg-canvas"
       style={{ width: PANEL_WIDTH }}
     >
-      <PropertiesPanel />
+      <div
+        // 대상이 바뀌면 새로 그려 스크롤을 맨 위로 - aside는 그대로라 다시 슬라이드하지 않음
+        key={selection.id}
+        className="h-full overflow-y-auto p-4"
+      >
+        <PropertiesPanel />
+      </div>
     </aside>
   );
 }
