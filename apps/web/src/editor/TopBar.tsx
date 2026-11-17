@@ -3,6 +3,7 @@
 import { history } from "@gagufit/core";
 import {
   ChevronLeft,
+  LoaderCircle,
   Redo2,
   Settings,
   TriangleAlert,
@@ -94,8 +95,8 @@ export function TopBar({ compact }: { compact: boolean }) {
 
 const SAVE_LABELS: Record<SaveStatus, string> = {
   saved: "저장됨",
-  unsaved: "저장 중…",
-  saving: "저장 중…",
+  unsaved: "저장 중",
+  saving: "저장 중",
   failed: "저장 실패",
 };
 
@@ -108,6 +109,13 @@ function SaveState({ compact }: { compact: boolean }) {
         status === "failed" ? "font-semibold text-danger" : "text-ink-muted"
       }`}
     >
+      {(status === "unsaved" || status === "saving") && (
+        <LoaderCircle
+          size={12}
+          aria-hidden
+          className="mr-1 inline animate-spin align-[-2px]"
+        />
+      )}
       {status === "failed" && !compact
         ? "저장 실패 - 다시 시도 중"
         : SAVE_LABELS[status]}

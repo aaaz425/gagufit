@@ -1,6 +1,8 @@
 "use client";
 
 import { useDeleteRoom } from "@gagufit/api";
+import { LoaderCircle } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { clearBackup } from "@/editor/save-backup";
 import {
   BUTTON_DANGER,
@@ -23,15 +25,58 @@ export function DeleteModal({
   onDeleted: () => void;
 }) {
   return (
-    <Modal title={`'${name}' 방을 지울까요?`} onClose={onClose}>
-      <DeleteBody id={id} onDeleted={onDeleted} />
+    <DeleteModalInner
+      id={id}
+      name={name}
+      onClose={onClose}
+      onDeleted={onDeleted}
+    />
+  );
+}
+
+function DeleteModalInner({
+  id,
+  name,
+  onClose,
+  onDeleted,
+}: {
+  id: string;
+  name: string;
+  onClose: () => void;
+  onDeleted: () => void;
+}) {
+  const del = useDeleteRoom();
+  return (
+    <Modal
+      title={`'${name}' 방을 지울까요?`}
+      onClose={onClose}
+      locked={del.isPending}
+    >
+      <DeleteBody id={id} del={del} onDeleted={onDeleted} />
     </Modal>
   );
 }
 
-function DeleteBody({ id, onDeleted }: { id: string; onDeleted: () => void }) {
-  const del = useDeleteRoom();
+function DeleteBody({
+  id,
+  del,
+  onDeleted,
+}: {
+  id: string;
+  del: ReturnType<typeof useDeleteRoom>;
+  onDeleted: () => void;
+}) {
   const close = useModalClose();
+  const done = del.isSuccess;
+  // 지우는 중에는 닫기가 잠겨 있어서, 성공이 반영된 뒤에 닫음
+  const finished = useRef(false);
+  useEffect(() => {
+    if (!done || finished.current) return;
+    finished.current = true;
+    clearBackup(id);
+    onDeleted();
+    close();
+  }, [done, id, onDeleted, close]);
   return (
     <>
       <p className="px-6 pt-2 text-sm text-ink-muted">
@@ -43,22 +88,17 @@ function DeleteBody({ id, onDeleted }: { id: string; onDeleted: () => void }) {
         </p>
       )}
       <ModalActions>
-        <ModalCancel />
+        <ModalCancel disabled={del.isPending} />
         <button
           type="button"
           disabled={del.isPending}
-          onClick={() =>
-            del.mutate(id, {
-              onSuccess: () => {
-                clearBackup(id);
-                onDeleted();
-                close();
-              },
-            })
-          }
-          className={BUTTON_DANGER}
+          onClick={() => del.mutate(id)}
+          className={`${BUTTON_DANGER} gap-2`}
         >
-          지우기
+          {del.isPending && (
+            <LoaderCircle size={16} className="animate-spin" aria-hidden />
+          )}
+          {del.isPending ? "지우는 중" : "지우기"}
         </button>
       </ModalActions>
     </>
