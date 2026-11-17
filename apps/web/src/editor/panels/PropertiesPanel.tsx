@@ -35,21 +35,21 @@ import {
   warningText,
 } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
-import { useEditor, useRoom, warningsOf } from "../store";
+import { useEditor, useRoom, warningsOf, type Selection } from "../store";
 import { NumberField, SectionTitle, Segment } from "../ui";
 import { OpeningIcon } from "./RoomPanel";
 
 /** 선택한 가구·문·창문 속성 - header는 모바일 시트 접기 버튼 자리 */
 export function PropertiesPanel({
+  selection,
   headerAction,
   showActions,
 }: {
+  selection: NonNullable<Selection>;
   headerAction?: ReactNode;
   showActions?: boolean;
 }) {
   const room = useRoom();
-  const selection = useEditor((s) => s.selection);
-  if (!selection) return null;
   if (selection.kind === "furniture") {
     const f = room.furniture.find((item) => item.id === selection.id);
     return f ? (
