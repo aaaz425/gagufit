@@ -4,6 +4,7 @@ import {
   moveOpening,
   setOpeningEdge,
   snapRotation,
+  updateFurniture,
   type Room,
   type Vec2,
 } from "@gagufit/core";
@@ -13,7 +14,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
-import { startCopyDrag, updateFurniture } from "../actions";
+import { startCopyDrag } from "../actions";
 import { LONG_PRESS_MS, MOVE_SLOP } from "../gesture";
 import { currentRoom, useEditor } from "../store";
 import { openingFrame } from "./RoomPlan";

@@ -9,6 +9,8 @@ import {
   resizeFurniture,
   setOpeningKind,
   setOpeningWidth,
+  updateFurniture,
+  updateOpening,
   wallFrame,
   type Opening,
   type PlacedFurniture,
@@ -23,8 +25,6 @@ import {
   duplicateSelected,
   rotateSelected90,
   rotationFromDisplay,
-  updateFurniture,
-  updateOpening,
 } from "../actions";
 import {
   CATEGORY_LABELS,

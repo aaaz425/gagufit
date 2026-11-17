@@ -18,6 +18,8 @@ export {
   setOpeningKind,
   setOpeningWidth,
   snapRotation,
+  updateFurniture,
+  updateOpening,
 } from "./edit";
 export {
   centerFromTopLeft,

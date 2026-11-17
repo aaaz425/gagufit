@@ -2,9 +2,9 @@
 
 import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import type { Room, Vec2 } from "@gagufit/core";
+import { updateFurniture, type Room, type Vec2 } from "@gagufit/core";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { startCopyDrag, updateFurniture } from "./actions";
+import { startCopyDrag } from "./actions";
 import { canvasInsets, PANEL_TAB_BOTTOM } from "./layout";
 import { useQualitySettings } from "./quality";
 import { SelectionToolbar, type ScreenBox } from "./SelectionToolbar";

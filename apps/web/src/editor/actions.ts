@@ -4,57 +4,13 @@ import {
   addOpening,
   duplicateFurniture,
   snapRotation,
+  updateFurniture,
   type FurniturePreset,
-  type Opening,
   type OpeningKind,
-  type PlacedFurniture,
   type Room,
 } from "@gagufit/core";
 import { screenDeltaToRoom } from "./plan/view";
 import { currentRoom, useEditor } from "./store";
-
-// 가구 이동·회전·색·삭제, 문 경첩·방향 변경은 core 함수 없이 여기서
-// core 편집 함수처럼 바뀐 게 없으면 같은 room을 돌려줌
-
-function samePatch<T extends object>(target: T, patch: Partial<T>): boolean {
-  return Object.entries(patch).every(([key, value]) => {
-    const current = target[key as keyof T];
-    if (typeof value === "object" && value !== null) {
-      return JSON.stringify(current) === JSON.stringify(value);
-    }
-    return Object.is(current, value);
-  });
-}
-
-export function updateFurniture(
-  room: Room,
-  id: string,
-  patch: Partial<Omit<PlacedFurniture, "id">>,
-): Room {
-  const source = room.furniture.find((f) => f.id === id);
-  if (!source || samePatch(source, patch)) return room;
-  return {
-    ...room,
-    furniture: room.furniture.map((f) =>
-      f === source ? { ...f, ...patch } : f,
-    ),
-  };
-}
-
-export function updateOpening(
-  room: Room,
-  id: string,
-  update: (o: Opening) => Opening,
-): Room {
-  const source = room.openings.find((o) => o.id === id);
-  if (!source) return room;
-  const next = update(source);
-  if (samePatch(source, next) && samePatch(next, source)) return room;
-  return {
-    ...room,
-    openings: room.openings.map((o) => (o === source ? next : o)),
-  };
-}
 
 /** 화면 각도 - 시계 방향, 저장 값 rotation은 반시계 */
 export const displayAngle = (rotation: number) => (360 - rotation) % 360;

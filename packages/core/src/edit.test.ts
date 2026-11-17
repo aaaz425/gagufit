@@ -18,6 +18,8 @@ import {
   setOpeningKind,
   setOpeningWidth,
   snapRotation,
+  updateFurniture,
+  updateOpening,
 } from "./edit";
 import type { FurniturePreset, Opening, Room } from "./types";
 
@@ -298,6 +300,44 @@ describe("resizeRoom", () => {
 
   it("바뀐 게 없으면 같은 room", () => {
     expect(resizeRoom(box, { width: 400 })).toBe(box);
+  });
+});
+
+describe("updateOpening", () => {
+  const base = withOpening({ offset: 100 });
+
+  it("바뀐 필드만 반영", () => {
+    const next = updateOpening(base, "w", (o) => ({ ...o, offset: 0 }));
+    expect(next.openings[0]).toMatchObject({ offset: 0, width: 100 });
+  });
+
+  it("바뀐 게 없으면 같은 room", () => {
+    expect(updateOpening(base, "w", (o) => ({ ...o }))).toBe(base);
+  });
+
+  it("없는 id면 던지지 않고 같은 room", () => {
+    expect(updateOpening(base, "x", (o) => ({ ...o, offset: 0 }))).toBe(base);
+  });
+});
+
+describe("updateFurniture", () => {
+  const base = addFurniture(room, preset, "a");
+
+  it("일부 필드만 바꿈", () => {
+    const next = updateFurniture(base, "a", { color: "walnut" });
+    expect(next.furniture[0].color).toBe("walnut");
+    expect(next.furniture[0].position).toEqual(base.furniture[0].position);
+  });
+
+  it("값이 같으면 같은 room - 객체는 내용으로 비교", () => {
+    const { position } = base.furniture[0];
+    expect(updateFurniture(base, "a", { position: { ...position } })).toBe(
+      base,
+    );
+  });
+
+  it("없는 id면 같은 room", () => {
+    expect(updateFurniture(base, "x", { rotation: 90 })).toBe(base);
   });
 });
 
