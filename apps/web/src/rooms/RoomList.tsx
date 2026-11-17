@@ -28,7 +28,7 @@ export function RoomList() {
     <div className="flex flex-1 flex-col bg-surface">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
         <header className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-baseline gap-2">
             <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
             {list && (
               <span className="text-base font-semibold text-ink-muted tabular-nums">
@@ -38,8 +38,10 @@ export function RoomList() {
           </div>
           <p className="flex items-start gap-1.5 text-sm text-ink-muted">
             <Info size={16} className="mt-0.5 shrink-0" aria-hidden />
-            <span>로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
-            삭제돼요</span>
+            <span>
+              로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
+              삭제돼요
+            </span>
           </p>
         </header>
 
