@@ -153,7 +153,7 @@ export function resizeFurniture(
   };
 }
 
-/** 값은 === 또는 한 단계 객체(position·size)의 같은 값 */
+/** 값은 ===, 객체(position·size)는 내용으로 비교 */
 function sameValues<T extends object>(a: T, b: T): boolean {
   const keys = Object.keys(a) as (keyof T)[];
   return (
