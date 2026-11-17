@@ -2,6 +2,7 @@
 
 import { useCreateRoom } from "@gagufit/api";
 import { ROOM_TEMPLATES, roomFromTemplate } from "@gagufit/data";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BUTTON_PRIMARY, Modal, ModalActions, ModalCancel } from "./Modal";
@@ -13,6 +14,9 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const create = useCreateRoom();
   const [picked, setPicked] = useState(TEMPLATES[0].id);
+
+  // 생성 성공 뒤에도 편집기로 이동하는 동안 유지
+  const busy = create.isPending || create.isSuccess;
 
   const start = () =>
     create.mutate(roomFromTemplate(ROOM_TEMPLATES[picked]), {
@@ -63,10 +67,13 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={start}
-            disabled={create.isPending || create.isSuccess}
-            className={BUTTON_PRIMARY}
+            disabled={busy}
+            className={`${BUTTON_PRIMARY} gap-2`}
           >
-            이 방으로 시작
+            {busy && (
+              <LoaderCircle size={16} className="animate-spin" aria-hidden />
+            )}
+            {busy ? "방 만드는 중" : "이 방으로 시작"}
           </button>
         </ModalActions>
       </div>
