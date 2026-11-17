@@ -97,7 +97,7 @@ export function RightPanel() {
   return (
     <aside
       aria-label="속성"
-      className="motion-side-in absolute inset-y-0 right-0 z-10 border-l border-border bg-canvas"
+      className="motion-side-rabsolute inset-y-0 right-0 z-10 border-l border-border bg-canvas"
       style={{ width: PANEL_WIDTH }}
     >
       <div

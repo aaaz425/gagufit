@@ -152,7 +152,7 @@ body {
     animation: motion-side var(--duration-slow) var(--ease-enter);
   }
   /* 편집기 오른쪽 패널 - 선택하면 들어옴, 해제하면 바로 사라짐 */
-  .motion-side-in {
+  .motion-side-r {
     animation: motion-side-r var(--duration-slow) var(--ease-enter);
   }
   /* 패널 배경 강조 - 붙였다 animationend에서 뗌 */
