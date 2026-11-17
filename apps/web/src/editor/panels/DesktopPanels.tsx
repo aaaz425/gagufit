@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft } from "lucide-react";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { COLLAPSED_PANEL_WIDTH, PANEL_WIDTH } from "../layout";
 import { useEditor, type PanelTab } from "../store";
 import { FurniturePanel } from "./FurniturePanel";
@@ -93,19 +93,27 @@ export function LeftPanel() {
 
 export function RightPanel() {
   const selection = useEditor((s) => s.selection);
-  if (!selection) return null;
+  // 해제하면 마지막 대상 내용을 둔 채 나감 - 삭제로 사라진 대상은 내용 없이 나감
+  const [last, setLast] = useState(selection);
+  if (selection && selection !== last) setLast(selection);
+  const open = !!selection;
   return (
     <aside
       aria-label="속성"
-      className="motion-side-r absolute inset-y-0 right-0 z-10 border-l border-border bg-canvas"
+      className={`absolute inset-y-0 right-0 z-10 border-l border-border bg-canvas transition-transform ${
+        open
+          ? "duration-(--duration-slow) ease-enter"
+          : "translate-x-full duration-(--duration-fast) ease-exit"
+      }`}
       style={{ width: PANEL_WIDTH }}
     >
       <div
         // 대상이 바뀌면 새로 그려 스크롤을 맨 위로 - aside는 그대로라 다시 슬라이드하지 않음
-        key={selection.id}
+        key={last?.id}
+        inert={!open}
         className="h-full overflow-y-auto p-4"
       >
-        <PropertiesPanel />
+        {last && <PropertiesPanel selection={last} />}
       </div>
     </aside>
   );

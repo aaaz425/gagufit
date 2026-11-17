@@ -214,7 +214,7 @@ function EditorScreen({
     return (
       <div className="flex h-dvh flex-col bg-canvas">
         <TopBar compact={false} />
-        <main className="relative min-h-0 flex-1">
+        <main className="relative min-h-0 flex-1 overflow-x-clip">
           {canvas}
           <p className="sr-only" aria-live="polite">
             {announce}
