@@ -44,6 +44,7 @@ export function TemplateModal({ onClose }: { onClose: () => void }) {
               role="radio"
               aria-checked={on}
               onClick={() => setPicked(t.id)}
+              disabled={busy}
               className={`flex flex-col gap-2 rounded-md p-2 text-left ${
                 on
                   ? "border-2 border-primary bg-primary-soft"
