@@ -1,3 +1,4 @@
+import { BackButton } from "./BackButton";
 import { EFFECTIVE_DATE } from "./constants";
 
 export type LegalSection = {
@@ -16,8 +17,9 @@ export function LegalPage({
 }) {
   return (
     <main>
-      <div className="mx-auto w-full max-w-[720px] px-4 pt-6 pb-10 md:px-0 md:pt-14 md:pb-20">
-        <div className="flex flex-col gap-7 md:gap-10">
+      <div className="mx-auto w-full max-w-[720px] px-4 pt-2 pb-10 md:px-0 md:pt-8 md:pb-20">
+        <BackButton />
+        <div className="mt-2 flex flex-col gap-7 md:mt-4 md:gap-10">
           <header className="flex flex-col gap-2">
             <h1 className="text-xl font-bold md:text-[28px] md:tracking-[-0.4px]">
               {title}

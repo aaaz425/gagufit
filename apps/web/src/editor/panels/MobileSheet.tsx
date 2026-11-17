@@ -12,6 +12,7 @@ import { SheetHandle } from "./SheetHandle";
 export function MobileSheet() {
   const current = useEditor((s) => s.sheet);
   const setSheet = useEditor((s) => s.setSheet);
+  const selection = useEditor((s) => s.selection);
   // 닫히는 동안 마지막 시트 유지
   const [kept, setKept] = useState(current);
   if (current && current !== kept) setKept(current);
@@ -40,19 +41,22 @@ export function MobileSheet() {
   } else {
     body = (
       <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 pb-1">
-        <PropertiesPanel
-          showActions
-          headerAction={
-            <button
-              type="button"
-              aria-label="접기"
-              onClick={close}
-              className="flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface"
-            >
-              <ChevronDown size={22} />
-            </button>
-          }
-        />
+        {selection && (
+          <PropertiesPanel
+            selection={selection}
+            showActions
+            headerAction={
+              <button
+                type="button"
+                aria-label="접기"
+                onClick={close}
+                className="flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface"
+              >
+                <ChevronDown size={22} />
+              </button>
+            }
+          />
+        )}
       </div>
     );
   }

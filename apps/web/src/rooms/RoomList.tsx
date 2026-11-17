@@ -1,7 +1,7 @@
 "use client";
 
 import { useRooms, type RoomSummary } from "@gagufit/api";
-import { CloudOff } from "lucide-react";
+import { CloudOff, Info } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { exitDelay } from "@/motion";
@@ -27,14 +27,16 @@ export function RoomList() {
   return (
     <div className="flex flex-1 flex-col bg-surface">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
-        <div className="flex items-baseline justify-between">
+        <header className="flex flex-col gap-2 pb-2">
           <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
-          {list && (
-            <span className="text-sm text-ink-muted tabular-nums">
-              {list.length}개
+          <p className="flex items-start gap-1.5 text-sm text-ink-muted">
+            <Info size={16} className="mt-0.5 shrink-0" aria-hidden />
+            <span>
+              로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
+              삭제돼요
             </span>
-          )}
-        </div>
+          </p>
+        </header>
 
         {rooms.isError ? (
           <div className="flex flex-col items-center gap-3 py-16 text-center">
@@ -70,15 +72,6 @@ export function RoomList() {
                 />
               ))}
             </div>
-            {list?.length === 0 && (
-              <p className="text-center text-sm text-ink-muted">
-                아직 만든 방이 없어요. 새 방을 만들어 가구를 배치해 보세요
-              </p>
-            )}
-            <p className="text-center text-xs text-ink-muted">
-              로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
-              삭제돼요
-            </p>
           </>
         )}
       </main>
