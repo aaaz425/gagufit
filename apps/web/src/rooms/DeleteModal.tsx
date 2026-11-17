@@ -24,27 +24,6 @@ export function DeleteModal({
   /** 지운 직후 - 목록의 퇴장 효과용 */
   onDeleted: () => void;
 }) {
-  return (
-    <DeleteModalInner
-      id={id}
-      name={name}
-      onClose={onClose}
-      onDeleted={onDeleted}
-    />
-  );
-}
-
-function DeleteModalInner({
-  id,
-  name,
-  onClose,
-  onDeleted,
-}: {
-  id: string;
-  name: string;
-  onClose: () => void;
-  onDeleted: () => void;
-}) {
   const del = useDeleteRoom();
   return (
     <Modal
