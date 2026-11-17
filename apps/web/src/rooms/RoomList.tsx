@@ -27,15 +27,8 @@ export function RoomList() {
   return (
     <div className="flex flex-1 flex-col bg-surface">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
-        <header className="flex flex-col gap-1">
-          <div className="flex items-baseline gap-2">
-            <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
-            {list && (
-              <span className="text-base font-semibold text-ink-muted tabular-nums">
-                {list.length}개
-              </span>
-            )}
-          </div>
+        <header className="flex flex-col gap-2 pb-2">
+          <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
           <p className="flex items-start gap-1.5 text-sm text-ink-muted">
             <Info size={16} className="mt-0.5 shrink-0" aria-hidden />
             <span>
@@ -79,11 +72,6 @@ export function RoomList() {
                 />
               ))}
             </div>
-            {list?.length === 0 && (
-              <p className="text-center text-sm text-ink-muted">
-                아직 만든 방이 없어요. 새 방을 만들어 가구를 배치해 보세요
-              </p>
-            )}
           </>
         )}
       </main>
