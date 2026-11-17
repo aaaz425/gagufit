@@ -100,6 +100,7 @@ export function RightPanel() {
   return (
     <aside
       aria-label="속성"
+      inert={!open}
       className={`absolute inset-y-0 right-0 z-10 border-l border-border bg-canvas transition-transform ${
         open
           ? "duration-(--duration-slow) ease-enter"
@@ -110,7 +111,6 @@ export function RightPanel() {
       <div
         // 대상이 바뀌면 새로 그려 스크롤을 맨 위로 - aside는 그대로라 다시 슬라이드하지 않음
         key={last?.id}
-        inert={!open}
         className="h-full overflow-y-auto p-4"
       >
         {last && <PropertiesPanel selection={last} />}
