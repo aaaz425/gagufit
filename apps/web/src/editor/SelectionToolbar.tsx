@@ -15,7 +15,7 @@ const GAP = 14;
 const EDGE = 8;
 
 /** 화면 px - 패널에 가리지 않은 영역 */
-export type ScreenRect = {
+type ScreenRect = {
   left: number;
   top: number;
   right: number;

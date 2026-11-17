@@ -18,7 +18,7 @@ export type Selection = { kind: "furniture" | "opening"; id: string } | null;
 export type PanelTab = "furniture" | "room";
 
 /** 모바일 바텀시트 - props는 선택 대상 전체 속성 */
-export type Sheet = PanelTab | "props" | null;
+type Sheet = PanelTab | "props" | null;
 
 export type Toast = { message: string; undo?: boolean };
 

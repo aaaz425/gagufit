@@ -28,7 +28,7 @@ const TEXTURE_SIZE: Readonly<Record<SurfaceId, [number, number]>> = {
 
 const MAPS = ["color", "normal", "roughness"] as const;
 
-export function textureUrls(id: SurfaceId, hiRes: boolean) {
+function textureUrls(id: SurfaceId, hiRes: boolean) {
   const suffix = hiRes ? "" : "-512";
   return MAPS.map((map) => `/textures/${id}/${map}${suffix}.jpg`);
 }

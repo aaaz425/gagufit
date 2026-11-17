@@ -1,7 +1,7 @@
 import { CURRENT_SCHEMA_VERSION, migrate, type Room } from "@gagufit/core";
 
 // 서버 저장에 실패한 방 임시 보관 - 방마다 하나, base는 보관 당시 서버 updated_at
-export type Backup = { room: Room; base: string };
+type Backup = { room: Room; base: string };
 
 const keyOf = (roomId: string) => `gagufit:backup:${roomId}`;
 

@@ -42,7 +42,7 @@ import { useFurnitureDrag } from "./use-furniture-drag";
 
 type OrbitControlsImpl = ComponentRef<typeof OrbitControls>;
 
-export type Room3DProps = {
+type Room3DProps = {
   room: Room;
   selectedId: string | null;
   warningTones: ReadonlyMap<string, WarningTone>;

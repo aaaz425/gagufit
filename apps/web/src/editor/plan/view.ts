@@ -4,8 +4,8 @@ import type { Insets } from "../layout";
 /** 화면 px = 회전(angle) · 확대(scale) · 방 cm + (x, y) - angle은 도, 화면 기준 시계 방향 */
 export type View = { x: number; y: number; scale: number; angle: number };
 
-export const MIN_SCALE = 0.2;
-export const MAX_SCALE = 8;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 8;
 
 const rad = (deg: number) => (deg * Math.PI) / 180;
 
@@ -32,7 +32,7 @@ export function screenDeltaToRoom(angle: number, d: Vec2): Vec2 {
   return { x: d.x * c + d.y * s, y: -d.x * s + d.y * c };
 }
 
-export const clampScale = (scale: number) =>
+const clampScale = (scale: number) =>
   Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
 
 /** anchor(화면 px)에 있던 방 위치가 그대로 남게 확대·회전 */
