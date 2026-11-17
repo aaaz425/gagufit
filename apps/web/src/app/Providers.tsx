@@ -2,6 +2,7 @@
 
 import { ApiProvider, createApiClient } from "@gagufit/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NavTracker } from "@/site/BackButton";
 import { useState, type ReactNode } from "react";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -15,11 +16,18 @@ export function Providers({ children }: { children: ReactNode }) {
 
   if (!client)
     return (
-      <p className="p-6 text-sm text-ink-muted">Supabase 설정이 필요해요</p>
+      <main className="flex min-h-dvh flex-col items-center justify-center bg-surface px-6 text-center">
+        <h1 className="text-xl font-bold text-ink">
+          Supabase 환경 설정이 필요해요
+        </h1>
+      </main>
     );
   return (
     <QueryClientProvider client={queryClient}>
-      <ApiProvider client={client}>{children}</ApiProvider>
+      <ApiProvider client={client}>
+        <NavTracker />
+        {children}
+      </ApiProvider>
     </QueryClientProvider>
   );
 }
