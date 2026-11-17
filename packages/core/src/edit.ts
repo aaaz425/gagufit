@@ -3,6 +3,7 @@ import type {
   FurniturePreset,
   Opening,
   OpeningKind,
+  PlacedFurniture,
   Room,
   Size,
   Vec2,
@@ -152,10 +153,23 @@ export function resizeFurniture(
   };
 }
 
+/** 값은 ===, 객체(position·size)는 내용으로 비교 */
 function sameValues<T extends object>(a: T, b: T): boolean {
   const keys = Object.keys(a) as (keyof T)[];
   return (
-    keys.length === Object.keys(b).length && keys.every((k) => a[k] === b[k])
+    keys.length === Object.keys(b).length &&
+    keys.every((k) => sameValue(a[k], b[k]))
+  );
+}
+
+function sameValue(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  return (
+    typeof a === "object" &&
+    typeof b === "object" &&
+    a !== null &&
+    b !== null &&
+    sameValues(a, b)
   );
 }
 
@@ -166,8 +180,8 @@ function fitToWall<T extends Opening>(opening: T, length: number): T {
   return { ...opening, width, offset };
 }
 
-/** 바뀐 게 없으면 같은 room */
-function updateOpening(
+/** 없는 id면 RangeError - 바뀐 게 없으면 같은 room */
+function editOpening(
   room: Room,
   openingId: string,
   update: (opening: Opening) => Opening,
@@ -179,6 +193,33 @@ function updateOpening(
   return {
     ...room,
     openings: room.openings.map((o) => (o === source ? next : o)),
+  };
+}
+
+/** 없는 id나 바뀐 게 없으면 같은 room */
+export function updateOpening(
+  room: Room,
+  openingId: string,
+  update: (opening: Opening) => Opening,
+): Room {
+  return room.openings.some((o) => o.id === openingId)
+    ? editOpening(room, openingId, update)
+    : room;
+}
+
+/** 넘겨 받은 항목만 바꿈 - 없는 id나 바뀐 게 없으면 같은 room */
+export function updateFurniture(
+  room: Room,
+  furnitureId: string,
+  patch: Partial<Omit<PlacedFurniture, "id">>,
+): Room {
+  const source = room.furniture.find((f) => f.id === furnitureId);
+  if (!source) return room;
+  const next = { ...source, ...patch };
+  if (sameValues(next, source)) return room;
+  return {
+    ...room,
+    furniture: room.furniture.map((f) => (f === source ? next : f)),
   };
 }
 
@@ -241,7 +282,7 @@ export function moveOpening(room: Room, openingId: string, point: Vec2): Room {
     if (distance < nearest.distance) nearest = { wall, along, distance };
   }
   const { wall, along } = nearest;
-  return updateOpening(room, openingId, (o) =>
+  return editOpening(room, openingId, (o) =>
     fitToWall(
       { ...o, wall, offset: Math.round(along - o.width / 2) },
       wallFrame(room, wall).length,
@@ -255,7 +296,7 @@ export function setOpeningWidth(
   openingId: string,
   width: number,
 ): Room {
-  return updateOpening(room, openingId, (o) =>
+  return editOpening(room, openingId, (o) =>
     fitToWall(
       { ...o, width: Math.max(Math.round(width), 1) },
       wallFrame(room, o.wall).length,
@@ -273,7 +314,7 @@ export function setOpeningEdge(
   side: "left" | "right",
   along: number,
 ): Room {
-  return updateOpening(room, openingId, (o) => {
+  return editOpening(room, openingId, (o) => {
     const right = o.offset + o.width;
     if (side === "left") {
       const left = Math.max(clampInt(along, 0, right - OPENING_MIN_WIDTH), 0);
@@ -291,7 +332,7 @@ export function setOpeningKind(
   openingId: string,
   kind: OpeningKind,
 ): Room {
-  return updateOpening(room, openingId, (o) => {
+  return editOpening(room, openingId, (o) => {
     if (o.kind === kind) return o;
     const offset = o.offset + (o.width - OPENING_DEFAULTS[kind].width) / 2;
     return fitToWall(

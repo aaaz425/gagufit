@@ -4,6 +4,7 @@ import {
   moveOpening,
   setOpeningEdge,
   snapRotation,
+  updateFurniture,
   type Room,
   type Vec2,
 } from "@gagufit/core";
@@ -13,15 +14,11 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
-import { startCopyDrag, updateFurniture } from "../actions";
+import { startCopyDrag } from "../actions";
+import { LONG_PRESS_MS, MOVE_SLOP } from "../gesture";
 import { currentRoom, useEditor } from "../store";
 import { openingFrame } from "./RoomPlan";
 import { toRoom, zoomAt, type View } from "./view";
-
-/** 터치 길게 누르기 - 실수 이동 방지 */
-const LONG_PRESS_MS = 400;
-/** 이만큼 움직이면 누르기가 아닌 끌기 */
-const MOVE_SLOP = 8;
 
 const HINT_KEY = "gagufit:drag-hint-seen";
 

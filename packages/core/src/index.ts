@@ -5,38 +5,33 @@ export {
   addOpening,
   clampPosition,
   cycleFurnitureId,
-  DUPLICATE_OFFSET,
   duplicateFurniture,
   FURNITURE_SIZE_LIMITS,
   lockAxis,
   minSizeOf,
-  MOVE_MARGIN,
   moveOpening,
   OPENING_MIN_WIDTH,
   resizeFurniture,
   resizeRoom,
   ROOM_LIMITS,
-  ROTATION_SNAP_THRESHOLD,
-  roundVec2,
   setOpeningEdge,
   setOpeningKind,
   setOpeningWidth,
   snapRotation,
+  updateFurniture,
+  updateOpening,
 } from "./edit";
 export {
   centerFromTopLeft,
   furnitureCorners,
   furnitureTopLeft,
-  polygonsOverlap,
 } from "./geometry";
 export * as history from "./history";
 export type { History } from "./history";
 export {
-  DOOR_PASSAGE_DEPTH,
   doorPassageCorners,
   OPENING_DEFAULTS,
   roomCorners,
   wallFrame,
-  type WallFrame,
 } from "./room";
-export { CURRENT_SCHEMA_VERSION, migrate, type SavedRoom } from "./schema";
+export { CURRENT_SCHEMA_VERSION, migrate } from "./schema";

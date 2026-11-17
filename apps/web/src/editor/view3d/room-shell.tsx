@@ -102,16 +102,17 @@ function Wall({ room, wall, lowered, material }: WallProps) {
   const top = lowered
     ? Math.min(LOWERED_WALL_HEIGHT, room.height)
     : room.height;
-  const openings = room.openings.filter((o) => o.wall === wall);
+  const openings = useMemo(
+    () => room.openings.filter((o) => o.wall === wall),
+    [room.openings, wall],
+  );
   const { pieces, marks } = useMemo(() => {
     const result = wallPieces(frame.length, top, openings);
     return {
       pieces: result.pieces.map(pieceGeometry),
       marks: result.marks.map(pieceGeometry),
     };
-    // openings 배열은 렌더마다 새로 만들어져 room.openings로 비교
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frame.length, top, room.openings, wall]);
+  }, [frame.length, top, openings]);
 
   useEffect(
     () => () => {

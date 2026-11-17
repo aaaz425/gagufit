@@ -10,7 +10,7 @@ export type QualitySettings = {
 };
 
 // 저사양 노트북 기준 - 그림자·후처리는 켜는 쪽을 사용자가 고름
-export const DEFAULT_QUALITY: QualitySettings = {
+const DEFAULT_QUALITY: QualitySettings = {
   hiDpi: true,
   shadows: false,
   post: false,
@@ -77,7 +77,7 @@ function subscribe(listener: () => void) {
   };
 }
 
-export function setQualitySettings(patch: Partial<QualitySettings>) {
+function setQualitySettings(patch: Partial<QualitySettings>) {
   current = { ...getSnapshot(), ...patch };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(current));

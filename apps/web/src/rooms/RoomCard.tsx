@@ -110,7 +110,7 @@ export function RoomCard({
 }
 
 // 새 방 모달은 이 경로 - 내비의 방 만들기와 같음
-export const NEW_ROOM_HREF = "/rooms?new=1";
+const NEW_ROOM_HREF = "/rooms?new=1";
 
 export function NewRoomCard() {
   return (

@@ -7,7 +7,7 @@ import { Suspense, useState } from "react";
 import { exitDelay } from "@/motion";
 import { ANON_RETENTION_DAYS } from "@/site/constants";
 import { DeleteModal } from "./DeleteModal";
-import { NEW_ROOM_HREF, NewRoomCard, RoomCard } from "./RoomCard";
+import { NewRoomCard, RoomCard } from "./RoomCard";
 import { TemplateModal } from "./TemplateModal";
 
 export function RoomList() {

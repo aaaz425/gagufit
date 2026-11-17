@@ -2,12 +2,9 @@ import { clampPosition, lockAxis, type Room, type Vec2 } from "@gagufit/core";
 import type { RootState, ThreeEvent } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { Plane, Raycaster, Vector2, Vector3 } from "three";
+import { LONG_PRESS_MS, MOVE_SLOP } from "../gesture";
 import { worldToPlan } from "./geometry";
 
-/** 터치 길게 누르기 ms - 실수 이동 방지, 2D와 같음 */
-const LONG_PRESS_MS = 400;
-/** 길게 누르는 중 이만큼 움직이면 끌기가 아닌 시점 회전 px */
-const MOVE_SLOP = 8;
 type Session = {
   pointerId: number;
   id: string;
