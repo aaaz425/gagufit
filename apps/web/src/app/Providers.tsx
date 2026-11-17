@@ -15,7 +15,12 @@ export function Providers({ children }: { children: ReactNode }) {
 
   if (!client)
     return (
-      <p className="p-6 text-sm text-ink-muted">Supabase 설정이 필요해요</p>
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-2 bg-surface px-6 text-center">
+        <h1 className="text-xl font-bold text-ink">Supabase 설정이 필요해요</h1>
+        <p className="text-sm text-ink-muted">
+          환경변수에 Supabase 주소와 키를 넣고 다시 시작해 주세요
+        </p>
+      </main>
     );
   return (
     <QueryClientProvider client={queryClient}>
