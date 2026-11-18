@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: { default: SITE_NAME, template: `%s - ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
   openGraph: { siteName: SITE_NAME, locale: "ko_KR", type: "website" },
+  verification: {
+    other: {
+      "naver-site-verification": "18a562a721825867920e750b700b8a7345383189",
+    },
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
