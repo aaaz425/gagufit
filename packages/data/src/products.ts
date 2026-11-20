@@ -1,17 +1,23 @@
-import type { FurniturePreset, Offer, Size } from "@gagufit/core";
-import type { FURNITURE_COLORS } from "./materials";
+import type {
+  FurnitureColorId,
+  FurniturePreset,
+  Offer,
+  Size,
+} from "@gagufit/core";
 import { FURNITURE_PRESETS, type PresetId } from "./presets";
 
 // 실제 상품 추가 - RAW에 항목 하나 복사해 채우기
 // - 키(id)는 저장 데이터에 남음 - 바꾸지 말 것, 기본 프리셋 id와 겹치면 안 됨
 // - base 기본 프리셋 id - 분류·최소 크기·재질·기본색을 이어받음
+// - 판매 종료돼도 항목은 지우지 말 것 - 배치된 방이 끊김, offers만 정리
+// - offers 여럿이면 화면에는 첫 항목만 표시
 // - size cm 정수, color 생략하면 base 기본색
 // - offers 쿠팡 파트너스 화면에서 만든 링크, price 원 정수, checkedAt 가격 확인일 YYYY-MM-DD
 type Product = {
   base: PresetId;
   name: string;
   size: Size;
-  color?: keyof typeof FURNITURE_COLORS;
+  color?: FurnitureColorId;
   offers: [Offer, ...Offer[]];
 };
 

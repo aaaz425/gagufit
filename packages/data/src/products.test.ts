@@ -23,11 +23,10 @@ describe("실제 상품", () => {
     }
   });
 
-  it("링크는 https, 가격은 양의 정수, 기준일은 날짜 형식", () => {
+  it("링크는 쿠팡 파트너스 주소, 가격은 양의 정수, 기준일은 날짜 형식", () => {
     for (const p of products) {
-      expect(p.offers?.length, p.id).toBeGreaterThan(0);
       for (const o of p.offers ?? []) {
-        expect(o.url.startsWith("https://"), p.id).toBe(true);
+        expect(o.url.startsWith("https://link.coupang.com/"), p.id).toBe(true);
         expect(isPosInt(o.price), p.id).toBe(true);
         expect(o.checkedAt, p.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
         expect(Number.isNaN(Date.parse(o.checkedAt)), p.id).toBe(false);

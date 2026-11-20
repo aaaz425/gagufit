@@ -20,6 +20,7 @@ import {
 import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
 import { ExternalLink, RotateCw, TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
+import { COUPANG_NOTICE } from "@/site/constants";
 import {
   deleteSelected,
   displayAngle,
@@ -38,7 +39,6 @@ import {
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
 import { useEditor, useRoom, warningsOf, type Selection } from "../store";
 import { NumberField, SectionTitle, Segment } from "../ui";
-import { COUPANG_NOTICE } from "@/site/constants";
 import { OpeningIcon } from "./RoomPanel";
 
 /** 선택한 가구·문·창문 속성 - header는 모바일 시트 접기 버튼 자리 */
@@ -103,31 +103,29 @@ function Offers({
 }: {
   offers: NonNullable<FurniturePreset["offers"]>;
 }) {
+  // 판매처가 여럿이어도 첫 offer만 표시
+  const o = offers[0];
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-border bg-surface p-3">
-      {offers.map((o) => (
-        <div key={o.url} className="flex flex-col gap-2">
-          <p className="flex items-baseline gap-2">
-            <span className="text-xs text-ink-muted">참고가</span>
-            <span className="text-base font-bold text-ink tabular-nums">
-              {o.price.toLocaleString("ko-KR")}원
-            </span>
-            <span className="text-xs text-ink-muted tabular-nums">
-              {o.checkedAt} 기준
-            </span>
-          </p>
-          <p className="text-xs text-ink-muted">실제 가격은 쿠팡에서 확인</p>
-          <a
-            href={o.url}
-            target="_blank"
-            rel="sponsored noopener noreferrer"
-            className="flex h-11 items-center justify-center gap-2 rounded-sm bg-primary-soft text-sm font-bold text-primary hover:bg-primary hover:text-white"
-          >
-            쿠팡에서 보기
-            <ExternalLink size={16} aria-hidden />
-          </a>
-        </div>
-      ))}
+    <div className="flex flex-col gap-2 rounded-md border border-border bg-surface p-3">
+      <p className="flex items-baseline gap-2">
+        <span className="text-xs text-ink-muted">참고가</span>
+        <span className="text-base font-bold text-ink tabular-nums">
+          {o.price.toLocaleString("ko-KR")}원
+        </span>
+        <span className="text-xs text-ink-muted tabular-nums">
+          {o.checkedAt} 기준
+        </span>
+      </p>
+      <p className="text-xs text-ink-muted">실제 가격은 쿠팡에서 확인</p>
+      <a
+        href={o.url}
+        target="_blank"
+        rel="sponsored noopener noreferrer"
+        className="flex h-11 items-center justify-center gap-2 rounded-sm bg-primary-soft text-sm font-bold text-primary hover:bg-primary hover:text-white"
+      >
+        쿠팡에서 보기
+        <ExternalLink size={16} aria-hidden />
+      </a>
       <p className="text-xs leading-[1.4] text-ink-muted">{COUPANG_NOTICE}</p>
     </div>
   );

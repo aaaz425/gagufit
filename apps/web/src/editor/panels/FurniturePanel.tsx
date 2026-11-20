@@ -71,6 +71,11 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
           </button>
         ))}
       </div>
+      {source === "product" && (
+        <p className="shrink-0 text-xs text-ink-muted">
+          실제 가격은 쿠팡에서 확인
+        </p>
+      )}
       <ul className="-mr-4 -ml-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-4 pl-1">
         {list.map((preset) => (
           <li key={preset.id}>
@@ -92,7 +97,8 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
                 </span>
                 {preset.offers && (
                   <span className="text-xs text-ink-muted tabular-nums">
-                    참고가 {preset.offers[0].price.toLocaleString("ko-KR")}원
+                    참고가 {preset.offers[0].price.toLocaleString("ko-KR")}원 ·{" "}
+                    {preset.offers[0].checkedAt.slice(5).replace("-", ".")} 기준
                   </span>
                 )}
               </span>
