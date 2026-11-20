@@ -89,13 +89,12 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
                 </span>
                 <span className="text-xs text-ink-muted tabular-nums">
                   {preset.size.width} × {preset.size.depth} cm
-                  {preset.offers && (
-                    <>
-                      {" · 참고가 "}
-                      {preset.offers[0].price.toLocaleString("ko-KR")}원
-                    </>
-                  )}
                 </span>
+                {preset.offers && (
+                  <span className="text-xs text-ink-muted tabular-nums">
+                    참고가 {preset.offers[0].price.toLocaleString("ko-KR")}원
+                  </span>
+                )}
               </span>
               <CirclePlus
                 size={22}
