@@ -5,7 +5,7 @@ import type {
   Room,
   Warning,
 } from "@gagufit/core";
-import { FURNITURE_PRESETS } from "@gagufit/data";
+import { FURNITURE_CATALOG } from "@gagufit/data";
 
 export const CATEGORY_LABELS: Record<FurnitureCategory, string> = {
   bed: "침대",
@@ -68,7 +68,7 @@ function josa(word: string, first: string, second: string): string {
 
 export function furnitureName(room: Room, id: string): string {
   const f = room.furniture.find((item) => item.id === id);
-  return (f && FURNITURE_PRESETS[f.presetId]?.name) ?? "가구";
+  return (f && FURNITURE_CATALOG[f.presetId]?.name) ?? "가구";
 }
 
 /** 경고를 보는 가구 입장의 한 줄 - id는 경고에 걸린 가구 */
