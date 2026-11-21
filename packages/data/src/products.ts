@@ -191,6 +191,19 @@ const RAW = {
       },
     ],
   },
+  "washer-samsung-wa16cg6441by": {
+    base: "washer",
+    name: "삼성전자 그랑데 통버블 세탁기 16kg",
+    size: { width: 64, depth: 70, height: 109 },
+    color: "grey",
+    offers: [
+      {
+        url: "https://link.coupang.com/a/iRfHNRzvGK",
+        price: 498580,
+        checkedAt: "2026-11-21",
+      },
+    ],
+  },
   "rug-ongyeol-washable-200x400": {
     base: "rug-160",
     name: "온결 워셔블 단모 사각 러그 200x400",
