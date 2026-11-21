@@ -178,6 +178,19 @@ const RAW = {
       },
     ],
   },
+  "fridge-lucoms-157l": {
+    base: "fridge",
+    name: "루컴즈 157L 2도어 냉장고",
+    size: { width: 47, depth: 50, height: 144 },
+    color: "white",
+    offers: [
+      {
+        url: "https://link.coupang.com/a/iReRgI4Z9o",
+        price: 274120,
+        checkedAt: "2026-11-21",
+      },
+    ],
+  },
   "rug-ongyeol-washable-200x400": {
     base: "rug-160",
     name: "온결 워셔블 단모 사각 러그 200x400",
