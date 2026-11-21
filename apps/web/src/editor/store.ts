@@ -8,7 +8,7 @@ import {
 import {
   DEFAULT_FLOOR_MATERIAL,
   DEFAULT_WALL_MATERIAL,
-  FURNITURE_PRESETS,
+  FURNITURE_CATALOG,
 } from "@gagufit/data";
 import { create } from "zustand";
 import { WARNING_TONE, type WarningTone } from "./labels";
@@ -189,7 +189,7 @@ const warningCache = new WeakMap<Room, Warning[]>();
 export function warningsOf(room: Room): Warning[] {
   let warnings = warningCache.get(room);
   if (!warnings) {
-    warnings = checkRoom(room, FURNITURE_PRESETS);
+    warnings = checkRoom(room, FURNITURE_CATALOG);
     warningCache.set(room, warnings);
   }
   return warnings;

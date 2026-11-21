@@ -98,6 +98,15 @@ export type FurnitureMaterial = "wood" | "fabric" | "appliance";
 /** floor는 러그 - 겹침·문 막힘 판정 제외 */
 export type FurnitureLayer = "floor" | "normal";
 
+/** 판매처 참고가 - 사용자 입력가와 별개 */
+export type Offer = {
+  url: string;
+  /** 원, 정수 */
+  price: number;
+  /** 가격 확인일 YYYY-MM-DD */
+  checkedAt: string;
+};
+
 export type FurniturePreset = {
   id: string;
   category: FurnitureCategory;
@@ -109,6 +118,8 @@ export type FurniturePreset = {
   material: FurnitureMaterial;
   defaultColor: FurnitureColorId;
   layer: FurnitureLayer;
+  /** 실제 상품만 - 쿠팡 파트너스 링크 */
+  offers?: Offer[];
 };
 
 export type PlacedFurniture = {
