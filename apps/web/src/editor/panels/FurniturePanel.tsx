@@ -97,8 +97,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
                 </span>
                 {preset.offers && (
                   <span className="text-xs text-ink-muted tabular-nums">
-                    참고가 {preset.offers[0].price.toLocaleString("ko-KR")}원 ·{" "}
-                    {preset.offers[0].checkedAt.slice(5).replace("-", ".")} 기준
+                    {preset.offers[0].price.toLocaleString("ko-KR")}원
                   </span>
                 )}
               </span>
