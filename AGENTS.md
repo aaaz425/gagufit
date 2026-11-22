@@ -2,26 +2,12 @@
 
 3D 방 배치 시뮬레이터
 
-## 스택
+## 방향
 
-- pnpm + Turborepo 모노레포
-- Next.js App Router, TypeScript, Tailwind
-- r3f + drei
-- zustand 편집기 상태, TanStack Query 서버 상태
-- Supabase 익명 로그인 → 카카오 linkIdentity
 - Vercel 시작, AWS 이전 가능하게 유지
-
-## 구조
-
-```
-apps/web         Next.js, 편집기
-apps/mobile      Expo WebView 예정
-packages/core    순수 TS 타입·로직
-packages/data    가구 프리셋, 방 템플릿
-packages/api     Supabase 호출, Query 훅
-packages/config  공용 설정
-supabase/        마이그레이션 SQL
-```
+- `apps/mobile` Expo WebView 예정
+- Supabase 익명 로그인 → 카카오 linkIdentity
+- 편집기 상태는 zustand, 서버 상태는 TanStack Query
 
 ## 규칙
 
