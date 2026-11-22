@@ -1,25 +1,30 @@
 "use client";
 
-import { FURNITURE_PRESETS } from "@gagufit/data";
+import { FURNITURE_PRESETS, PRODUCTS } from "@gagufit/data";
 import { CirclePlus, Search } from "lucide-react";
 import { useState } from "react";
 import { addPresetToRoom } from "../actions";
 import { CATEGORY_GROUPS } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
-import { TOUCH_44 } from "../ui";
+import { Segment, TOUCH_44 } from "../ui";
 
 /** 검색창 id - 빈 방 안내가 찾아 포커스 */
 export const FURNITURE_SEARCH_ID = "furniture-search";
 
-const PRESETS = Object.values(FURNITURE_PRESETS);
+const SOURCES = {
+  basic: Object.values(FURNITURE_PRESETS),
+  product: Object.values(PRODUCTS),
+};
+type Source = keyof typeof SOURCES;
 
 /** 검색·칩은 위에 고정, 목록만 스크롤 - 부모가 높이를 정해야 함 */
 export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
   const [group, setGroup] = useState(0);
   const [query, setQuery] = useState("");
+  const [source, setSource] = useState<Source>("basic");
   const categories = CATEGORY_GROUPS[group].categories;
   const words = query.trim().replace(/\s+/g, "");
-  const list = PRESETS.filter(
+  const list = SOURCES[source].filter(
     (p) =>
       (!categories || categories.includes(p.category)) &&
       (!words || p.name.replace(/\s+/g, "").includes(words)),
@@ -27,6 +32,16 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
+      <Segment
+        full
+        label="가구 종류"
+        value={source}
+        onChange={setSource}
+        options={[
+          { value: "basic", label: "기본 가구" },
+          { value: "product", label: "실제 상품" },
+        ]}
+      />
       <label className="flex h-11 shrink-0 items-center gap-2 rounded-sm border border-border bg-canvas px-3 focus-within:border-primary focus-within:outline focus-within:outline-1 focus-within:outline-primary">
         <Search size={16} className="shrink-0 text-ink-muted" aria-hidden />
         <input
@@ -56,6 +71,11 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
           </button>
         ))}
       </div>
+      {source === "product" && (
+        <p className="shrink-0 text-xs text-ink-muted">
+          실제 가격은 쿠팡에서 확인
+        </p>
+      )}
       <ul className="-mr-4 -ml-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-4 pl-1">
         {list.map((preset) => (
           <li key={preset.id}>
@@ -75,6 +95,11 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
                 <span className="text-xs text-ink-muted tabular-nums">
                   {preset.size.width} × {preset.size.depth} cm
                 </span>
+                {preset.offers && (
+                  <span className="text-xs text-ink-muted tabular-nums">
+                    {preset.offers[0].price.toLocaleString("ko-KR")}원
+                  </span>
+                )}
               </span>
               <CirclePlus
                 size={22}

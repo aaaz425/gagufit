@@ -12,13 +12,15 @@ import {
   updateFurniture,
   updateOpening,
   wallFrame,
+  type FurniturePreset,
   type Opening,
   type PlacedFurniture,
   type Room,
 } from "@gagufit/core";
-import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
-import { RotateCw, TriangleAlert } from "lucide-react";
+import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
+import { ExternalLink, RotateCw, TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
+import { COUPANG_NOTICE } from "@/site/constants";
 import {
   deleteSelected,
   displayAngle,
@@ -95,6 +97,40 @@ function Header({
   );
 }
 
+/** 판매처 참고가 + 쿠팡 링크 - 대가성 문구는 링크 바로 옆, 접지 않음 */
+function Offers({
+  offers,
+}: {
+  offers: NonNullable<FurniturePreset["offers"]>;
+}) {
+  // 판매처가 여럿이어도 첫 offer만 표시
+  const o = offers[0];
+  return (
+    <div className="flex flex-col gap-2 rounded-md border border-border bg-surface p-3">
+      <p className="flex items-baseline gap-2">
+        <span className="text-xs text-ink-muted">참고가</span>
+        <span className="text-base font-bold text-ink tabular-nums">
+          {o.price.toLocaleString("ko-KR")}원
+        </span>
+        <span className="text-xs text-ink-muted tabular-nums">
+          {o.checkedAt} 기준
+        </span>
+      </p>
+      <p className="text-xs text-ink-muted">실제 가격은 쿠팡에서 확인</p>
+      <a
+        href={o.url}
+        target="_blank"
+        rel="sponsored noopener noreferrer"
+        className="flex h-11 items-center justify-center gap-2 rounded-sm bg-primary-soft text-sm font-bold text-primary hover:bg-primary hover:text-white"
+      >
+        쿠팡에서 보기
+        <ExternalLink size={16} aria-hidden />
+      </a>
+      <p className="text-xs leading-[1.4] text-ink-muted">{COUPANG_NOTICE}</p>
+    </div>
+  );
+}
+
 const WARNING_STYLE: Record<WarningTone, string> = {
   danger: "bg-danger-soft text-danger",
   caution: "bg-caution-soft text-caution",
@@ -148,10 +184,10 @@ function FurnitureProps({
 }) {
   const update = useEditor((s) => s.update);
   const showToast = useEditor((s) => s.showToast);
-  const preset = FURNITURE_PRESETS[f.presetId];
-  const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
+  const preset = FURNITURE_CATALOG[f.presetId];
+  const minSize = minSizeOf(FURNITURE_CATALOG, f.presetId);
   const size = (key: "width" | "depth" | "height") => (value: number) =>
-    update(resizeFurniture(room, FURNITURE_PRESETS, f.id, { [key]: value }));
+    update(resizeFurniture(room, FURNITURE_CATALOG, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
   // X·Y는 회전 외곽 상자 왼쪽 위 기준 - 저장은 중심
@@ -184,6 +220,7 @@ function FurnitureProps({
         subtitle={preset ? CATEGORY_LABELS[preset.category] : "기타"}
         action={headerAction}
       />
+      {preset?.offers && <Offers offers={preset.offers} />}
       <SectionTitle>크기</SectionTitle>
       <div className="flex gap-2">
         {(
