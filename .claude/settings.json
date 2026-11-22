@@ -1,4 +1,27 @@
 {
+  "sandbox": {
+    "enabled": true,
+    "excludedCommands": [
+      "supabase *",
+      "docker *",
+      "gh *",
+      "pnpm dev *",
+      "pnpm --filter * dev *"
+    ],
+    "filesystem": {
+      "allowWrite": ["~/Library/pnpm/store"],
+      "denyRead": ["~/.ssh", "~/.aws"]
+    },
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.github.com",
+        "*.githubusercontent.com",
+        "registry.npmjs.org"
+      ],
+      "allowLocalBinding": true
+    }
+  },
   "permissions": {
     "allow": [
       "Bash(pnpm lint)",
