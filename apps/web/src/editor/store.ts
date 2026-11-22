@@ -81,7 +81,9 @@ export const useEditor = create<EditorState>()((set) => ({
   products: [],
   catalog: buildCatalog([]),
 
-  load: (room, products) =>
+  load: (room, products) => {
+    warningCache = new WeakMap();
+    warnedTonesCache = new WeakMap();
     set({
       products,
       catalog: buildCatalog(products),
@@ -93,7 +95,8 @@ export const useEditor = create<EditorState>()((set) => ({
       sheet: null,
       toast: null,
       dragging: false,
-    }),
+    });
+  },
   // 바뀐 게 없으면 기록 안 함 - 편집 함수가 같은 room을 돌려줌
   // 새 편집이 생기면 삭제 토스트의 실행 취소 대상이 달라져 닫음
   update: (next) =>
@@ -192,7 +195,8 @@ export const currentRoom = () => useEditor.getState().history.present;
 
 export const useRoom = () => useEditor((s) => s.history.present);
 
-const warningCache = new WeakMap<Room, Warning[]>();
+// 판정이 catalog에 따라 달라 방을 열 때마다 비움
+let warningCache = new WeakMap<Room, Warning[]>();
 
 /** room 객체별로 한 번만 판정 */
 export function warningsOf(room: Room): Warning[] {
@@ -204,7 +208,7 @@ export function warningsOf(room: Room): Warning[] {
   return warnings;
 }
 
-const warnedTonesCache = new WeakMap<Room, ReadonlyMap<string, WarningTone>>();
+let warnedTonesCache = new WeakMap<Room, ReadonlyMap<string, WarningTone>>();
 
 /** 경고에 걸린 가구 id → 가장 강한 경고 */
 export function warnedFurnitureTones(
