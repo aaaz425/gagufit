@@ -1,4 +1,27 @@
 {
+  "sandbox": {
+    "enabled": true,
+    "excludedCommands": [
+      "supabase *",
+      "docker *",
+      "gh *",
+      "pnpm dev *",
+      "pnpm --filter * dev *"
+    ],
+    "filesystem": {
+      "allowWrite": ["~/Library/pnpm/store"],
+      "denyRead": ["~/.ssh", "~/.aws"]
+    },
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.github.com",
+        "*.githubusercontent.com",
+        "registry.npmjs.org"
+      ],
+      "allowLocalBinding": true
+    }
+  },
   "permissions": {
     "allow": [
       "Bash(pnpm lint)",
@@ -35,7 +58,10 @@
       "Bash(supabase db reset --db-url:*)",
       "Edit(**/.env)",
       "Edit(**/.env.local)",
-      "Edit(**/.env.*.local)"
+      "Edit(**/.env.*.local)",
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)"
     ]
   },
   "hooks": {
@@ -67,6 +93,28 @@
           {
             "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check.sh",
+            "timeout": 300
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check.sh",
+            "timeout": 300
           }
         ]
       }
