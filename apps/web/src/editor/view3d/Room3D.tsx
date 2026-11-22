@@ -6,7 +6,6 @@ import {
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FURNITURE_CATALOG } from "@gagufit/data";
 import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import {
   Canvas,
@@ -34,6 +33,7 @@ import type { Insets } from "../layout";
 import type { QualitySettings } from "../quality";
 import type { WarningTone } from "../labels";
 import { SCENE_COLORS } from "../scene-colors";
+import { useEditor } from "../store";
 import type { ScreenBox } from "../SelectionToolbar";
 import { FurnitureMesh } from "./furniture-mesh";
 import { m, planToWorld } from "./geometry";
@@ -366,16 +366,17 @@ function Room3D({
   const [reducedMotion] = useState(prefersReducedMotion);
   const animate = quality.hiDpi && !reducedMotion;
 
+  const catalog = useEditor((s) => s.catalog);
   const furniture = useMemo(
     () =>
       room.furniture.map((f) => ({
         furniture: f,
         // 저장 데이터의 presetId가 상속 키일 수 있음
-        preset: Object.hasOwn(FURNITURE_CATALOG, f.presetId)
-          ? FURNITURE_CATALOG[f.presetId]
+        preset: Object.hasOwn(catalog, f.presetId)
+          ? catalog[f.presetId]
           : undefined,
       })),
-    [room.furniture],
+    [room.furniture, catalog],
   );
 
   return (

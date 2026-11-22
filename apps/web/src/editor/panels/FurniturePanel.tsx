@@ -1,30 +1,29 @@
 "use client";
 
-import { FURNITURE_PRESETS, PRODUCTS } from "@gagufit/data";
+import { FURNITURE_PRESETS } from "@gagufit/data";
 import { CirclePlus, Search } from "lucide-react";
 import { useState } from "react";
 import { addPresetToRoom } from "../actions";
 import { CATEGORY_GROUPS } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
+import { useEditor } from "../store";
 import { Segment, TOUCH_44 } from "../ui";
 
 /** 검색창 id - 빈 방 안내가 찾아 포커스 */
 export const FURNITURE_SEARCH_ID = "furniture-search";
 
-const SOURCES = {
-  basic: Object.values(FURNITURE_PRESETS),
-  product: Object.values(PRODUCTS),
-};
-type Source = keyof typeof SOURCES;
+const BASIC = Object.values(FURNITURE_PRESETS);
+type Source = "basic" | "product";
 
 /** 검색·칩은 위에 고정, 목록만 스크롤 - 부모가 높이를 정해야 함 */
 export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
   const [group, setGroup] = useState(0);
   const [query, setQuery] = useState("");
+  const products = useEditor((s) => s.products);
   const [source, setSource] = useState<Source>("basic");
   const categories = CATEGORY_GROUPS[group].categories;
   const words = query.trim().replace(/\s+/g, "");
-  const list = SOURCES[source].filter(
+  const list = (source === "basic" ? BASIC : products).filter(
     (p) =>
       (!categories || categories.includes(p.category)) &&
       (!words || p.name.replace(/\s+/g, "").includes(words)),

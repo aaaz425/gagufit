@@ -1,14 +1,15 @@
 import {
   checkRoom,
   history,
+  type FurniturePreset,
   type History,
   type Room,
   type Warning,
 } from "@gagufit/core";
 import {
+  buildCatalog,
   DEFAULT_FLOOR_MATERIAL,
   DEFAULT_WALL_MATERIAL,
-  FURNITURE_CATALOG,
 } from "@gagufit/data";
 import { create } from "zustand";
 import { WARNING_TONE, type WarningTone } from "./labels";
@@ -39,8 +40,12 @@ type EditorState = {
   saveStatus: SaveStatus;
   /** 2D 화면 회전 도 - 방향키가 화면 기준으로 움직이게, 2D가 아니면 0 */
   planAngle: number;
+  /** 실제 상품 - 표시 순서 */
+  products: readonly FurniturePreset[];
+  /** 기본 프리셋 + 상품, presetId로 찾음 - 방을 열 때만 바뀜 */
+  catalog: Readonly<Record<string, FurniturePreset>>;
 
-  load: (room: Room) => void;
+  load: (room: Room, products: readonly FurniturePreset[]) => void;
   /** 기록 한 단계 */
   update: (next: Room) => void;
   /** 끌기 중 - 기록 안 함 */
@@ -73,9 +78,13 @@ export const useEditor = create<EditorState>()((set) => ({
   dragging: false,
   saveStatus: "saved",
   planAngle: 0,
+  products: [],
+  catalog: buildCatalog([]),
 
-  load: (room) =>
+  load: (room, products) =>
     set({
+      products,
+      catalog: buildCatalog(products),
       saveStatus: "saved",
       history: history.create(room),
       selection: null,
@@ -189,7 +198,7 @@ const warningCache = new WeakMap<Room, Warning[]>();
 export function warningsOf(room: Room): Warning[] {
   let warnings = warningCache.get(room);
   if (!warnings) {
-    warnings = checkRoom(room, FURNITURE_CATALOG);
+    warnings = checkRoom(room, useEditor.getState().catalog);
     warningCache.set(room, warnings);
   }
   return warnings;

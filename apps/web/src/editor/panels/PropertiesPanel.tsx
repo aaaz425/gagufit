@@ -17,7 +17,7 @@ import {
   type PlacedFurniture,
   type Room,
 } from "@gagufit/core";
-import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
+import { FURNITURE_COLORS } from "@gagufit/data";
 import { ExternalLink, RotateCw, TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import { COUPANG_NOTICE } from "@/site/constants";
@@ -184,10 +184,11 @@ function FurnitureProps({
 }) {
   const update = useEditor((s) => s.update);
   const showToast = useEditor((s) => s.showToast);
-  const preset = FURNITURE_CATALOG[f.presetId];
-  const minSize = minSizeOf(FURNITURE_CATALOG, f.presetId);
+  const catalog = useEditor((s) => s.catalog);
+  const preset = catalog[f.presetId];
+  const minSize = minSizeOf(catalog, f.presetId);
   const size = (key: "width" | "depth" | "height") => (value: number) =>
-    update(resizeFurniture(room, FURNITURE_CATALOG, f.id, { [key]: value }));
+    update(resizeFurniture(room, catalog, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
   // X·Y는 회전 외곽 상자 왼쪽 위 기준 - 저장은 중심
@@ -201,7 +202,7 @@ function FurnitureProps({
         : w.furnitureId === f.id,
     )
     .map((w) => ({
-      text: warningText(room, w, f.id),
+      text: warningText(room, catalog, w, f.id),
       tone: WARNING_TONE[w.type],
     }));
 
@@ -343,13 +344,14 @@ function OpeningProps({
   showActions?: boolean;
 }) {
   const update = useEditor((s) => s.update);
+  const catalog = useEditor((s) => s.catalog);
   const set = (fn: (o: Opening) => Opening) =>
     update(updateOpening(room, o.id, fn));
   const { length } = wallFrame(room, o.wall);
   const blockers = warningsOf(room)
     .filter((w) => w.type === "doorBlocked" && w.openingId === o.id)
     .map((w) => ({
-      text: warningText(room, w, ""),
+      text: warningText(room, catalog, w, ""),
       tone: WARNING_TONE[w.type],
     }));
 

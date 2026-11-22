@@ -1,6 +1,6 @@
 "use client";
 
-import { useRoomQuery, type RoomRecord } from "@gagufit/api";
+import { useProducts, useRoomQuery, type RoomRecord } from "@gagufit/api";
 import { CloudOff, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -38,6 +38,9 @@ export function Editor({ roomId }: { roomId: string }) {
   const load = useEditor((s) => s.load);
   const showToast = useEditor((s) => s.showToast);
   const query = useRoomQuery(roomId);
+  // 방과 동시에 요청 - 상품 정보 없이 방을 열면 이름·크기 제한·겹침 경고가 깜빡임
+  const products = useProducts();
+  const productsDone = products.isSuccess || products.isError;
   // 서버에 있는 방 - 불러온 뒤 한 번만 정함, 이후 쿼리 상태는 무시
   const [baseline, setBaseline] = useState<RoomRecord | null>(null);
 
@@ -45,15 +48,25 @@ export function Editor({ roomId }: { roomId: string }) {
   // 캐시된 이전 값이 아니라 새로 받은 값으로 열기
   const fresh = query.isSuccess && !query.isFetching;
   useEffect(() => {
-    if (baseline || !fresh || !record) return;
+    if (baseline || !fresh || !record || !productsDone) return;
     // 보관 뒤 서버가 바뀌지 않았으면 저장 못 한 보관본으로 열고 바로 저장
     const backup = readBackup(roomId);
     const restore = backup !== null && backup.base === record.updatedAt;
-    load(restore ? backup.room : record.room);
+    // 상품을 못 불러와도 기본 가구로 열림
+    load(restore ? backup.room : record.room, products.data ?? []);
     if (restore) showToast({ message: "저장하지 못한 변경을 되살렸어요" });
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 불러온 방을 스토어에 옮긴 뒤 화면을 여는 신호
     setBaseline(record);
-  }, [baseline, fresh, record, roomId, load, showToast]);
+  }, [
+    baseline,
+    fresh,
+    record,
+    productsDone,
+    products.data,
+    roomId,
+    load,
+    showToast,
+  ]);
 
   if (baseline) return <EditorScreen roomId={roomId} baseline={baseline} />;
   if (query.isError) return <LoadError onRetry={() => query.refetch()} />;
@@ -199,7 +212,7 @@ function EditorScreen({
   const announce = useEditor((s) => {
     const sel = s.selection;
     return sel?.kind === "furniture"
-      ? `${furnitureName(s.history.present, sel.id)} 선택됨`
+      ? `${furnitureName(s.history.present, s.catalog, sel.id)} 선택됨`
       : "";
   });
 
