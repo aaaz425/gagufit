@@ -108,6 +108,9 @@ importers:
       '@gagufit/core':
         specifier: workspace:*
         version: link:../core
+      '@gagufit/data':
+        specifier: workspace:*
+        version: link:../data
       '@supabase/supabase-js':
         specifier: ^2.119.0
         version: 2.119.0
