@@ -106,13 +106,18 @@ function Header({
 
 /** 상품 정보는 방과 따로 불러옴 - 줄이 없으면(판매 종료) 링크만 안 보임 */
 function ProductOffers({ productId }: { productId: string }) {
-  const { data, isPending } = useProducts();
+  const { data, isPending, isError } = useProducts();
   if (isPending) {
     return (
       <div className="flex h-11 items-center justify-center gap-2 rounded-md border border-border bg-surface text-xs text-ink-muted">
         <LoaderCircle size={16} className="animate-spin" aria-hidden />
         <span role="status">가격과 링크를 불러오는 중이에요</span>
       </div>
+    );
+  }
+  if (isError) {
+    return (
+      <p className="text-xs text-ink-muted">가격과 링크를 불러오지 못했어요</p>
     );
   }
   const offers = data?.find((p) => p.id === productId)?.offers;

@@ -2,7 +2,7 @@
 
 import { FURNITURE_PRESETS } from "@gagufit/data";
 import { useProducts } from "@gagufit/api";
-import { CirclePlus, LoaderCircle, Search } from "lucide-react";
+import { CirclePlus, CloudOff, LoaderCircle, Search } from "lucide-react";
 import { useState } from "react";
 import { addPresetToRoom } from "../actions";
 import { CATEGORY_GROUPS } from "../labels";
@@ -22,8 +22,8 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
   const [source, setSource] = useState<Source>("basic");
   const categories = CATEGORY_GROUPS[group].categories;
   const words = query.trim().replace(/\s+/g, "");
-  // 실패하면 실제 상품 탭만 빔
-  const { data: products = [], isPending } = useProducts();
+  // 실패하면 실제 상품 탭만 다시 시도 안내
+  const { data: products = [], isPending, isError, refetch } = useProducts();
   const list = (source === "basic" ? BASIC : products).filter(
     (p) =>
       (!categories || categories.includes(p.category)) &&
@@ -109,7 +109,19 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             </button>
           </li>
         ))}
-        {source === "product" && isPending ? (
+        {source === "product" && isError ? (
+          <li className="flex flex-col items-center gap-3 py-6 text-center">
+            <CloudOff size={24} className="text-ink-muted" aria-hidden />
+            <p className="text-sm text-ink-muted">상품을 불러오지 못했어요</p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="h-11 rounded-sm border border-border bg-canvas px-5 text-sm font-semibold text-ink hover:bg-surface"
+            >
+              다시 시도
+            </button>
+          </li>
+        ) : source === "product" && isPending ? (
           <li
             role="status"
             className="flex items-center justify-center gap-2 py-6 text-sm text-ink-muted"
