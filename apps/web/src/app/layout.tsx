@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
@@ -16,12 +17,16 @@ export const metadata: Metadata = {
   },
 };
 
+// Production에만 등록해 로컬·미리보기는 수집 제외
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko">
       <body className="font-sans">
         <Providers>{children}</Providers>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }
