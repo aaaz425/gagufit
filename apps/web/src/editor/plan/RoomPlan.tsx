@@ -8,7 +8,7 @@ import {
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
+import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
 import { useId } from "react";
 import { useInitialIds } from "@/motion";
 import type { WarningTone } from "../labels";
@@ -74,10 +74,10 @@ export function RoomPlan({
   const initialIds = useInitialIds(room.furniture.map((f) => f.id));
   // 러그 - 문 열림 영역 - 다른 가구 순서
   const isRug = (f: PlacedFurniture) =>
-    FURNITURE_CATALOG[f.presetId]?.layer === "floor";
+    FURNITURE_PRESETS[f.presetId]?.layer === "floor";
   // 행거는 속이 비쳐 그림자가 진해 보임
   const isHollow = (f: PlacedFurniture) =>
-    FURNITURE_CATALOG[f.presetId]?.category === "hanger";
+    FURNITURE_PRESETS[f.presetId]?.category === "hanger";
   const shape = (f: PlacedFurniture) => (
     <FurnitureShape
       key={f.id}
@@ -191,7 +191,7 @@ function FurnitureShape({
   scope: string;
   rich: boolean;
 }) {
-  const preset = FURNITURE_CATALOG[f.presetId];
+  const preset = FURNITURE_PRESETS[f.presetId];
   const { width: w, depth: d } = f.size;
   const outline = warned ?? "primary";
   return (

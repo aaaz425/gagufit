@@ -1,12 +1,12 @@
 "use client";
 
 import { FURNITURE_PRESETS } from "@gagufit/data";
-import { CirclePlus, Search } from "lucide-react";
+import { useProducts } from "@gagufit/api";
+import { CirclePlus, LoaderCircle, Search } from "lucide-react";
 import { useState } from "react";
 import { addPresetToRoom } from "../actions";
 import { CATEGORY_GROUPS } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
-import { useEditor } from "../store";
 import { Segment, TOUCH_44 } from "../ui";
 
 /** 검색창 id - 빈 방 안내가 찾아 포커스 */
@@ -19,10 +19,11 @@ type Source = "basic" | "product";
 export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
   const [group, setGroup] = useState(0);
   const [query, setQuery] = useState("");
-  const products = useEditor((s) => s.products);
   const [source, setSource] = useState<Source>("basic");
   const categories = CATEGORY_GROUPS[group].categories;
   const words = query.trim().replace(/\s+/g, "");
+  // 실패하면 실제 상품 탭만 빔
+  const { data: products = [], isPending } = useProducts();
   const list = (source === "basic" ? BASIC : products).filter(
     (p) =>
       (!categories || categories.includes(p.category)) &&
@@ -108,10 +109,20 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             </button>
           </li>
         ))}
-        {list.length === 0 && (
-          <li className="py-6 text-center text-sm text-ink-muted">
-            찾는 가구가 없어요
+        {source === "product" && isPending ? (
+          <li
+            role="status"
+            className="flex items-center justify-center gap-2 py-6 text-sm text-ink-muted"
+          >
+            <LoaderCircle size={16} className="animate-spin" aria-hidden />
+            상품을 불러오는 중이에요
           </li>
+        ) : (
+          list.length === 0 && (
+            <li className="py-6 text-center text-sm text-ink-muted">
+              찾는 가구가 없어요
+            </li>
+          )
         )}
       </ul>
     </div>

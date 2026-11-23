@@ -1,6 +1,6 @@
 "use client";
 
-import { useRoomQuery, type RoomRecord } from "@gagufit/api";
+import { useProducts, useRoomQuery, type RoomRecord } from "@gagufit/api";
 import { CloudOff, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -38,6 +38,8 @@ export function Editor({ roomId }: { roomId: string }) {
   const load = useEditor((s) => s.load);
   const showToast = useEditor((s) => s.showToast);
   const query = useRoomQuery(roomId);
+  // 방과 동시에 요청해 둠 - 상품 탭·링크는 방과 따로 채워짐
+  useProducts();
   // 서버에 있는 방 - 불러온 뒤 한 번만 정함, 이후 쿼리 상태는 무시
   const [baseline, setBaseline] = useState<RoomRecord | null>(null);
 

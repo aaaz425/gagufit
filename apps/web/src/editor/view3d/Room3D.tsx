@@ -6,7 +6,7 @@ import {
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FURNITURE_CATALOG } from "@gagufit/data";
+import { FURNITURE_PRESETS } from "@gagufit/data";
 import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import {
   Canvas,
@@ -371,8 +371,8 @@ function Room3D({
       room.furniture.map((f) => ({
         furniture: f,
         // 저장 데이터의 presetId가 상속 키일 수 있음
-        preset: Object.hasOwn(FURNITURE_CATALOG, f.presetId)
-          ? FURNITURE_CATALOG[f.presetId]
+        preset: Object.hasOwn(FURNITURE_PRESETS, f.presetId)
+          ? FURNITURE_PRESETS[f.presetId]
           : undefined,
       })),
     [room.furniture],

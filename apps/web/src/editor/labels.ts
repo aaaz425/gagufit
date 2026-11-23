@@ -2,10 +2,11 @@ import type {
   FurnitureCategory,
   Opening,
   OpeningKind,
+  PlacedFurniture,
   Room,
   Warning,
 } from "@gagufit/core";
-import { FURNITURE_CATALOG } from "@gagufit/data";
+import { FURNITURE_PRESETS } from "@gagufit/data";
 
 export const CATEGORY_LABELS: Record<FurnitureCategory, string> = {
   bed: "침대",
@@ -66,9 +67,14 @@ function josa(word: string, first: string, second: string): string {
   return `${word}${code % 28 ? first : second}`;
 }
 
+/** 상품은 배치 당시 이름 */
+export function placedName(f: PlacedFurniture): string {
+  return f.product?.name ?? FURNITURE_PRESETS[f.presetId]?.name ?? "가구";
+}
+
 export function furnitureName(room: Room, id: string): string {
   const f = room.furniture.find((item) => item.id === id);
-  return (f && FURNITURE_CATALOG[f.presetId]?.name) ?? "가구";
+  return f ? placedName(f) : "가구";
 }
 
 /** 경고를 보는 가구 입장의 한 줄 - id는 경고에 걸린 가구 */
