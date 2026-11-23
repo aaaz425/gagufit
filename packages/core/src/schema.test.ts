@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { migrate, type SavedRoom } from "./schema";
+import { CURRENT_SCHEMA_VERSION, migrate, type SavedRoom } from "./schema";
 
 const saved: SavedRoom = {
   schemaVersion: 2,
@@ -75,7 +75,7 @@ describe("migrate", () => {
 
     it("상품 가구는 기본 프리셋 id + product로 바뀜", () => {
       const out = migrate(v1("rug-ongyeol-washable-200x400"));
-      expect(out.schemaVersion).toBe(2);
+      expect(out.schemaVersion).toBe(CURRENT_SCHEMA_VERSION);
       expect(out.room.furniture[0]).toMatchObject({
         presetId: "rug-160",
         product: {
@@ -102,6 +102,9 @@ describe("migrate", () => {
     );
     expect(() => migrate({ room: saved.room })).toThrow("schemaVersion");
     expect(() => migrate({ ...saved, schemaVersion: "2" })).toThrow('"2"');
+    expect(() => migrate({ ...saved, schemaVersion: 0 })).toThrow(
+      "schemaVersion",
+    );
   });
 
   const { room } = saved;
