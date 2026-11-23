@@ -43,38 +43,47 @@ export function Editor({ roomId }: { roomId: string }) {
   // 서버에 있는 방 - 불러온 뒤 한 번만 정함, 이후 쿼리 상태는 무시
   const [baseline, setBaseline] = useState<RoomRecord | null>(null);
   const [deleted, setDeleted] = useState(false);
-  // 충돌로 서버본을 다시 열 때 - 보관본 복구 대신 토스트
-  const reloading = useRef(false);
+  // 충돌로 서버본을 다시 받는 중 - 끝나면 토스트를 띄움
+  const [reloading, setReloading] = useState(false);
+  const notifyConflict = useRef(false);
 
   const record = query.data;
   // 캐시된 이전 값이 아니라 새로 받은 값으로 열기
   const fresh = query.isSuccess && !query.isFetching;
   useEffect(() => {
-    if (baseline || !fresh || !record) return;
+    if (baseline || reloading || !fresh || !record) return;
     // 보관 뒤 서버가 바뀌지 않았으면 저장 못 한 보관본으로 열고 바로 저장
     const backup = readBackup(roomId);
     const restore = backup !== null && backup.base === record.updatedAt;
     load(restore ? backup.room : record.room);
-    if (reloading.current) {
-      reloading.current = false;
+    if (notifyConflict.current) {
+      notifyConflict.current = false;
       showToast({ message: "다른 곳에서 바뀐 내용을 불러왔어요" });
     } else if (restore)
       showToast({ message: "저장하지 못한 변경을 되살렸어요" });
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 불러온 방을 스토어에 옮긴 뒤 화면을 여는 신호
     setBaseline(record);
-  }, [baseline, fresh, record, roomId, load, showToast]);
+  }, [baseline, reloading, fresh, record, roomId, load, showToast]);
 
   const onStop = (reason: "conflict" | "deleted") => {
     if (reason === "deleted") {
       setDeleted(true);
       return;
     }
-    // 서버본을 새로 받은 뒤 편집기를 다시 엶
-    reloading.current = true;
-    void query.refetch().then(() => setBaseline(null));
+    // 바로 로딩 화면으로 - 서버본을 새로 받은 뒤 편집기를 다시 엶
+    notifyConflict.current = true;
+    setReloading(true);
+    setBaseline(null);
+    void query.refetch().finally(() => setReloading(false));
   };
 
-  if (deleted) return <NotFound title="삭제된 방이에요" />;
+  if (deleted)
+    return (
+      <NotFound
+        title="삭제된 방이에요"
+        description="다른 곳에서 이 방을 지웠어요"
+      />
+    );
   if (baseline)
     return <EditorScreen roomId={roomId} baseline={baseline} onStop={onStop} />;
   if (query.isError) return <LoadError onRetry={() => query.refetch()} />;
@@ -111,16 +120,20 @@ function LoadError({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-function NotFound({ title = "방을 찾을 수 없어요" }: { title?: string }) {
+function NotFound({
+  title = "방을 찾을 수 없어요",
+  description = "지워졌거나 다른 브라우저에서 만든 방일 수 있어요",
+}: {
+  title?: string;
+  description?: string;
+}) {
   return (
     <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-surface px-4 text-center">
       <span className="flex size-16 items-center justify-center rounded-full bg-canvas text-ink-muted shadow-raised">
         <SearchX size={28} aria-hidden />
       </span>
       <h1 className="text-lg font-bold text-ink">{title}</h1>
-      <p className="max-w-[300px] text-sm text-ink-muted">
-        지워졌거나 다른 브라우저에서 만든 방일 수 있어요
-      </p>
+      <p className="max-w-[300px] text-sm text-ink-muted">{description}</p>
       <Link
         href="/rooms"
         className="flex h-11 items-center rounded-sm bg-primary px-5 text-sm font-semibold text-white hover:bg-primary-hover"

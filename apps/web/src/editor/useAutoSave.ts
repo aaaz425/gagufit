@@ -70,6 +70,8 @@ export function useAutoSave(
       if (result.status !== "saved") {
         stopped = true;
         clearTimeout(timer);
+        // 떠난 뒤 결과는 같은 방에 새로 연 화면의 보관본·상태를 건드리지 않음
+        if (disposed) return;
         clearBackup(roomId);
         onStopRef.current(result.status);
         return;
