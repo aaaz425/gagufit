@@ -11,6 +11,7 @@ export type QuoteItem = {
 export type Quote = {
   /** 원 */
   total: number;
+  /** room.furniture와 같은 순서·길이 */
   items: QuoteItem[];
   counts: Record<QuoteItem["source"], number>;
   /** 합계에 쓰인 참고가 중 가장 오래된 checkedAt YYYY-MM-DD, 없으면 null */

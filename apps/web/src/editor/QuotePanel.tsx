@@ -165,7 +165,6 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
       </p>
       <ul className="-mx-1 flex min-h-0 flex-1 flex-col overflow-y-auto px-1">
         {quote.items.map((item, i) => {
-          // 견적 항목은 가구와 같은 순서
           const f = room.furniture[i];
           const on = selection?.kind === "furniture" && selection.id === f.id;
           const tag = SOURCE_TAG[item.source];
@@ -224,7 +223,7 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
       )}
       {failed &&
         room.furniture.some((f) => f.product && f.price === undefined) && (
-          <p className="text-xs text-ink-muted">
+          <p role="status" className="text-xs text-ink-muted">
             상품 참고가를 불러오지 못해 견적에서 빠졌어요
           </p>
         )}
