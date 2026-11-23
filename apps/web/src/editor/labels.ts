@@ -6,7 +6,7 @@ import type {
   Room,
   Warning,
 } from "@gagufit/core";
-import { FURNITURE_PRESETS } from "@gagufit/data";
+import { presetOf } from "@gagufit/data";
 
 export const CATEGORY_LABELS: Record<FurnitureCategory, string> = {
   bed: "침대",
@@ -25,6 +25,36 @@ export const CATEGORY_LABELS: Record<FurnitureCategory, string> = {
   washer: "세탁기",
   rug: "러그",
   etc: "기타",
+  "low-table": "좌식 테이블",
+  shelf: "선반·렌지대",
+  "shoe-cabinet": "신발장",
+  mirror: "전신거울",
+  "drying-rack": "빨래건조대",
+  "floor-lamp": "스탠드 조명",
+  plant: "화분",
+  mattress: "매트리스·토퍼",
+  "loft-bed": "이층·로프트 침대",
+  stool: "스툴",
+  cabinet: "수납장",
+  cart: "수납 트롤리",
+  "storage-box": "리빙박스",
+  "floor-chair": "좌식 의자",
+  "bean-bag": "빈백",
+  "bar-table": "아일랜드·바 테이블",
+  dryer: "건조기",
+  "clothes-care": "의류관리기",
+  "air-conditioner": "스탠드 에어컨",
+  "air-purifier": "공기청정기·제습기",
+  fan: "선풍기·서큘레이터",
+  tv: "이동식 TV",
+  treadmill: "러닝머신",
+  "exercise-bike": "실내자전거",
+  piano: "디지털 피아노",
+  partition: "파티션·가림막",
+  "cat-tower": "캣타워",
+  "pet-house": "반려동물 집",
+  bicycle: "자전거",
+  "trash-can": "휴지통",
 };
 
 /** 가구 패널 칩 - 처음 항목이 기본 */
@@ -33,14 +63,80 @@ export const CATEGORY_GROUPS: {
   categories?: FurnitureCategory[];
 }[] = [
   { label: "전체" },
-  { label: "침대", categories: ["bed", "nightstand"] },
-  { label: "책상", categories: ["desk", "chair", "dressing-table"] },
-  { label: "수납", categories: ["wardrobe", "drawer", "bookshelf", "hanger"] },
-  { label: "소파", categories: ["sofa", "tv-stand", "rug"] },
-  { label: "식탁", categories: ["dining-table"] },
-  { label: "가전", categories: ["fridge", "washer"] },
-  { label: "기타", categories: ["etc"] },
+  { label: "침대", categories: ["bed", "nightstand", "mattress", "loft-bed"] },
+  { label: "책상", categories: ["desk", "chair", "dressing-table", "stool"] },
+  {
+    label: "수납",
+    categories: [
+      "wardrobe",
+      "drawer",
+      "bookshelf",
+      "hanger",
+      "shelf",
+      "shoe-cabinet",
+      "cabinet",
+      "cart",
+      "storage-box",
+    ],
+  },
+  {
+    label: "소파",
+    categories: ["sofa", "floor-chair", "bean-bag", "tv-stand", "rug"],
+  },
+  { label: "테이블", categories: ["dining-table", "bar-table", "low-table"] },
+  {
+    label: "가전",
+    categories: [
+      "fridge",
+      "washer",
+      "dryer",
+      "clothes-care",
+      "air-conditioner",
+      "air-purifier",
+      "fan",
+      "tv",
+    ],
+  },
+  {
+    label: "생활",
+    categories: [
+      "mirror",
+      "drying-rack",
+      "floor-lamp",
+      "plant",
+      "treadmill",
+      "exercise-bike",
+      "piano",
+      "partition",
+      "cat-tower",
+      "pet-house",
+      "bicycle",
+      "trash-can",
+      "etc",
+    ],
+  },
 ];
+
+/** 크기 빠른 선택 - 가로·깊이만 바꿈, depth가 없으면 깊이는 그대로 */
+export const SIZE_CHOICES: Partial<
+  Record<FurnitureCategory, { label: string; width: number; depth?: number }[]>
+> = {
+  bed: [
+    { label: "싱글", width: 100, depth: 200 },
+    { label: "슈퍼싱글", width: 110, depth: 200 },
+    { label: "퀸", width: 150, depth: 200 },
+    { label: "킹", width: 160, depth: 200 },
+  ],
+  sofa: [
+    { label: "1인", width: 80 },
+    { label: "2인", width: 150 },
+    { label: "3인", width: 200 },
+  ],
+  "dining-table": [
+    { label: "2인", width: 80, depth: 80 },
+    { label: "4인", width: 120, depth: 75 },
+  ],
+};
 
 export const OPENING_LABELS: Record<OpeningKind, string> = {
   hinged: "여닫이 문",
@@ -69,7 +165,7 @@ function josa(word: string, first: string, second: string): string {
 
 /** 상품은 배치 당시 이름 */
 export function placedName(f: PlacedFurniture): string {
-  return f.product?.name ?? FURNITURE_PRESETS[f.presetId]?.name ?? "가구";
+  return f.product?.name ?? presetOf(f.presetId)?.name ?? "가구";
 }
 
 export function furnitureName(room: Room, id: string): string {

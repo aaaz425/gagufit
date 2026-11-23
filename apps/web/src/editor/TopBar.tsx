@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { usePresence } from "@/motion";
 import { strongestTone, warningBadgeLabel } from "./labels";
+import { QuoteButton } from "./QuotePanel";
 import { SettingsPopover } from "./SettingsPopover";
 import {
   currentRoom,
@@ -87,6 +88,7 @@ export function TopBar({ compact }: { compact: boolean }) {
           </span>
         )}
       </span>
+      <QuoteButton compact={compact} />
       {!compact && <ViewSwitch />}
       <SettingsButton compact={compact} />
     </header>

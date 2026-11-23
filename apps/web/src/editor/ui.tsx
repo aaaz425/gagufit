@@ -44,28 +44,43 @@ export function NumberField({
   max,
   onCommit,
   onClampMin,
+  onClear,
+  placeholder,
+  thousands,
 }: {
   label: string;
   unit: string;
-  value: number;
+  /** undefined는 비어 있음 - onClear가 있을 때만 */
+  value: number | undefined;
   min?: number;
   max?: number;
   onCommit: (value: number) => void;
   /** 입력이 min보다 작아 min으로 고쳐질 때 */
   onClampMin?: () => void;
+  /** 비우고 마치면 호출 - 없으면 빈 입력은 되돌림 */
+  onClear?: () => void;
+  placeholder?: string;
+  /** 쓰지 않는 동안 천 단위 쉼표로 보여줌 */
+  thousands?: boolean;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
+  const plain = value === undefined ? "" : String(value);
 
   const finish = () => {
     if (draft === null) return;
     // 안 바꾸고 나가면 저장된 값을 min으로 올리지 않음
-    if (draft === String(value)) {
+    if (draft === plain) {
       setDraft(null);
       return;
     }
-    const n = Number(draft.trim());
+    const text = draft.replace(/[,\s]/g, "");
+    const n = Number(text);
     setDraft(null);
-    if (draft.trim() === "" || !Number.isFinite(n)) return;
+    if (text === "") {
+      onClear?.();
+      return;
+    }
+    if (!Number.isFinite(n)) return;
     let v = Math.round(n);
     if (v < min) onClampMin?.();
     v = Math.max(v, min);
@@ -79,10 +94,16 @@ export function NumberField({
       <span className="flex h-11 items-center rounded-sm border border-border bg-canvas px-2 focus-within:border-primary focus-within:outline focus-within:outline-1 focus-within:outline-primary">
         <input
           inputMode="numeric"
-          className="w-full min-w-0 bg-transparent text-base font-medium text-ink tabular-nums outline-none"
-          value={draft ?? String(value)}
+          placeholder={placeholder}
+          className="w-full min-w-0 bg-transparent text-base font-medium text-ink tabular-nums outline-none placeholder:font-normal placeholder:text-ink-subtle"
+          value={
+            draft ??
+            (thousands && value !== undefined
+              ? value.toLocaleString("ko-KR")
+              : plain)
+          }
           onFocus={(e) => {
-            setDraft(String(value));
+            setDraft(plain);
             e.currentTarget.select();
           }}
           onChange={(e) => setDraft(e.target.value)}
