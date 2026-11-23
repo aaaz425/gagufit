@@ -65,33 +65,31 @@ const V1_PRODUCTS: Record<string, { base: string; name: string }> = {
   },
 };
 
-// 버전 올릴 때 이전 버전 변환 case 추가
+// 키 = 변환 전 버전, 바로 다음 버전으로만 변환 - 버전 올릴 때 case 하나 추가
+const STEPS: Record<number, (room: Room) => Room> = {
+  1: (room) => ({
+    ...room,
+    furniture: room.furniture.map((f) => {
+      if (!Object.hasOwn(V1_PRODUCTS, f.presetId)) return f;
+      const { base, name } = V1_PRODUCTS[f.presetId];
+      return { ...f, presetId: base, product: { id: f.presetId, name } };
+    }),
+  }),
+};
+
 export function migrate(data: unknown): SavedRoom {
   if (!isObject(data)) throw new Error("저장 데이터가 객체가 아님");
-  switch (data.schemaVersion) {
-    case 1: {
-      if (!isRoom(data.room)) throw new Error("v1 방 형식이 아님");
-      const room = data.room;
-      return {
-        schemaVersion: 2,
-        room: {
-          ...room,
-          furniture: room.furniture.map((f) => {
-            if (!Object.hasOwn(V1_PRODUCTS, f.presetId)) return f;
-            const { base, name } = V1_PRODUCTS[f.presetId];
-            return { ...f, presetId: base, product: { id: f.presetId, name } };
-          }),
-        },
-      };
-    }
-    case 2:
-      if (!isRoom(data.room)) throw new Error("v2 방 형식이 아님");
-      return { schemaVersion: 2, room: data.room };
-    default:
-      throw new Error(
-        `지원하지 않는 schemaVersion: ${JSON.stringify(data.schemaVersion)}`,
-      );
+  const version = data.schemaVersion;
+  if (
+    typeof version !== "number" ||
+    (!Object.hasOwn(STEPS, version) && version !== CURRENT_SCHEMA_VERSION)
+  ) {
+    throw new Error(`지원하지 않는 schemaVersion: ${JSON.stringify(version)}`);
   }
+  if (!isRoom(data.room)) throw new Error(`v${version} 방 형식이 아님`);
+  let room = data.room;
+  for (let v = version; v < CURRENT_SCHEMA_VERSION; v++) room = STEPS[v](room);
+  return { schemaVersion: CURRENT_SCHEMA_VERSION, room };
 }
 
 function isObject(v: unknown): v is Record<string, unknown> {
