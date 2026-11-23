@@ -421,3 +421,10 @@ const RAW = {
 
 export const FURNITURE_PRESETS: Readonly<Record<string, FurniturePreset>> =
   withIds(RAW);
+
+/** 모르는 id(옛 데이터·상속 키 "toString" 등)면 undefined - 화면은 기타처럼 처리 */
+export function presetOf(presetId: string): FurniturePreset | undefined {
+  return Object.hasOwn(FURNITURE_PRESETS, presetId)
+    ? FURNITURE_PRESETS[presetId]
+    : undefined;
+}

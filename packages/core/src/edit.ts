@@ -208,7 +208,7 @@ export function updateOpening(
     : room;
 }
 
-/** 넘겨 받은 항목만 바꿈 - 없는 id나 바뀐 게 없으면 같은 room */
+/** 넘겨 받은 항목만 바꿈, undefined로 주면 선택 항목(price)을 지움 - 없는 id나 바뀐 게 없으면 같은 room */
 export function updateFurniture(
   room: Room,
   furnitureId: string,
@@ -217,6 +217,7 @@ export function updateFurniture(
   const source = room.furniture.find((f) => f.id === furnitureId);
   if (!source) return room;
   const next = { ...source, ...patch };
+  if (next.price === undefined) delete next.price;
   if (sameValues(next, source)) return room;
   return {
     ...room,

@@ -356,6 +356,14 @@ describe("updateFurniture", () => {
     );
   });
 
+  it("price를 undefined로 주면 키째 지움", () => {
+    const priced = updateFurniture(base, "a", { price: 5000 });
+    const cleared = updateFurniture(priced, "a", { price: undefined });
+    expect("price" in cleared.furniture[0]).toBe(false);
+    // 원래 없던 값을 지우면 바뀐 게 없음
+    expect(updateFurniture(base, "a", { price: undefined })).toBe(base);
+  });
+
   it("없는 id면 같은 room", () => {
     expect(updateFurniture(base, "x", { rotation: 90 })).toBe(base);
   });
