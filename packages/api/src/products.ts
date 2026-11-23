@@ -12,7 +12,5 @@ export async function listProducts(
       "id, base, name, width, depth, height, color, url, price, checked_at",
     );
   if (error) throw error;
-  return productsFromRows(
-    data.map(({ checked_at, ...r }) => ({ ...r, checkedAt: checked_at })),
-  );
+  return productsFromRows(data);
 }

@@ -2,7 +2,7 @@ import type { FurnitureColorId, FurniturePreset } from "@gagufit/core";
 import { FURNITURE_COLORS } from "./materials";
 import { FURNITURE_PRESETS } from "./presets";
 
-/** products 테이블 한 줄 - 크기 cm, price 원, checkedAt YYYY-MM-DD */
+/** products 테이블 한 줄 - 크기 cm, price 원, checked_at YYYY-MM-DD */
 export type ProductRow = {
   id: string;
   base: string;
@@ -13,7 +13,7 @@ export type ProductRow = {
   color: string | null;
   url: string;
   price: number;
-  checkedAt: string;
+  checked_at: string;
 };
 
 const BASE_ORDER = Object.keys(FURNITURE_PRESETS);
@@ -50,7 +50,8 @@ export function productsFromRows(
         material: base.material,
         defaultColor: color,
         layer: base.layer,
-        offers: [{ url: r.url, price: r.price, checkedAt: r.checkedAt }],
+        baseId: r.base,
+        offers: [{ url: r.url, price: r.price, checkedAt: r.checked_at }],
       },
     });
   }
@@ -59,14 +60,4 @@ export function productsFromRows(
       (a, b) => a.rank - b.rank || a.preset.name.localeCompare(b.preset.name),
     )
     .map((x) => x.preset);
-}
-
-/** 기본 프리셋 + 상품 - 배치된 가구의 presetId는 여기서 찾음 */
-export function buildCatalog(
-  products: readonly FurniturePreset[],
-): Readonly<Record<string, FurniturePreset>> {
-  return {
-    ...FURNITURE_PRESETS,
-    ...Object.fromEntries(products.map((p) => [p.id, p])),
-  };
 }

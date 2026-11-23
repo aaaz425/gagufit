@@ -7,4 +7,4 @@ export {
 } from "./materials";
 export { FURNITURE_PRESETS } from "./presets";
 export { ROOM_TEMPLATES, roomFromTemplate } from "./templates";
-export { buildCatalog, productsFromRows, type ProductRow } from "./products";
+export { productsFromRows, type ProductRow } from "./products";

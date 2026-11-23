@@ -6,6 +6,10 @@ import { listProducts } from "./products";
 import { createRoom, deleteRoom, getRoom, listRooms, saveRoom } from "./rooms";
 import { ensureSession } from "./session";
 
+export const productKeys = {
+  list: ["products", "list"] as const,
+};
+
 export const roomKeys = {
   list: ["rooms", "list"] as const,
   detail: (id: string) => ["rooms", "detail", id] as const,
@@ -33,7 +37,7 @@ function useClient(): ApiClient {
 export function useProducts() {
   const client = useClient();
   return useQuery({
-    queryKey: ["products"] as const,
+    queryKey: productKeys.list,
     queryFn: () => listProducts(client),
     staleTime: Infinity,
     retry: 1,

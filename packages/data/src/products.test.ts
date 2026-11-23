@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FURNITURE_PRESETS } from "./presets";
-import { buildCatalog, productsFromRows, type ProductRow } from "./products";
+import { productsFromRows, type ProductRow } from "./products";
 
 const row = (id: string, over: Partial<ProductRow> = {}): ProductRow => ({
   id,
@@ -12,7 +12,7 @@ const row = (id: string, over: Partial<ProductRow> = {}): ProductRow => ({
   color: null,
   url: "https://link.coupang.com/a/x",
   price: 10000,
-  checkedAt: "2026-11-21",
+  checked_at: "2026-11-21",
   ...over,
 });
 
@@ -23,6 +23,7 @@ describe("productsFromRows", () => {
     expect(p.category).toBe(base.category);
     expect(p.minSize).toEqual(base.minSize);
     expect(p.layer).toBe("floor");
+    expect(p.baseId).toBe("rug-160");
     expect(p.size).toEqual({ width: 100, depth: 50, height: 70 });
     expect(p.offers).toEqual([
       {
@@ -61,14 +62,5 @@ describe("productsFromRows", () => {
       row("4", { base: "bed-super-single", name: "라" }),
     ]);
     expect(out.map((p) => p.id)).toEqual(["4", "2", "3", "1"]);
-  });
-});
-
-describe("buildCatalog", () => {
-  it("기본 프리셋과 상품을 id로 찾음", () => {
-    const products = productsFromRows([row("a")]);
-    const catalog = buildCatalog(products);
-    expect(catalog.a).toBe(products[0]);
-    expect(catalog.chair).toBe(FURNITURE_PRESETS.chair);
   });
 });
