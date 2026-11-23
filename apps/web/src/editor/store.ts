@@ -1,15 +1,14 @@
 import {
   checkRoom,
   history,
-  type FurniturePreset,
   type History,
   type Room,
   type Warning,
 } from "@gagufit/core";
 import {
-  buildCatalog,
   DEFAULT_FLOOR_MATERIAL,
   DEFAULT_WALL_MATERIAL,
+  FURNITURE_CATALOG,
 } from "@gagufit/data";
 import { create } from "zustand";
 import { WARNING_TONE, type WarningTone } from "./labels";
@@ -40,12 +39,8 @@ type EditorState = {
   saveStatus: SaveStatus;
   /** 2D 화면 회전 도 - 방향키가 화면 기준으로 움직이게, 2D가 아니면 0 */
   planAngle: number;
-  /** 실제 상품 - 표시 순서 */
-  products: readonly FurniturePreset[];
-  /** 기본 프리셋 + 상품, presetId로 찾음 - 방을 열 때만 바뀜 */
-  catalog: Readonly<Record<string, FurniturePreset>>;
 
-  load: (room: Room, products: readonly FurniturePreset[]) => void;
+  load: (room: Room) => void;
   /** 기록 한 단계 */
   update: (next: Room) => void;
   /** 끌기 중 - 기록 안 함 */
@@ -78,15 +73,9 @@ export const useEditor = create<EditorState>()((set) => ({
   dragging: false,
   saveStatus: "saved",
   planAngle: 0,
-  products: [],
-  catalog: buildCatalog([]),
 
-  load: (room, products) => {
-    warningCache = new WeakMap();
-    warnedTonesCache = new WeakMap();
+  load: (room) =>
     set({
-      products,
-      catalog: buildCatalog(products),
       saveStatus: "saved",
       history: history.create(room),
       selection: null,
@@ -95,8 +84,7 @@ export const useEditor = create<EditorState>()((set) => ({
       sheet: null,
       toast: null,
       dragging: false,
-    });
-  },
+    }),
   // 바뀐 게 없으면 기록 안 함 - 편집 함수가 같은 room을 돌려줌
   // 새 편집이 생기면 삭제 토스트의 실행 취소 대상이 달라져 닫음
   update: (next) =>
@@ -195,20 +183,19 @@ export const currentRoom = () => useEditor.getState().history.present;
 
 export const useRoom = () => useEditor((s) => s.history.present);
 
-// 판정이 catalog에 따라 달라 방을 열 때마다 비움
-let warningCache = new WeakMap<Room, Warning[]>();
+const warningCache = new WeakMap<Room, Warning[]>();
 
 /** room 객체별로 한 번만 판정 */
 export function warningsOf(room: Room): Warning[] {
   let warnings = warningCache.get(room);
   if (!warnings) {
-    warnings = checkRoom(room, useEditor.getState().catalog);
+    warnings = checkRoom(room, FURNITURE_CATALOG);
     warningCache.set(room, warnings);
   }
   return warnings;
 }
 
-let warnedTonesCache = new WeakMap<Room, ReadonlyMap<string, WarningTone>>();
+const warnedTonesCache = new WeakMap<Room, ReadonlyMap<string, WarningTone>>();
 
 /** 경고에 걸린 가구 id → 가장 강한 경고 */
 export function warnedFurnitureTones(

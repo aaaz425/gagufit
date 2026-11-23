@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { migrate, type SavedRoom } from "./schema";
 
 const saved: SavedRoom = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   room: {
     name: "내 방",
     width: 300,
@@ -55,17 +55,53 @@ const saved: SavedRoom = {
 };
 
 describe("migrate", () => {
-  it("v1은 그대로", () => {
+  it("v2는 그대로", () => {
     const data: unknown = JSON.parse(JSON.stringify(saved));
     expect(migrate(data)).toEqual(saved);
   });
 
+  describe("v1 -> v2", () => {
+    const v1 = (...presetIds: string[]) => ({
+      schemaVersion: 1,
+      room: {
+        ...saved.room,
+        furniture: presetIds.map((presetId, i) => ({
+          ...saved.room.furniture[0],
+          id: `f${i}`,
+          presetId,
+        })),
+      },
+    });
+
+    it("상품 가구는 기본 프리셋 id + product로 바뀜", () => {
+      const out = migrate(v1("rug-ongyeol-washable-200x400"));
+      expect(out.schemaVersion).toBe(2);
+      expect(out.room.furniture[0]).toMatchObject({
+        presetId: "rug-160",
+        product: {
+          id: "rug-ongyeol-washable-200x400",
+          name: "온결 워셔블 단모 사각 러그 200x400",
+        },
+      });
+    });
+
+    it("일반 가구와 모르는 id는 그대로", () => {
+      const out = migrate(v1("bed-super-single", "no-such", "toString"));
+      expect(out.room.furniture.map((f) => f.presetId)).toEqual([
+        "bed-super-single",
+        "no-such",
+        "toString",
+      ]);
+      expect(out.room.furniture.some((f) => f.product)).toBe(false);
+    });
+  });
+
   it("모르는 버전이면 throw", () => {
-    expect(() => migrate({ ...saved, schemaVersion: 2 })).toThrow(
+    expect(() => migrate({ ...saved, schemaVersion: 3 })).toThrow(
       "schemaVersion",
     );
     expect(() => migrate({ room: saved.room })).toThrow("schemaVersion");
-    expect(() => migrate({ ...saved, schemaVersion: "1" })).toThrow('"1"');
+    expect(() => migrate({ ...saved, schemaVersion: "2" })).toThrow('"2"');
   });
 
   const { room } = saved;
@@ -89,7 +125,7 @@ describe("migrate", () => {
     ],
   ])("%s이면 throw", (_, patch) => {
     expect(() =>
-      migrate({ schemaVersion: 1, room: { ...room, ...patch } }),
-    ).toThrow("v1 방 형식");
+      migrate({ schemaVersion: 2, room: { ...room, ...patch } }),
+    ).toThrow("v2 방 형식");
   });
 });

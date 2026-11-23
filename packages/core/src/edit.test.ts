@@ -71,6 +71,18 @@ describe("addFurniture", () => {
     ]);
     expect(room.furniture).toEqual([]);
   });
+
+  it("실제 상품은 기본 프리셋 id로 저장하고 product에 상품 id·이름을 남김", () => {
+    const product = {
+      ...preset,
+      id: "bed-x",
+      name: "상품 침대",
+      baseId: "bed-single",
+    };
+    const [f] = addFurniture(room, product, "a").furniture;
+    expect(f.presetId).toBe("bed-single");
+    expect(f.product).toEqual({ id: "bed-x", name: "상품 침대" });
+  });
 });
 
 describe("duplicateFurniture", () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { FURNITURE_COLORS } from "@gagufit/data";
+import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
 import { Ruler, SlidersHorizontal, Sofa } from "lucide-react";
 import type { ReactNode } from "react";
 import { displayAngle } from "../actions";
@@ -16,7 +16,6 @@ export function MobileBottom() {
   const selection = useEditor((s) => s.selection);
   const setSheet = useEditor((s) => s.setSheet);
   const setPanel = useEditor((s) => s.setPanel);
-  const catalog = useEditor((s) => s.catalog);
 
   if (selection) {
     let icon: ReactNode = null;
@@ -24,7 +23,7 @@ export function MobileBottom() {
     let detail = "";
     if (selection.kind === "furniture") {
       const f = room.furniture.find((item) => item.id === selection.id);
-      const preset = f && catalog[f.presetId];
+      const preset = f && FURNITURE_CATALOG[f.presetId];
       if (f) {
         icon = (
           <FurnitureThumb

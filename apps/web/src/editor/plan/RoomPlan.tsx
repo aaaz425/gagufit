@@ -8,12 +8,12 @@ import {
   type Room,
   type Vec2,
 } from "@gagufit/core";
-import { FURNITURE_COLORS } from "@gagufit/data";
+import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
 import { useId } from "react";
 import { useInitialIds } from "@/motion";
 import type { WarningTone } from "../labels";
 import { DOOR_AREA_OPACITY } from "../scene-colors";
-import { useEditor, type Selection } from "../store";
+import type { Selection } from "../store";
 import { FurnitureSymbol, SymbolDefs } from "./FurnitureSymbol";
 import { PlanFloor, TextureDefs } from "./PlanDefs";
 import type { PlanTexture } from "./texture";
@@ -72,12 +72,12 @@ export function RoomPlan({
   const wall = WALL_PX / scale;
   const scope = useId();
   const initialIds = useInitialIds(room.furniture.map((f) => f.id));
-  const catalog = useEditor((s) => s.catalog);
   // 러그 - 문 열림 영역 - 다른 가구 순서
-  const isRug = (f: PlacedFurniture) => catalog[f.presetId]?.layer === "floor";
+  const isRug = (f: PlacedFurniture) =>
+    FURNITURE_CATALOG[f.presetId]?.layer === "floor";
   // 행거는 속이 비쳐 그림자가 진해 보임
   const isHollow = (f: PlacedFurniture) =>
-    catalog[f.presetId]?.category === "hanger";
+    FURNITURE_CATALOG[f.presetId]?.category === "hanger";
   const shape = (f: PlacedFurniture) => (
     <FurnitureShape
       key={f.id}
@@ -191,7 +191,7 @@ function FurnitureShape({
   scope: string;
   rich: boolean;
 }) {
-  const preset = useEditor((s) => s.catalog[f.presetId]);
+  const preset = FURNITURE_CATALOG[f.presetId];
   const { width: w, depth: d } = f.size;
   const outline = warned ?? "primary";
   return (

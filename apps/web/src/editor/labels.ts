@@ -1,12 +1,11 @@
 import type {
   FurnitureCategory,
-  FurniturePreset,
   Opening,
   OpeningKind,
   Room,
   Warning,
 } from "@gagufit/core";
-type Catalog = Readonly<Record<string, FurniturePreset>>;
+import { FURNITURE_CATALOG } from "@gagufit/data";
 
 export const CATEGORY_LABELS: Record<FurnitureCategory, string> = {
   bed: "침대",
@@ -67,43 +66,34 @@ function josa(word: string, first: string, second: string): string {
   return `${word}${code % 28 ? first : second}`;
 }
 
-export function furnitureName(
-  room: Room,
-  catalog: Catalog,
-  id: string,
-): string {
+export function furnitureName(room: Room, id: string): string {
   const f = room.furniture.find((item) => item.id === id);
-  return (f && catalog[f.presetId]?.name) ?? "가구";
+  return (f && FURNITURE_CATALOG[f.presetId]?.name) ?? "가구";
 }
 
 /** 경고를 보는 가구 입장의 한 줄 - id는 경고에 걸린 가구 */
-export function warningText(
-  room: Room,
-  catalog: Catalog,
-  w: Warning,
-  id: string,
-): string {
+export function warningText(room: Room, w: Warning, id: string): string {
   if (w.type === "overlap") {
     const other =
       w.furnitureIds[0] === id ? w.furnitureIds[1] : w.furnitureIds[0];
-    return `${josa(furnitureName(room, catalog, id), "이", "가")} ${josa(
-      furnitureName(room, catalog, other),
+    return `${josa(furnitureName(room, id), "이", "가")} ${josa(
+      furnitureName(room, other),
       "과",
       "와",
     )} 겹쳐요`;
   }
   if (w.type === "frontBlocked") {
-    return `${furnitureName(room, catalog, id)} 앞쪽이 벽에 막혀 있어요`;
+    return `${furnitureName(room, id)} 앞쪽이 벽에 막혀 있어요`;
   }
   if (w.type === "outOfRoom") {
-    return `${josa(furnitureName(room, catalog, id), "이", "가")} 방 밖으로 나갔어요`;
+    return `${josa(furnitureName(room, id), "이", "가")} 방 밖으로 나갔어요`;
   }
   const door = room.openings.find((o) => o.id === w.openingId);
   const where =
     door?.kind === "hinged" && door.swing === "in"
       ? "문 열리는 자리를"
       : "문 앞 통로를";
-  return `${josa(furnitureName(room, catalog, w.furnitureId), "이", "가")} ${where} 막아요`;
+  return `${josa(furnitureName(room, w.furnitureId), "이", "가")} ${where} 막아요`;
 }
 
 const WARNING_BADGE: Record<Warning["type"], string> = {
