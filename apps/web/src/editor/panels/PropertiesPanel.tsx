@@ -13,6 +13,7 @@ import {
   updateOpening,
   wallFrame,
   type FurniturePreset,
+  type Offer,
   type Opening,
   type PlacedFurniture,
   type Room,
@@ -122,21 +123,19 @@ function ProductOffers({ productId }: { productId: string }) {
     );
   }
   const product = data?.find((p) => p.id === productId);
-  return (
-    product?.offers && <Offers product={product} offers={product.offers} />
-  );
+  // 판매처가 여럿이어도 첫 offer만 표시
+  const offer = product?.offers?.[0];
+  return product && offer && <Offers product={product} offer={offer} />;
 }
 
 /** 판매처 참고가 + 쿠팡 링크 - 대가성 문구는 링크 바로 옆, 접지 않음 */
 function Offers({
   product,
-  offers,
+  offer: o,
 }: {
   product: FurniturePreset;
-  offers: NonNullable<FurniturePreset["offers"]>;
+  offer: Offer;
 }) {
-  // 판매처가 여럿이어도 첫 offer만 표시
-  const o = offers[0];
   return (
     <div className="flex flex-col gap-2 rounded-md border border-border bg-surface p-3">
       <p className="flex items-baseline gap-2">
