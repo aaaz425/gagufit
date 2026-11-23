@@ -20,12 +20,21 @@ export async function listRooms(client: ApiClient): Promise<RoomSummary[]> {
     .select("id, name, data, updated_at")
     .order("updated_at", { ascending: false });
   if (error) throw error;
-  return data.map((r) => ({
-    id: r.id,
-    name: r.name,
-    room: migrate(r.data).room,
-    updatedAt: r.updated_at,
-  }));
+  // 못 여는 방 하나가 목록 전체를 막지 않게 뺌
+  return data.flatMap((r) => {
+    try {
+      return [
+        {
+          id: r.id,
+          name: r.name,
+          room: migrate(r.data).room,
+          updatedAt: r.updated_at,
+        },
+      ];
+    } catch {
+      return [];
+    }
+  });
 }
 
 // 없거나 uuid 형식이 아니면 null
@@ -57,20 +66,35 @@ export async function createRoom(
   return data.id;
 }
 
-// 반환값은 서버가 갱신한 updated_at
+// 충돌 - base 이후 다른 곳에서 저장함, 삭제됨 - 방이 없음
+export type SaveResult =
+  | { status: "saved"; updatedAt: string }
+  | { status: "conflict" }
+  | { status: "deleted" };
+
+// base - 편집 시작한 서버 updated_at, 다르면 덮어쓰지 않음
 export async function saveRoom(
   client: ApiClient,
   id: string,
   room: Room,
-): Promise<string> {
+  base: string,
+): Promise<SaveResult> {
   const { data, error } = await client
     .from("rooms")
     .update({ name: room.name, data: wrap(room) })
     .eq("id", id)
+    .eq("updated_at", base)
     .select("updated_at")
-    .single();
+    .maybeSingle();
   if (error) throw error;
-  return data.updated_at;
+  if (data) return { status: "saved", updatedAt: data.updated_at };
+  const { data: exists, error: existsError } = await client
+    .from("rooms")
+    .select("id")
+    .eq("id", id)
+    .maybeSingle();
+  if (existsError) throw existsError;
+  return { status: exists ? "conflict" : "deleted" };
 }
 
 export async function deleteRoom(client: ApiClient, id: string): Promise<void> {

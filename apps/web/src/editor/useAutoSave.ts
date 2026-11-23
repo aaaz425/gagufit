@@ -1,6 +1,6 @@
 import { useSaveRoom, type RoomRecord } from "@gagufit/api";
 import type { Room } from "@gagufit/core";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { clearBackup, writeBackup } from "./save-backup";
 import { useEditor, type SaveStatus } from "./store";
 
@@ -10,9 +10,18 @@ const RETRY_MS = 15000;
 /**
  * baseline - 서버에 있는 방, 현재 방이 다르면(보관본 복구) 바로 저장
  * 끄는 중에는 미루고, 실패하면 보관 후 간격·online·다음 편집 때 재시도
+ * 다른 곳에서 바뀌었거나(conflict) 지워진(deleted) 방은 내 변경을 버리고 멈춤
  */
-export function useAutoSave(roomId: string, baseline: RoomRecord) {
+export function useAutoSave(
+  roomId: string,
+  baseline: RoomRecord,
+  onStop: (reason: "conflict" | "deleted") => void,
+) {
   const { mutateAsync } = useSaveRoom();
+  const onStopRef = useRef(onStop);
+  useEffect(() => {
+    onStopRef.current = onStop;
+  });
 
   useEffect(() => {
     let saved = baseline.room;
@@ -20,6 +29,7 @@ export function useAutoSave(roomId: string, baseline: RoomRecord) {
     let base = baseline.updatedAt;
     let inFlight = false;
     let disposed = false;
+    let stopped = false;
     // 떠난 시점의 방 - 이후 스토어는 다음 방이 씀
     let finalRoom: Room | null = null;
     const current = () => finalRoom ?? useEditor.getState().history.present;
@@ -36,6 +46,7 @@ export function useAutoSave(roomId: string, baseline: RoomRecord) {
 
     async function flush() {
       timer = undefined;
+      if (stopped) return;
       const room = current();
       if (room === saved) {
         clearBackup(roomId);
@@ -45,8 +56,9 @@ export function useAutoSave(roomId: string, baseline: RoomRecord) {
       if (inFlight || (!disposed && useEditor.getState().dragging)) return;
       inFlight = true;
       setStatus("saving");
+      let result;
       try {
-        base = await mutateAsync({ id: roomId, room });
+        result = await mutateAsync({ id: roomId, room, base });
       } catch {
         inFlight = false;
         writeBackup(roomId, current(), base);
@@ -55,6 +67,16 @@ export function useAutoSave(roomId: string, baseline: RoomRecord) {
         return;
       }
       inFlight = false;
+      if (result.status !== "saved") {
+        stopped = true;
+        clearTimeout(timer);
+        // 떠난 뒤 결과는 같은 방에 새로 연 화면의 보관본·상태를 건드리지 않음
+        if (disposed) return;
+        clearBackup(roomId);
+        onStopRef.current(result.status);
+        return;
+      }
+      base = result.updatedAt;
       saved = room;
       const latest = current();
       if (latest === saved) clearBackup(roomId);
@@ -114,6 +136,7 @@ export function useAutoSave(roomId: string, baseline: RoomRecord) {
       clearTimeout(timer);
       finalRoom = useEditor.getState().history.present;
       disposed = true;
+      if (stopped) return;
       if (finalRoom !== saved) writeBackup(roomId, finalRoom, base);
       void flush();
     };
