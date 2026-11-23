@@ -85,7 +85,7 @@ describe("migrate", () => {
       });
     });
 
-    it("일반 가구와 모르는 id는 그대로", () => {
+    it("일반 가구는 새 id로 바뀌고 모르는 id는 그대로", () => {
       const out = migrate(v1("bed-super-single", "no-such", "toString"));
       expect(out.room.furniture.map((f) => f.presetId)).toEqual([
         "bed",

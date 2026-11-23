@@ -70,7 +70,7 @@ const V1_PRODUCTS: Record<string, { base: string; name: string }> = {
 };
 
 /** v2까지의 기본 프리셋 id → v3 id - 상품 base(products.base)도 같은 매핑으로 읽음 */
-export const LEGACY_PRESET_IDS: Readonly<Record<string, string>> = {
+const LEGACY_PRESET_IDS: Readonly<Record<string, string>> = {
   "bed-super-single": "bed",
   "desk-120": "desk",
   "sofa-2seat": "sofa",
