@@ -1,6 +1,7 @@
 import type { FurnitureCategory, Size } from "@gagufit/core";
 import { useId, type ReactNode } from "react";
 import type { TextureRef } from "./texture";
+import { EXTRA_DECOR } from "./FurnitureSymbolExtra";
 import { symbolPalette, type SymbolPalette } from "./symbol-palette";
 
 // 가구 평면 기호 - (0,0)~(w,d) cm, 위쪽이 등·벽 쪽, 선 굵기는 화면 px
@@ -139,9 +140,11 @@ const front = ({ w, d }: Box, p: SymbolPalette, h = 5) => {
   );
 };
 
-const DECOR: Record<
-  FurnitureCategory,
-  (b: Box, p: SymbolPalette, c: Ctx) => ReactNode
+type Decor = (b: Box, p: SymbolPalette, c: Ctx) => ReactNode;
+
+const BASE_DECOR: Record<
+  Exclude<FurnitureCategory, keyof typeof EXTRA_DECOR>,
+  Decor
 > = {
   bed: (b, p, c) => {
     const pillows = b.w < 120 ? 1 : 2;
@@ -511,6 +514,11 @@ const DECOR: Record<
     </>
   ),
   etc: (b, p, c) => body(b, p, c),
+};
+
+const DECOR: Record<FurnitureCategory, Decor> = {
+  ...BASE_DECOR,
+  ...EXTRA_DECOR,
 };
 
 /** 입체 표현 공용 gradient·filter - 도면(방)·썸네일 svg마다 한 번만 */

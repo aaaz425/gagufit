@@ -78,6 +78,9 @@ const EDGE_MATERIAL = new LineBasicMaterial({ color: SCENE_COLORS.inkMuted });
 
 /** 원기둥을 앞쪽으로 눕힌 지름 1·두께 1 기준 - 세탁기 문 */
 const DISC = new CylinderGeometry(0.5, 0.5, 1, 32).rotateX(Math.PI / 2);
+/** 위로 선 지름 1·높이 1 기준 - 화분·휴지통 */
+const ROUND = new CylinderGeometry(0.5, 0.5, 1, 24);
+const UNIT_SHAPES = new Set<BufferGeometry>([DISC, ROUND]);
 
 const warningMaterial = (color: string, opacity: number) =>
   new MeshBasicMaterial({
@@ -104,6 +107,7 @@ const FALLBACK_LOOK: Pick<FurniturePreset, "category" | "material" | "layer"> =
 
 function partGeometry(part: Part) {
   if (part.shape === "disc") return DISC;
+  if (part.shape === "round") return ROUND;
   const [w, h, d] = part.size.map(m);
   // 둥근 모서리 - 조각이 작아도 면 수가 늘지 않게 분할 2
   return part.round > 0
@@ -113,7 +117,12 @@ function partGeometry(part: Part) {
 
 /** 윤곽선은 각진 상자 모서리 기준 - 손잡이처럼 작은 조각은 생략 */
 function partEdges(part: Part): BufferGeometry | null {
-  if (part.shape === "disc" || Math.min(...part.size) < 2.5 || part.round > 2)
+  if (
+    part.shape !== "box" ||
+    part.rot ||
+    Math.min(...part.size) < 2.5 ||
+    part.round > 2
+  )
     return null;
   const box = new BoxGeometry(
     ...(part.size.map(m) as [number, number, number]),
@@ -233,9 +242,9 @@ const FLOOR_MARKS = {
 };
 
 function partScale(part: Part): [number, number, number] {
-  return part.shape === "disc"
-    ? (part.size.map(m) as [number, number, number])
-    : [1, 1, 1];
+  return part.shape === "box"
+    ? [1, 1, 1]
+    : (part.size.map(m) as [number, number, number]);
 }
 
 // 등장 효과 길이(초)와 시작 크기 - globals.css 움직임 토큰과 맞춤
@@ -325,7 +334,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   useEffect(
     () => () => {
       for (const { geometry, edges } of parts) {
-        if (geometry !== DISC) geometry.dispose();
+        if (!UNIT_SHAPES.has(geometry)) geometry.dispose();
         edges?.dispose();
       }
     },
@@ -382,7 +391,12 @@ export const FurnitureMesh = memo(function FurnitureMesh({
         const scale = partScale(part);
         const position = part.center.map(m) as [number, number, number];
         return (
-          <group key={i} position={position} scale={scale}>
+          <group
+            key={i}
+            position={position}
+            scale={scale}
+            rotation={part.rot && [...part.rot, "YXZ"]}
+          >
             <mesh
               geometry={geometry}
               material={furnitureMaterial(look.material, hex, part.tone)}
