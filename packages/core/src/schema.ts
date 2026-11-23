@@ -1,8 +1,8 @@
 import type { Room } from "./types";
 
-type Version = 1 | 2;
+type Version = 1 | 2 | 3;
 // 버전 올릴 때 Version에 추가하고 STEPS에 이전 버전 단계 추가
-export const CURRENT_SCHEMA_VERSION = 2 satisfies Version;
+export const CURRENT_SCHEMA_VERSION = 3 satisfies Version;
 type OldVersion = Exclude<Version, typeof CURRENT_SCHEMA_VERSION>;
 type Loose = Record<string, unknown>;
 
@@ -69,6 +69,25 @@ const V1_PRODUCTS: Record<string, { base: string; name: string }> = {
   },
 };
 
+/** v2까지의 기본 프리셋 id → v3 id - 상품 base(products.base)도 같은 매핑으로 읽음 */
+export const LEGACY_PRESET_IDS: Readonly<Record<string, string>> = {
+  "bed-super-single": "bed",
+  "desk-120": "desk",
+  "sofa-2seat": "sofa",
+  "dining-table-2": "dining-table",
+  "wardrobe-90": "wardrobe",
+  "drawer-80": "drawer",
+  "bookshelf-80": "bookshelf",
+  "hanger-100": "hanger",
+  "tv-stand-150": "tv-stand",
+  "rug-160": "rug",
+  "etc-box": "etc",
+};
+
+/** 옛 id면 새 id, 아니면 그대로 */
+export const currentPresetId = (id: string): string =>
+  Object.hasOwn(LEGACY_PRESET_IDS, id) ? LEGACY_PRESET_IDS[id] : id;
+
 // 키 = 변환 전 버전, 바로 다음 버전으로만 변환 - 이전 버전 데이터라 필요한 필드만 다룸
 const STEPS: Record<OldVersion, (room: Loose) => Loose> = {
   1: (room) => ({
@@ -80,6 +99,17 @@ const STEPS: Record<OldVersion, (room: Loose) => Loose> = {
           const { base, name } = V1_PRODUCTS[f.presetId];
           return { ...f, presetId: base, product: { id: f.presetId, name } };
         })
+      : room.furniture,
+  }),
+  // presetId만 새 id로 - 크기·위치·상품은 그대로
+  2: (room) => ({
+    ...room,
+    furniture: Array.isArray(room.furniture)
+      ? room.furniture.map((f: unknown) =>
+          isObject(f) && typeof f.presetId === "string"
+            ? { ...f, presetId: currentPresetId(f.presetId) }
+            : f,
+        )
       : room.furniture,
   }),
 };
@@ -114,7 +144,7 @@ const isInt = (v: unknown, min = -Infinity, max = Infinity) =>
 
 const isPositiveInt = (v: unknown) => isInt(v, 1);
 
-// v1·v2 공통 - v2에만 가구의 product가 있음
+// 모든 버전 공통 - product는 v2부터, price는 v3부터 있을 수 있음
 function isRoom(v: unknown): v is Room {
   return (
     isObject(v) &&
@@ -169,6 +199,7 @@ function isFurniture(v: unknown): boolean {
     (v.product === undefined ||
       (isObject(v.product) &&
         typeof v.product.id === "string" &&
-        typeof v.product.name === "string"))
+        typeof v.product.name === "string")) &&
+    (v.price === undefined || isInt(v.price, 0))
   );
 }

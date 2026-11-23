@@ -96,6 +96,14 @@ describe("duplicateFurniture", () => {
     });
   });
 
+  it("내 가격도 복사", () => {
+    const base = addFurniture(room, preset, "a");
+    const priced = updateFurniture(base, "a", { price: 120000 });
+    expect(duplicateFurniture(priced, "a", "b").furniture[1].price).toBe(
+      120000,
+    );
+  });
+
   it("offset 0이면 같은 자리에 복제", () => {
     const base = addFurniture(room, preset, "a");
     const next = duplicateFurniture(base, "a", "b", 0);

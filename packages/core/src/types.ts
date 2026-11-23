@@ -91,7 +91,37 @@ export type FurnitureCategory =
   | "fridge"
   | "washer"
   | "rug"
-  | "etc";
+  | "etc"
+  | "low-table"
+  | "shelf"
+  | "shoe-cabinet"
+  | "mirror"
+  | "drying-rack"
+  | "floor-lamp"
+  | "plant"
+  | "mattress"
+  | "loft-bed"
+  | "stool"
+  | "cabinet"
+  | "cart"
+  | "storage-box"
+  | "floor-chair"
+  | "bean-bag"
+  | "bar-table"
+  | "dryer"
+  | "clothes-care"
+  | "air-conditioner"
+  | "air-purifier"
+  | "fan"
+  | "tv"
+  | "treadmill"
+  | "exercise-bike"
+  | "piano"
+  | "partition"
+  | "cat-tower"
+  | "pet-house"
+  | "bicycle"
+  | "trash-can";
 
 export type FurnitureMaterial = "wood" | "fabric" | "appliance";
 
@@ -136,6 +166,8 @@ export type PlacedFurniture = {
   color: FurnitureColorId;
   /** 실제 상품을 놓은 경우 - 이름은 당시 값, 링크·가격은 저장하지 않고 id로 조회 */
   product?: { id: string; name: string };
+  /** 내 가격 원, 0 이상 정수 - 견적에서 상품 참고가보다 먼저 씀 */
+  price?: number;
 };
 
 export type Room = {
