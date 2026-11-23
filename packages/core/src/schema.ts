@@ -1,6 +1,10 @@
 import type { Room } from "./types";
 
-export const CURRENT_SCHEMA_VERSION = 2;
+type Version = 1 | 2;
+// 버전 올릴 때 Version에 추가하고 STEPS에 이전 버전 단계 추가
+export const CURRENT_SCHEMA_VERSION = 2 satisfies Version;
+type OldVersion = Exclude<Version, typeof CURRENT_SCHEMA_VERSION>;
+type Loose = Record<string, unknown>;
 
 export type SavedRoom = {
   schemaVersion: typeof CURRENT_SCHEMA_VERSION;
@@ -65,30 +69,39 @@ const V1_PRODUCTS: Record<string, { base: string; name: string }> = {
   },
 };
 
-// 키 = 변환 전 버전, 바로 다음 버전으로만 변환 - 버전 올릴 때 case 하나 추가
-const STEPS: Record<number, (room: Room) => Room> = {
+// 키 = 변환 전 버전, 바로 다음 버전으로만 변환 - 이전 버전 데이터라 필요한 필드만 다룸
+const STEPS: Record<OldVersion, (room: Loose) => Loose> = {
   1: (room) => ({
     ...room,
-    furniture: room.furniture.map((f) => {
-      if (!Object.hasOwn(V1_PRODUCTS, f.presetId)) return f;
-      const { base, name } = V1_PRODUCTS[f.presetId];
-      return { ...f, presetId: base, product: { id: f.presetId, name } };
-    }),
+    furniture: Array.isArray(room.furniture)
+      ? room.furniture.map((f: unknown) => {
+          if (!isObject(f) || typeof f.presetId !== "string") return f;
+          if (!Object.hasOwn(V1_PRODUCTS, f.presetId)) return f;
+          const { base, name } = V1_PRODUCTS[f.presetId];
+          return { ...f, presetId: base, product: { id: f.presetId, name } };
+        })
+      : room.furniture,
   }),
 };
+
+const isOldVersion = (v: unknown): v is OldVersion =>
+  typeof v === "number" && Object.hasOwn(STEPS, v);
 
 export function migrate(data: unknown): SavedRoom {
   if (!isObject(data)) throw new Error("저장 데이터가 객체가 아님");
   const version = data.schemaVersion;
-  if (
-    typeof version !== "number" ||
-    (!Object.hasOwn(STEPS, version) && version !== CURRENT_SCHEMA_VERSION)
-  ) {
+  if (!isOldVersion(version) && version !== CURRENT_SCHEMA_VERSION) {
     throw new Error(`지원하지 않는 schemaVersion: ${JSON.stringify(version)}`);
   }
-  if (!isRoom(data.room)) throw new Error(`v${version} 방 형식이 아님`);
-  let room = data.room;
-  for (let v = version; v < CURRENT_SCHEMA_VERSION; v++) room = STEPS[v](room);
+  const fail = () => new Error(`v${version} 방 형식이 아님`);
+  if (!isObject(data.room)) throw fail();
+  let room: Loose = data.room;
+  if (isOldVersion(version)) {
+    for (let v: number = version; v < CURRENT_SCHEMA_VERSION; v++) {
+      room = STEPS[v as OldVersion](room);
+    }
+  }
+  if (!isRoom(room)) throw fail();
   return { schemaVersion: CURRENT_SCHEMA_VERSION, room };
 }
 
