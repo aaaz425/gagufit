@@ -12,6 +12,10 @@ import { useEditor, useRoom } from "./store";
 
 const won = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 
+/** 좁은 상단 바용 - 1만원 이상은 만 단위 소수 한 자리 */
+const shortWon = (n: number) =>
+  n < 10000 ? won(n) : `${Math.round(n / 1000) / 10}만원`;
+
 /** 방 견적 - 상품 참고가는 방과 따로 불러오므로 도착하면 다시 계산 */
 export function useQuote(): { quote: Quote; loading: boolean } {
   const room = useRoom();
@@ -53,7 +57,7 @@ export function QuoteButton({ compact }: { compact: boolean }) {
         }`}
       >
         <Receipt size={16} aria-hidden />
-        {compact ? won(quote.total) : `견적 ${won(quote.total)}`}
+        {compact ? shortWon(quote.total) : `견적 ${won(quote.total)}`}
         {!compact && <ChevronDown size={16} aria-hidden />}
       </button>
       {!compact && mounted && (
@@ -96,7 +100,7 @@ function QuotePopover({
       data-exiting={exiting || undefined}
       className="motion-menu absolute top-full right-0 z-30 mt-1 flex max-h-[min(560px,calc(100dvh-80px))] w-[min(380px,calc(100vw-16px))] flex-col gap-3 rounded-md border border-border bg-canvas p-4 shadow-floating"
     >
-      <QuoteBody />
+      <QuoteBody onPick={onClose} />
     </div>
   );
 }

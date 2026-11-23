@@ -69,11 +69,8 @@ export function TopBar({ compact }: { compact: boolean }) {
           <Redo2 size={20} />
         </IconButton>
       </div>
-      {/* 배지가 생기고 없어져도 옆 버튼이 밀리지 않게 자리 고정 */}
-      <span
-        role="status"
-        className={`flex shrink-0 ${compact ? "w-14" : "w-26"}`}
-      >
+      {/* 배지가 생기고 없어져도 옆 버튼이 밀리지 않게 데스크톱은 자리 고정 - 모바일은 이름 자리가 좁아 고정 안 함 */}
+      <span role="status" className={`flex shrink-0 ${compact ? "" : "w-26"}`}>
         {warnings.length > 0 && (
           <span
             aria-label={warningBadgeLabel(warnings)}
