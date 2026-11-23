@@ -17,15 +17,19 @@ const shortWon = (n: number) =>
   n < 10000 ? won(n) : `${Math.round(n / 1000) / 10}만원`;
 
 /** 방 견적 - 상품 참고가는 방과 따로 불러오므로 도착하면 다시 계산 */
-export function useQuote(): { quote: Quote; loading: boolean } {
+export function useQuote(): {
+  quote: Quote;
+  loading: boolean;
+  failed: boolean;
+} {
   const room = useRoom();
-  const { data, isPending } = useProducts();
+  const { data, isPending, isError } = useProducts();
   const products = useMemo(
     () => Object.fromEntries((data ?? []).map((p) => [p.id, p])),
     [data],
   );
   const quote = useMemo(() => quoteRoom(room, products), [room, products]);
-  return { quote, loading: isPending };
+  return { quote, loading: isPending, failed: isError };
 }
 
 /** 상단 바 견적 알약 - 데스크톱은 아래 팝오버, 모바일은 바텀시트 */
@@ -122,9 +126,8 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
   const room = useRoom();
   const select = useEditor((s) => s.select);
   const selection = useEditor((s) => s.selection);
-  const { quote, loading } = useQuote();
+  const { quote, loading, failed } = useQuote();
   const { counts } = quote;
-  const furniture = new Map(room.furniture.map((f) => [f.id, f]));
 
   return (
     <>
@@ -161,9 +164,9 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
         )}
       </p>
       <ul className="-mx-1 flex min-h-0 flex-1 flex-col overflow-y-auto px-1">
-        {quote.items.map((item) => {
-          const f = furniture.get(item.furnitureId);
-          if (!f) return null;
+        {quote.items.map((item, i) => {
+          // 견적 항목은 가구와 같은 순서
+          const f = room.furniture[i];
           const on = selection?.kind === "furniture" && selection.id === f.id;
           const tag = SOURCE_TAG[item.source];
           return (
@@ -219,6 +222,12 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
           상품 참고가를 불러오는 중이에요
         </p>
       )}
+      {failed &&
+        room.furniture.some((f) => f.product && f.price === undefined) && (
+          <p className="text-xs text-ink-muted">
+            상품 참고가를 불러오지 못해 견적에서 빠졌어요
+          </p>
+        )}
       {quote.refCheckedAt && (
         <p className="rounded-sm bg-surface px-3 py-2 text-xs leading-[1.4] text-ink-muted">
           참고가 {counts.ref}건은{" "}
