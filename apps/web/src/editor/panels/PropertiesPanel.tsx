@@ -26,6 +26,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { trackCoupangClick } from "@/site/analytics";
 import { COUPANG_NOTICE } from "@/site/constants";
 import {
   deleteSelected,
@@ -120,14 +121,18 @@ function ProductOffers({ productId }: { productId: string }) {
       <p className="text-xs text-ink-muted">가격과 링크를 불러오지 못했어요</p>
     );
   }
-  const offers = data?.find((p) => p.id === productId)?.offers;
-  return offers && <Offers offers={offers} />;
+  const product = data?.find((p) => p.id === productId);
+  return (
+    product?.offers && <Offers product={product} offers={product.offers} />
+  );
 }
 
 /** 판매처 참고가 + 쿠팡 링크 - 대가성 문구는 링크 바로 옆, 접지 않음 */
 function Offers({
+  product,
   offers,
 }: {
+  product: FurniturePreset;
   offers: NonNullable<FurniturePreset["offers"]>;
 }) {
   // 판매처가 여럿이어도 첫 offer만 표시
@@ -148,6 +153,13 @@ function Offers({
         href={o.url}
         target="_blank"
         rel="sponsored noopener noreferrer"
+        onClick={() =>
+          trackCoupangClick({
+            id: product.id,
+            name: product.name,
+            referencePrice: o.price,
+          })
+        }
         className="flex h-11 items-center justify-center gap-2 rounded-sm bg-primary-soft text-sm font-bold text-primary hover:bg-primary hover:text-white"
       >
         쿠팡에서 보기

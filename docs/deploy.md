@@ -47,6 +47,7 @@ Supabase 운영 프로젝트 + Vercel + gagufit.com
    - 향상된 측정 켜기, 페이지 조회수의 "브라우저 기록 이벤트 기반 페이지 변경"이 켜진 상태 확인
    - 측정 ID `G-...` 복사 → 환경변수 `NEXT_PUBLIC_GA_ID`
    - 관리 > 데이터 수집에서 Google 신호 끄기, 데이터 보관 14개월로 설정
+   - 관리 > 이벤트에서 `coupang_click`을 주요 이벤트로 지정, 첫 클릭이 수집된 뒤 목록에 나타남
    - 개인정보처리방침(6·8번)과 맞추기 위한 설정
 10. 도메인 - 직접
     - Settings > Domains에 `gagufit.com`과 `www.gagufit.com` 추가
