@@ -8,6 +8,7 @@ export {
   saveRoom,
   type RoomRecord,
   type RoomSummary,
+  type SaveResult,
 } from "./rooms";
 export {
   ApiProvider,

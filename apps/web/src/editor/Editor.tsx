@@ -3,7 +3,7 @@
 import { useProducts, useRoomQuery, type RoomRecord } from "@gagufit/api";
 import { CloudOff, SearchX } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { cycleFurnitureId } from "@gagufit/core";
 import { deleteSelected, nudgeSelected } from "./actions";
 import { EditorLoading } from "./EditorLoading";
@@ -42,6 +42,9 @@ export function Editor({ roomId }: { roomId: string }) {
   useProducts();
   // 서버에 있는 방 - 불러온 뒤 한 번만 정함, 이후 쿼리 상태는 무시
   const [baseline, setBaseline] = useState<RoomRecord | null>(null);
+  const [deleted, setDeleted] = useState(false);
+  // 충돌로 서버본을 다시 열 때 - 보관본 복구 대신 토스트
+  const reloading = useRef(false);
 
   const record = query.data;
   // 캐시된 이전 값이 아니라 새로 받은 값으로 열기
@@ -52,12 +55,28 @@ export function Editor({ roomId }: { roomId: string }) {
     const backup = readBackup(roomId);
     const restore = backup !== null && backup.base === record.updatedAt;
     load(restore ? backup.room : record.room);
-    if (restore) showToast({ message: "저장하지 못한 변경을 되살렸어요" });
+    if (reloading.current) {
+      reloading.current = false;
+      showToast({ message: "다른 곳에서 바뀐 내용을 불러왔어요" });
+    } else if (restore)
+      showToast({ message: "저장하지 못한 변경을 되살렸어요" });
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 불러온 방을 스토어에 옮긴 뒤 화면을 여는 신호
     setBaseline(record);
   }, [baseline, fresh, record, roomId, load, showToast]);
 
-  if (baseline) return <EditorScreen roomId={roomId} baseline={baseline} />;
+  const onStop = (reason: "conflict" | "deleted") => {
+    if (reason === "deleted") {
+      setDeleted(true);
+      return;
+    }
+    // 서버본을 새로 받은 뒤 편집기를 다시 엶
+    reloading.current = true;
+    void query.refetch().then(() => setBaseline(null));
+  };
+
+  if (deleted) return <NotFound title="삭제된 방이에요" />;
+  if (baseline)
+    return <EditorScreen roomId={roomId} baseline={baseline} onStop={onStop} />;
   if (query.isError) return <LoadError onRetry={() => query.refetch()} />;
   if (fresh && record === null) return <NotFound />;
   return <EditorLoading />;
@@ -92,13 +111,13 @@ function LoadError({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-function NotFound() {
+function NotFound({ title = "방을 찾을 수 없어요" }: { title?: string }) {
   return (
     <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-surface px-4 text-center">
       <span className="flex size-16 items-center justify-center rounded-full bg-canvas text-ink-muted shadow-raised">
         <SearchX size={28} aria-hidden />
       </span>
-      <h1 className="text-lg font-bold text-ink">방을 찾을 수 없어요</h1>
+      <h1 className="text-lg font-bold text-ink">{title}</h1>
       <p className="max-w-[300px] text-sm text-ink-muted">
         지워졌거나 다른 브라우저에서 만든 방일 수 있어요
       </p>
@@ -188,12 +207,14 @@ function useShortcuts() {
 function EditorScreen({
   roomId,
   baseline,
+  onStop,
 }: {
   roomId: string;
   baseline: RoomRecord;
+  onStop: (reason: "conflict" | "deleted") => void;
 }) {
   const desktop = useIsDesktop();
-  useAutoSave(roomId, baseline);
+  useAutoSave(roomId, baseline, onStop);
   const view = useEditor((s) => s.view);
   const selected = useEditor((s) => s.selection !== null);
   useShortcuts();

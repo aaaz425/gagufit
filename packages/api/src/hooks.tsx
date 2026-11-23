@@ -83,9 +83,17 @@ export function useSaveRoom() {
   const client = useClient();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, room }: { id: string; room: Room }) => {
+    mutationFn: async ({
+      id,
+      room,
+      base,
+    }: {
+      id: string;
+      room: Room;
+      base: string;
+    }) => {
       await ensureSession(client);
-      return saveRoom(client, id, room);
+      return saveRoom(client, id, room, base);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: roomKeys.list }),
   });
