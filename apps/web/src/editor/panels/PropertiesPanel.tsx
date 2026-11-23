@@ -195,6 +195,7 @@ function OwnPrice({
         label="내 가격"
         unit="원"
         thousands
+        rejectBelowMin
         value={value}
         max={MAX_PRICE}
         placeholder={ref ? ref.price.toLocaleString("ko-KR") : "입력 안 함"}
@@ -304,7 +305,8 @@ function FurnitureProps({
   const showToast = useEditor((s) => s.showToast);
   const preset = presetOf(f.presetId);
   const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
-  const choices = preset && SIZE_CHOICES[preset.category];
+  // 실제 상품은 크기가 정해져 있어 빠른 선택을 숨김
+  const choices = preset && !f.product && SIZE_CHOICES[preset.category];
   const size = (key: "width" | "depth" | "height") => (value: number) =>
     update(resizeFurniture(room, FURNITURE_PRESETS, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>

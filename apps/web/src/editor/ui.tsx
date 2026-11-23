@@ -47,6 +47,7 @@ export function NumberField({
   onClear,
   placeholder,
   thousands,
+  rejectBelowMin,
 }: {
   label: string;
   unit: string;
@@ -62,6 +63,8 @@ export function NumberField({
   placeholder?: string;
   /** 쓰지 않는 동안 천 단위 쉼표로 보여줌 */
   thousands?: boolean;
+  /** min보다 작은 입력은 min으로 고치지 않고 버림 - 0으로 바뀌면 안 되는 값 */
+  rejectBelowMin?: boolean;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
   const plain = value === undefined ? "" : String(value);
@@ -82,6 +85,7 @@ export function NumberField({
     }
     if (!Number.isFinite(n)) return;
     let v = Math.round(n);
+    if (v < min && rejectBelowMin) return;
     if (v < min) onClampMin?.();
     v = Math.max(v, min);
     if (max !== undefined) v = Math.min(v, max);
