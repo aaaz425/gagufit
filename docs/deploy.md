@@ -41,24 +41,34 @@ Supabase 운영 프로젝트 + Vercel + gagufit.com
 8. 환경변수 - 직접
    - Settings > Environment Variables, Production에 입력
    - `NEXT_PUBLIC_*`는 빌드 때 박힘 - 값 변경 시 재배포
-9. 도메인 - 직접
-   - Settings > Domains에 `gagufit.com`과 `www.gagufit.com` 추가
-   - `www.gagufit.com`은 `gagufit.com`으로 리다이렉트 설정
-   - 등록기관 DNS에 Vercel이 안내하는 레코드 입력 (apex A, `www` CNAME)
-10. 배포 후 확인
+9. Google 애널리틱스 - 직접
+   - analytics.google.com에서 계정 → 속성 생성, 시간대 대한민국, 통화 KRW
+   - 데이터 스트림 > 웹, URL `https://gagufit.com`
+   - 향상된 측정 켜기, 페이지 조회수의 "브라우저 기록 이벤트 기반 페이지 변경"이 켜진 상태 확인
+   - 측정 ID `G-...` 복사 → 환경변수 `NEXT_PUBLIC_GA_ID`
+   - 관리 > 데이터 수집에서 Google 신호 끄기, 데이터 보관 14개월로 설정
+   - 관리 > 이벤트에서 `coupang_click`을 주요 이벤트로 지정, 첫 클릭이 수집된 뒤 목록에 나타남
+   - 개인정보처리방침(6·8번)과 맞추기 위한 설정
+10. 도메인 - 직접
+    - Settings > Domains에 `gagufit.com`과 `www.gagufit.com` 추가
+    - `www.gagufit.com`은 `gagufit.com`으로 리다이렉트 설정
+    - 등록기관 DNS에 Vercel이 안내하는 레코드 입력 (apex A, `www` CNAME)
+11. 배포 후 확인
     - `https://gagufit.com` 접속, `www`는 apex로 이동, `/privacy` `/terms` 열림
     - 방 만들기 → 새로고침 후 자동 저장 유지, `/rooms` 목록 표시
     - Supabase 대시보드 Authentication > Users에 익명 사용자 생성
     - Database > Cron Jobs에 `delete-stale-anonymous-users` 등록
+    - GA 실시간 보고서에 방문 표시
 
 ## 환경변수
 
-| 이름                                   | 값 출처                                              | 비고                               |
-| -------------------------------------- | ---------------------------------------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`             | Supabase > Project Settings > API > Project URL      | 로컬은 `supabase status`           |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase > Project Settings > API Keys > Publishable | secret·service_role 키는 넣지 않음 |
-| `ENABLE_EXPERIMENTAL_COREPACK`         | 값 `1`, Vercel 환경변수                              | 선택, pnpm 버전이 안 맞을 때만     |
-| `NEXT_PUBLIC_SITE_URL`                 | `https://gagufit.com`                                | 선택, 기본값 같음                  |
+| 이름                                   | 값 출처                                              | 비고                                                 |
+| -------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Supabase > Project Settings > API > Project URL      | 로컬은 `supabase status`                             |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase > Project Settings > API Keys > Publishable | secret·service_role 키는 넣지 않음                   |
+| `ENABLE_EXPERIMENTAL_COREPACK`         | 값 `1`, Vercel 환경변수                              | 선택, pnpm 버전이 안 맞을 때만                       |
+| `NEXT_PUBLIC_SITE_URL`                 | `https://gagufit.com`                                | 선택, 기본값 같음                                    |
+| `NEXT_PUBLIC_GA_ID`                    | GA > 데이터 스트림 > 측정 ID `G-...`                 | Production에만, 미리보기·로컬은 비움, 등록 후 재배포 |
 
 ## Vercel 없이 실행
 
