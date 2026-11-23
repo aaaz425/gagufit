@@ -1,7 +1,8 @@
 "use client";
 
-import { FURNITURE_PRESETS, PRODUCTS } from "@gagufit/data";
-import { CirclePlus, Search } from "lucide-react";
+import { FURNITURE_PRESETS } from "@gagufit/data";
+import { useProducts } from "@gagufit/api";
+import { CirclePlus, CloudOff, LoaderCircle, Search } from "lucide-react";
 import { useState } from "react";
 import { addPresetToRoom } from "../actions";
 import { CATEGORY_GROUPS } from "../labels";
@@ -11,11 +12,8 @@ import { Segment, TOUCH_44 } from "../ui";
 /** 검색창 id - 빈 방 안내가 찾아 포커스 */
 export const FURNITURE_SEARCH_ID = "furniture-search";
 
-const SOURCES = {
-  basic: Object.values(FURNITURE_PRESETS),
-  product: Object.values(PRODUCTS),
-};
-type Source = keyof typeof SOURCES;
+const BASIC = Object.values(FURNITURE_PRESETS);
+type Source = "basic" | "product";
 
 /** 검색·칩은 위에 고정, 목록만 스크롤 - 부모가 높이를 정해야 함 */
 export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
@@ -24,7 +22,9 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
   const [source, setSource] = useState<Source>("basic");
   const categories = CATEGORY_GROUPS[group].categories;
   const words = query.trim().replace(/\s+/g, "");
-  const list = SOURCES[source].filter(
+  // 실패하면 실제 상품 탭만 다시 시도 안내
+  const { data: products = [], isPending, isError, refetch } = useProducts();
+  const list = (source === "basic" ? BASIC : products).filter(
     (p) =>
       (!categories || categories.includes(p.category)) &&
       (!words || p.name.replace(/\s+/g, "").includes(words)),
@@ -109,10 +109,32 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             </button>
           </li>
         ))}
-        {list.length === 0 && (
-          <li className="py-6 text-center text-sm text-ink-muted">
-            찾는 가구가 없어요
+        {source === "product" && isError ? (
+          <li className="flex flex-col items-center gap-3 py-6 text-center">
+            <CloudOff size={24} className="text-ink-muted" aria-hidden />
+            <p className="text-sm text-ink-muted">상품을 불러오지 못했어요</p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="h-11 rounded-sm border border-border bg-canvas px-5 text-sm font-semibold text-ink hover:bg-surface"
+            >
+              다시 시도
+            </button>
           </li>
+        ) : source === "product" && isPending ? (
+          <li
+            role="status"
+            className="flex items-center justify-center gap-2 py-6 text-sm text-ink-muted"
+          >
+            <LoaderCircle size={16} className="animate-spin" aria-hidden />
+            상품을 불러오는 중이에요
+          </li>
+        ) : (
+          list.length === 0 && (
+            <li className="py-6 text-center text-sm text-ink-muted">
+              찾는 가구가 없어요
+            </li>
+          )
         )}
       </ul>
     </div>

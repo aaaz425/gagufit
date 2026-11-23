@@ -1,36 +1,66 @@
 import { describe, expect, it } from "vitest";
 import { FURNITURE_PRESETS } from "./presets";
-import { FURNITURE_CATALOG, PRODUCTS } from "./products";
+import { productsFromRows, type ProductRow } from "./products";
 
-const isPosInt = (n: number) => Number.isInteger(n) && n > 0;
+const row = (id: string, over: Partial<ProductRow> = {}): ProductRow => ({
+  id,
+  base: "desk-120",
+  name: id,
+  width: 100,
+  depth: 50,
+  height: 70,
+  color: null,
+  url: "https://link.coupang.com/a/x",
+  price: 10000,
+  checked_at: "2026-11-21",
+  ...over,
+});
 
-describe("실제 상품", () => {
-  const products = Object.values(PRODUCTS);
-
-  it("기본 프리셋 id와 겹치지 않고 카탈로그에 모두 들어감", () => {
-    for (const p of products) {
-      expect(FURNITURE_PRESETS[p.id]).toBeUndefined();
-      expect(FURNITURE_CATALOG[p.id]).toBe(p);
-    }
+describe("productsFromRows", () => {
+  it("base에서 분류·최소 크기·layer를 이어받고 참고가를 담음", () => {
+    const [p] = productsFromRows([row("rug-a", { base: "rug-160" })]);
+    const base = FURNITURE_PRESETS["rug-160"];
+    expect(p.category).toBe(base.category);
+    expect(p.minSize).toEqual(base.minSize);
+    expect(p.layer).toBe("floor");
+    expect(p.baseId).toBe("rug-160");
+    expect(p.size).toEqual({ width: 100, depth: 50, height: 70 });
+    expect(p.offers).toEqual([
+      {
+        url: "https://link.coupang.com/a/x",
+        price: 10000,
+        checkedAt: "2026-11-21",
+      },
+    ]);
   });
 
-  it("크기는 cm 양의 정수이고 최소 크기 이상", () => {
-    for (const p of products) {
-      for (const k of ["width", "depth", "height"] as const) {
-        expect(isPosInt(p.size[k]), `${p.id} ${k}`).toBe(true);
-        expect(p.size[k], `${p.id} ${k}`).toBeGreaterThanOrEqual(p.minSize[k]);
-      }
-    }
+  it("color가 비었거나 모르는 값이면 base 기본색", () => {
+    const [a, b, c] = productsFromRows([
+      row("a"),
+      row("b", { color: "no-such-color" }),
+      row("c", { color: "white" }),
+    ]);
+    expect(a.defaultColor).toBe(FURNITURE_PRESETS["desk-120"].defaultColor);
+    expect(b.defaultColor).toBe(a.defaultColor);
+    expect(c.defaultColor).toBe("white");
   });
 
-  it("링크는 쿠팡 파트너스 주소, 가격은 양의 정수, 기준일은 날짜 형식", () => {
-    for (const p of products) {
-      for (const o of p.offers ?? []) {
-        expect(o.url.startsWith("https://link.coupang.com/"), p.id).toBe(true);
-        expect(isPosInt(o.price), p.id).toBe(true);
-        expect(o.checkedAt, p.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-        expect(Number.isNaN(Date.parse(o.checkedAt)), p.id).toBe(false);
-      }
-    }
+  it("모르는 base와 기본 프리셋과 겹치는 id는 건너뜀", () => {
+    const out = productsFromRows([
+      row("a", { base: "no-such-base" }),
+      row("chair"),
+      row("ok"),
+    ]);
+    expect(out.map((p) => p.id)).toEqual(["ok"]);
+  });
+
+  it("base 프리셋 순서, 같으면 이름순", () => {
+    const out = productsFromRows([
+      row("1", { base: "chair", name: "나" }),
+      row("2", { base: "desk-120", name: "다" }),
+      row("3", { base: "chair", name: "가" }),
+      row("4", { base: "bed-super-single", name: "라" }),
+    ]);
+    expect(out.map((p) => p.id)).toEqual(["4", "2", "3", "1"]);
   });
 });

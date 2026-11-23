@@ -17,8 +17,14 @@ import {
   type PlacedFurniture,
   type Room,
 } from "@gagufit/core";
-import { FURNITURE_COLORS, FURNITURE_CATALOG } from "@gagufit/data";
-import { ExternalLink, RotateCw, TriangleAlert } from "lucide-react";
+import { useProducts } from "@gagufit/api";
+import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
+import {
+  ExternalLink,
+  LoaderCircle,
+  RotateCw,
+  TriangleAlert,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { COUPANG_NOTICE } from "@/site/constants";
 import {
@@ -31,6 +37,7 @@ import {
 import {
   CATEGORY_LABELS,
   OPENING_LABELS,
+  placedName,
   wallLabel,
   WARNING_TONE,
   type WarningTone,
@@ -95,6 +102,26 @@ function Header({
       {action}
     </div>
   );
+}
+
+/** 상품 정보는 방과 따로 불러옴 - 줄이 없으면(판매 종료) 링크만 안 보임 */
+function ProductOffers({ productId }: { productId: string }) {
+  const { data, isPending, isError } = useProducts();
+  if (isPending) {
+    return (
+      <div className="flex h-11 items-center justify-center gap-2 rounded-md border border-border bg-surface text-xs text-ink-muted">
+        <LoaderCircle size={16} className="animate-spin" aria-hidden />
+        <span role="status">가격과 링크를 불러오는 중이에요</span>
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <p className="text-xs text-ink-muted">가격과 링크를 불러오지 못했어요</p>
+    );
+  }
+  const offers = data?.find((p) => p.id === productId)?.offers;
+  return offers && <Offers offers={offers} />;
 }
 
 /** 판매처 참고가 + 쿠팡 링크 - 대가성 문구는 링크 바로 옆, 접지 않음 */
@@ -184,10 +211,10 @@ function FurnitureProps({
 }) {
   const update = useEditor((s) => s.update);
   const showToast = useEditor((s) => s.showToast);
-  const preset = FURNITURE_CATALOG[f.presetId];
-  const minSize = minSizeOf(FURNITURE_CATALOG, f.presetId);
+  const preset = FURNITURE_PRESETS[f.presetId];
+  const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
   const size = (key: "width" | "depth" | "height") => (value: number) =>
-    update(resizeFurniture(room, FURNITURE_CATALOG, f.id, { [key]: value }));
+    update(resizeFurniture(room, FURNITURE_PRESETS, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
     update(updateFurniture(room, f.id, patch));
   // X·Y는 회전 외곽 상자 왼쪽 위 기준 - 저장은 중심
@@ -216,11 +243,11 @@ function FurnitureProps({
             px={44}
           />
         }
-        title={preset?.name ?? "가구"}
+        title={placedName(f)}
         subtitle={preset ? CATEGORY_LABELS[preset.category] : "기타"}
         action={headerAction}
       />
-      {preset?.offers && <Offers offers={preset.offers} />}
+      {f.product && <ProductOffers productId={f.product.id} />}
       <SectionTitle>크기</SectionTitle>
       <div className="flex gap-2">
         {(
@@ -240,7 +267,7 @@ function FurnitureProps({
             onCommit={size(key)}
             onClampMin={() =>
               showToast({
-                message: `${preset?.name ?? "가구"} ${label}는 ${minSize[key]}cm부터 가능해요`,
+                message: `${placedName(f)} ${label}는 ${minSize[key]}cm부터 가능해요`,
               })
             }
           />

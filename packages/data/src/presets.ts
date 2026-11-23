@@ -149,8 +149,5 @@ const RAW = {
   },
 } satisfies Record<string, Omit<FurniturePreset, "id">>;
 
-/** 상품의 base로 쓸 수 있는 id */
-export type PresetId = keyof typeof RAW;
-
 export const FURNITURE_PRESETS: Readonly<Record<string, FurniturePreset>> =
   withIds(RAW);

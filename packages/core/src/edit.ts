@@ -80,7 +80,8 @@ export function addFurniture(
       ...room.furniture,
       {
         id,
-        presetId: preset.id,
+        presetId: preset.baseId ?? preset.id,
+        ...(preset.baseId && { product: { id: preset.id, name: preset.name } }),
         position: roundVec2({ x: room.width / 2, y: room.depth / 2 }),
         rotation: 0,
         size: { ...preset.size },

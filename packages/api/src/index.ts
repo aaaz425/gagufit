@@ -14,6 +14,7 @@ export {
   roomKeys,
   useCreateRoom,
   useDeleteRoom,
+  useProducts,
   useRoomQuery,
   useRooms,
   useSaveRoom,

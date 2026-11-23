@@ -120,6 +120,8 @@ export type FurniturePreset = {
   layer: FurnitureLayer;
   /** 실제 상품만 - 쿠팡 파트너스 링크 */
   offers?: Offer[];
+  /** 실제 상품만 - 분류·크기 규칙을 이어받은 기본 프리셋 id, 배치 때 presetId로 저장 */
+  baseId?: string;
 };
 
 export type PlacedFurniture = {
@@ -132,6 +134,8 @@ export type PlacedFurniture = {
   /** 추가할 때 프리셋 크기 복사, 이후 따로 조절 */
   size: Size;
   color: FurnitureColorId;
+  /** 실제 상품을 놓은 경우 - 이름은 당시 값, 링크·가격은 저장하지 않고 id로 조회 */
+  product?: { id: string; name: string };
 };
 
 export type Room = {

@@ -2,8 +2,13 @@ import type { Room } from "@gagufit/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, type ReactNode } from "react";
 import type { ApiClient } from "./client";
+import { listProducts } from "./products";
 import { createRoom, deleteRoom, getRoom, listRooms, saveRoom } from "./rooms";
 import { ensureSession } from "./session";
+
+export const productKeys = {
+  list: ["products", "list"] as const,
+};
 
 export const roomKeys = {
   list: ["rooms", "list"] as const,
@@ -26,6 +31,17 @@ function useClient(): ApiClient {
   const client = useContext(ApiContext);
   if (!client) throw new Error("ApiProvider 안에서만 사용");
   return client;
+}
+
+// 거의 안 바뀌므로 세션 동안 한 번만 불러옴
+export function useProducts() {
+  const client = useClient();
+  return useQuery({
+    queryKey: productKeys.list,
+    queryFn: () => listProducts(client),
+    staleTime: Infinity,
+    retry: 1,
+  });
 }
 
 export function useRooms() {
