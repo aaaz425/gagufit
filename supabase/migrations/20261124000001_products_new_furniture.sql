@@ -1,0 +1,35 @@
+-- 새 가구 30종 실제 상품 - 종류마다 쿠팡 판매량 상위 상품 하나, 파트너스 링크
+-- 크기·가격은 상품 페이지와 파트너스 화면 기준 - 일부 크기는 추정이라 확인 필요 (fan, floor-lamp, plant, loft-bed, trash-can, partition, cat-tower, pet-house, bicycle, mirror 깊이)
+insert into public.products
+  (id, base, name, width, depth, height, color, url, price, checked_at)
+values
+  ('low-table-comet-fold-600', 'low-table', '코멧 홈 접이식 좌식 테이블 600', 60, 40, 25, 'oak', 'https://link.coupang.com/a/iVbnQbsKf6', 9330, '2026-11-24'),
+  ('shelf-obmin-lpm-3', 'shelf', '오브민 LPM 조립식 선반 3단', 60, 40, 80, 'white', 'https://link.coupang.com/a/iVbv9Ip8YS', 19900, '2026-11-24'),
+  ('shoe-cabinet-zeus-lpm-800', 'shoe-cabinet', '제우스가구 LPM 양문 수납장 800', 80, 40, 80, 'white', 'https://link.coupang.com/a/iVbQeAPs5s', 38970, '2026-11-24'),
+  ('mattress-kurua-spring-ss', 'mattress', 'KURUA 독립스프링 매트리스 슈퍼싱글 20cm', 110, 200, 20, 'white', 'https://link.coupang.com/a/iVbT0bDEYe', 69800, '2026-11-24'),
+  ('stool-comet-fold-xl', 'stool', '코멧 홈 폴딩 체어 XL', 41, 35, 45, 'grey', 'https://link.coupang.com/a/iVb1FNX5Iy', 7900, '2026-11-24'),
+  ('cabinet-dongseo-penta-4', 'cabinet', '동서가구 팬타 광폭 서랍장 800 4단', 80, 50, 94, 'white', 'https://link.coupang.com/a/iV1hlStyV2', 93010, '2026-11-24'),
+  ('cart-destem-mono-3', 'cart', '데스텀 모노 3단 트롤리', 40, 22, 64, 'white', 'https://link.coupang.com/a/iV1i4lRN8e', 12900, '2026-11-24'),
+  ('storage-box-kumho-50l', 'storage-box', '금호화학 리빙박스 50L', 58, 41, 30, 'white', 'https://link.coupang.com/a/iV1k6OY4I0', 25930, '2026-11-24'),
+  ('floor-chair-ogu-oak', 'floor-chair', '오구 좌식의자 오크', 37, 47, 43, 'oak', 'https://link.coupang.com/a/iV1mB7mRS9', 13800, '2026-11-24'),
+  ('bean-bag-unifire-1p', 'bean-bag', 'UNIFIRE 1인용 빈백소파', 90, 100, 80, 'grey', 'https://link.coupang.com/a/iV1nUs5fcy', 66750, '2026-11-24'),
+  ('bar-table-wonpl-1200', 'bar-table', '원피엘가구 아일랜드 바테이블 1200', 120, 70, 82, 'white', 'https://link.coupang.com/a/iV1pf9UCVU', 223000, '2026-11-24'),
+  ('mirror-beautypeak-1610', 'mirror', '뷰티피크 전신거울 3in1 스탠드 1610', 52, 5, 161, 'grey', 'https://link.coupang.com/a/iV1qx3H8XQ', 101900, '2026-11-24'),
+  ('drying-rack-kurua-y', 'drying-rack', 'KURUA Y형 접이식 대형 빨래건조대', 180, 60, 123, 'white', 'https://link.coupang.com/a/iV1rUwvJF6', 42800, '2026-11-24'),
+  ('dryer-samsung-dv21dg8200bw', 'dryer', '삼성전자 AI 건조기 21kg DV21DG8200BW', 69, 84, 98, 'white', 'https://link.coupang.com/a/iV2AVc2uk0', 997500, '2026-11-24'),
+  ('clothes-care-samsung-df18cb8600er', 'clothes-care', '삼성전자 비스포크 에어드레서 DF18CB8600ER', 45, 60, 196, 'beige-fabric', 'https://link.coupang.com/a/iV2CqmeAqy', 990000, '2026-11-24'),
+  ('air-conditioner-samsung-q9000', 'air-conditioner', '삼성 비스포크 AI Q9000 스탠드 에어컨 19평', 36, 25, 185, 'white', 'https://link.coupang.com/a/iV2DGnN1bw', 1328000, '2026-11-24'),
+  ('air-purifier-lg-as186hwwa', 'air-purifier', 'LG전자 퓨리케어 360도 공기청정기 AS186HWWA', 32, 32, 51, 'white', 'https://link.coupang.com/a/iV2E2mx6Em', 329000, '2026-11-24'),
+  ('tv-lg-standbyme2-32', 'tv', 'LG전자 스탠바이미 2 Max 32인치', 72, 42, 131, 'charcoal', 'https://link.coupang.com/a/iV349pXEvQ', 1342000, '2026-11-24'),
+  ('fan-unimax-umf33408rw', 'fan', '유니맥스 써큘레이터형 선풍기 UMF-33408RW', 40, 40, 115, 'white', 'https://link.coupang.com/a/iV36EtJKX6', 54900, '2026-11-24'),
+  ('floor-lamp-comet-mood', 'floor-lamp', '코멧 무드 플로어 장스탠드', 30, 30, 160, 'white', 'https://link.coupang.com/a/iV33F7woEK', 24990, '2026-11-24'),
+  ('plant-joart-lilac-150', 'plant', '조아트 라일락 인조목 150cm', 40, 40, 150, 'green-fabric', 'https://link.coupang.com/a/iV374jHJ0u', 82150, '2026-11-24'),
+  ('loft-bed-monot-bunk', 'loft-bed', '모노트 철제 이층침대 사다리형', 100, 205, 160, 'white', 'https://link.coupang.com/a/iV39yFvh9w', 215000, '2026-11-24'),
+  ('trash-can-fablus-vins-45l', 'trash-can', '패블러스 빈스 페달 휴지통 45L', 40, 30, 58, 'charcoal', 'https://link.coupang.com/a/iV4kswMuzY', 31200, '2026-11-24'),
+  ('partition-casamaru-1200', 'partition', '까사마루 스탠드 가림막 1200x1500', 120, 30, 150, 'white', 'https://link.coupang.com/a/iV4mH27dRI', 33900, '2026-11-24'),
+  ('treadmill-egojin-7500', 'treadmill', '이고진 7500 워킹머신 F3690', 61, 124, 112, 'white', 'https://link.coupang.com/a/iV4pexHjDU', 310900, '2026-11-24'),
+  ('exercise-bike-egojin-718s', 'exercise-bike', '이고진 718S 스핀바이크', 50, 101, 128, 'charcoal', 'https://link.coupang.com/a/iV4rSz2JCm', 261800, '2026-11-24'),
+  ('piano-casio-cdps160', 'piano', '카시오 디지털피아노 CDP-S160 스탠드 세트', 132, 37, 75, 'charcoal', 'https://link.coupang.com/a/iV4vct2pvU', 799000, '2026-11-24'),
+  ('bicycle-samchully-typhoon-dx', 'bicycle', '삼천리 태풍DX 26 MTB 21단', 169, 60, 100, 'charcoal', 'https://link.coupang.com/a/iV4w00fUL6', 299000, '2026-11-24'),
+  ('cat-tower-pawzroad-175', 'cat-tower', 'PAWZ Road 8단 캣타워 175cm', 55, 50, 175, 'beige-fabric', 'https://link.coupang.com/a/iV4y5CFaY8', 75550, '2026-11-24'),
+  ('pet-house-lebonheur-tent', 'pet-house', '르보네르 보온 텐트 숨숨집', 55, 55, 50, 'walnut', 'https://link.coupang.com/a/iV4A8z5ku4', 32300, '2026-11-24');
