@@ -12,10 +12,10 @@ describe("방 템플릿", () => {
       // 문은 아래 벽 - 침대는 위 벽 쪽 가운데
       room.furniture.push({
         id: "f1",
-        presetId: "bed-super-single",
+        presetId: "bed",
         position: { x: room.width / 2, y: 110 },
         rotation: 0,
-        size: FURNITURE_PRESETS["bed-super-single"].size,
+        size: FURNITURE_PRESETS.bed.size,
         color: "beige-fabric",
       });
       expect(checkRoom(room, FURNITURE_PRESETS)).toEqual([]);

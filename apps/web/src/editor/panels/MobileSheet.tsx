@@ -3,6 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { usePresence } from "@/motion";
+import { QuoteBody } from "../QuotePanel";
 import { useEditor } from "../store";
 import { FurniturePanel } from "./FurniturePanel";
 import { PropertiesPanel } from "./PropertiesPanel";
@@ -31,6 +32,8 @@ export function MobileSheet() {
         <FurniturePanel onAdded={close} />
       </>
     );
+  } else if (sheet === "quote") {
+    body = <QuoteBody onPick={close} />;
   } else if (sheet === "room") {
     body = (
       <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4">

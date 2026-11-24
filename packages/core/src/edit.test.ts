@@ -96,6 +96,14 @@ describe("duplicateFurniture", () => {
     });
   });
 
+  it("내 가격도 복사", () => {
+    const base = addFurniture(room, preset, "a");
+    const priced = updateFurniture(base, "a", { price: 120000 });
+    expect(duplicateFurniture(priced, "a", "b").furniture[1].price).toBe(
+      120000,
+    );
+  });
+
   it("offset 0이면 같은 자리에 복제", () => {
     const base = addFurniture(room, preset, "a");
     const next = duplicateFurniture(base, "a", "b", 0);
@@ -346,6 +354,14 @@ describe("updateFurniture", () => {
     expect(updateFurniture(base, "a", { position: { ...position } })).toBe(
       base,
     );
+  });
+
+  it("price를 undefined로 주면 키째 지움", () => {
+    const priced = updateFurniture(base, "a", { price: 5000 });
+    const cleared = updateFurniture(priced, "a", { price: undefined });
+    expect("price" in cleared.furniture[0]).toBe(false);
+    // 원래 없던 값을 지우면 바뀐 게 없음
+    expect(updateFurniture(base, "a", { price: undefined })).toBe(base);
   });
 
   it("없는 id면 같은 room", () => {

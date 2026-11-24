@@ -49,6 +49,18 @@ const SURFACE: Readonly<
 /** 선택 외곽선 CSS px - drei Outlines 기본 모드는 그리기 버퍼 px */
 const SELECTION_PX = 3;
 
+/** 이보다 얇은 조각은 외곽선이 몸통을 덮어 가늘게 - 이 두께(cm)부터 전체 굵기 */
+const OUTLINE_FULL_CM = 10;
+/** 이보다 얇은 조각(유리·손잡이 덧댐)은 외곽선을 생략 - 아래 몸체 외곽선이 대신함 */
+const OUTLINE_MIN_CM = 1;
+
+/** 조각 가장 얇은 변 기준 외곽선 굵기 배율 - 0이면 그리지 않음 */
+function outlineScale(part: Part): number {
+  const thin = Math.min(...part.size);
+  if (thin < OUTLINE_MIN_CM) return 0;
+  return Math.min(1, Math.max(0.35, thin / OUTLINE_FULL_CM));
+}
+
 const materialCache = new Map<string, MeshStandardMaterial>();
 
 /** 재질·색·톤 조합마다 하나 - 가구끼리 공유 */
@@ -78,6 +90,9 @@ const EDGE_MATERIAL = new LineBasicMaterial({ color: SCENE_COLORS.inkMuted });
 
 /** 원기둥을 앞쪽으로 눕힌 지름 1·두께 1 기준 - 세탁기 문 */
 const DISC = new CylinderGeometry(0.5, 0.5, 1, 32).rotateX(Math.PI / 2);
+/** 위로 선 지름 1·높이 1 기준 - 화분·휴지통 */
+const ROUND = new CylinderGeometry(0.5, 0.5, 1, 24);
+const UNIT_SHAPES = new Set<BufferGeometry>([DISC, ROUND]);
 
 const warningMaterial = (color: string, opacity: number) =>
   new MeshBasicMaterial({
@@ -104,6 +119,7 @@ const FALLBACK_LOOK: Pick<FurniturePreset, "category" | "material" | "layer"> =
 
 function partGeometry(part: Part) {
   if (part.shape === "disc") return DISC;
+  if (part.shape === "round") return ROUND;
   const [w, h, d] = part.size.map(m);
   // 둥근 모서리 - 조각이 작아도 면 수가 늘지 않게 분할 2
   return part.round > 0
@@ -113,7 +129,12 @@ function partGeometry(part: Part) {
 
 /** 윤곽선은 각진 상자 모서리 기준 - 손잡이처럼 작은 조각은 생략 */
 function partEdges(part: Part): BufferGeometry | null {
-  if (part.shape === "disc" || Math.min(...part.size) < 2.5 || part.round > 2)
+  if (
+    part.shape !== "box" ||
+    part.rot ||
+    Math.min(...part.size) < 2.5 ||
+    part.round > 2
+  )
     return null;
   const box = new BoxGeometry(
     ...(part.size.map(m) as [number, number, number]),
@@ -233,9 +254,9 @@ const FLOOR_MARKS = {
 };
 
 function partScale(part: Part): [number, number, number] {
-  return part.shape === "disc"
-    ? (part.size.map(m) as [number, number, number])
-    : [1, 1, 1];
+  return part.shape === "box"
+    ? [1, 1, 1]
+    : (part.size.map(m) as [number, number, number]);
 }
 
 // 등장 효과 길이(초)와 시작 크기 - globals.css 움직임 토큰과 맞춤
@@ -325,7 +346,7 @@ export const FurnitureMesh = memo(function FurnitureMesh({
   useEffect(
     () => () => {
       for (const { geometry, edges } of parts) {
-        if (geometry !== DISC) geometry.dispose();
+        if (!UNIT_SHAPES.has(geometry)) geometry.dispose();
         edges?.dispose();
       }
     },
@@ -382,7 +403,12 @@ export const FurnitureMesh = memo(function FurnitureMesh({
         const scale = partScale(part);
         const position = part.center.map(m) as [number, number, number];
         return (
-          <group key={i} position={position} scale={scale}>
+          <group
+            key={i}
+            position={position}
+            scale={scale}
+            rotation={part.rot && [...part.rot, "YXZ"]}
+          >
             <mesh
               geometry={geometry}
               material={furnitureMaterial(look.material, hex, part.tone)}
@@ -390,9 +416,9 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               receiveShadow
             >
               {/* 러그는 바닥에 붙은 판이라 뒤집힌 셸이 바닥과 깊이 경쟁해 번짐 - 바닥 표시만 */}
-              {selected && shadow && (
+              {selected && shadow && outlineScale(part) > 0 && (
                 <Outlines
-                  thickness={SELECTION_PX * dpr}
+                  thickness={SELECTION_PX * dpr * outlineScale(part)}
                   // 2D와 같이 경고 우선
                   color={SCENE_COLORS[warning ?? "primary"]}
                 />

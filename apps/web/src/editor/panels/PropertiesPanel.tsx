@@ -12,14 +12,16 @@ import {
   updateFurniture,
   updateOpening,
   wallFrame,
+  type FurnitureCategory,
   type FurniturePreset,
   type Offer,
   type Opening,
   type PlacedFurniture,
   type Room,
+  type Size,
 } from "@gagufit/core";
 import { useProducts } from "@gagufit/api";
-import { FURNITURE_COLORS, FURNITURE_PRESETS } from "@gagufit/data";
+import { FURNITURE_COLORS, FURNITURE_PRESETS, presetOf } from "@gagufit/data";
 import {
   ExternalLink,
   LoaderCircle,
@@ -40,6 +42,7 @@ import {
   CATEGORY_LABELS,
   OPENING_LABELS,
   placedName,
+  SIZE_CHOICES,
   wallLabel,
   WARNING_TONE,
   type WarningTone,
@@ -47,7 +50,7 @@ import {
 } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
 import { useEditor, useRoom, warningsOf, type Selection } from "../store";
-import { NumberField, SectionTitle, Segment } from "../ui";
+import { NumberField, SectionTitle, Segment, TOUCH_44 } from "../ui";
 import { OpeningIcon } from "./RoomPanel";
 
 /** 선택한 가구·문·창문 속성 - header는 모바일 시트 접기 버튼 자리 */
@@ -169,6 +172,84 @@ function Offers({
   );
 }
 
+/** 내 가격 입력 상한 원 */
+const MAX_PRICE = 1_000_000_000;
+
+/** 입력이 견적에서 상품 참고가보다 먼저 쓰임 - 쿠팡 카드와 모양을 달리해 입력창으로만 보임 */
+function OwnPrice({
+  value,
+  productId,
+  onChange,
+}: {
+  value: number | undefined;
+  productId: string | undefined;
+  onChange: (price: number | undefined) => void;
+}) {
+  const { data } = useProducts();
+  const ref = productId
+    ? data?.find((p) => p.id === productId)?.offers?.[0]
+    : undefined;
+  return (
+    <>
+      <NumberField
+        label="내 가격"
+        unit="원"
+        thousands
+        rejectBelowMin
+        value={value}
+        max={MAX_PRICE}
+        placeholder={ref ? ref.price.toLocaleString("ko-KR") : "입력 안 함"}
+        onCommit={onChange}
+        onClear={() => onChange(undefined)}
+      />
+      <p className="-mt-2 text-xs text-ink-muted">
+        {ref
+          ? `내가 찾은 가격을 넣으면 견적에 이 값이 먼저 쓰여요. 비우면 참고가 ${ref.price.toLocaleString("ko-KR")}원으로 계산해요`
+          : "내가 찾은 가격을 넣으면 견적에 더해져요"}
+      </p>
+    </>
+  );
+}
+
+/** 가로·깊이만 바꾸는 빠른 선택 - 현재 값과 같으면 선택됨 */
+function SizeChoices({
+  choices,
+  size,
+  onPick,
+}: {
+  choices: NonNullable<(typeof SIZE_CHOICES)[FurnitureCategory]>;
+  size: Size;
+  onPick: (choice: (typeof choices)[number]) => void;
+}) {
+  return (
+    <div className="-mx-4 flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-0.5 md:mx-0 md:flex-wrap md:px-0">
+      {choices.map((c) => {
+        const on =
+          size.width === c.width &&
+          (c.depth === undefined || size.depth === c.depth);
+        return (
+          <button
+            key={c.label}
+            type="button"
+            aria-pressed={on}
+            onClick={() => !on && onPick(c)}
+            className={`flex h-8 shrink-0 items-center gap-1 rounded-full px-3 text-sm ${TOUCH_44} ${
+              on
+                ? "bg-primary-soft font-bold text-primary"
+                : "border border-border bg-surface font-medium text-ink-muted hover:text-ink"
+            }`}
+          >
+            {c.label}
+            <small className="text-xs font-normal tabular-nums opacity-80">
+              {c.depth === undefined ? c.width : `${c.width}×${c.depth}`}
+            </small>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 const WARNING_STYLE: Record<WarningTone, string> = {
   danger: "bg-danger-soft text-danger",
   caution: "bg-caution-soft text-caution",
@@ -222,8 +303,10 @@ function FurnitureProps({
 }) {
   const update = useEditor((s) => s.update);
   const showToast = useEditor((s) => s.showToast);
-  const preset = FURNITURE_PRESETS[f.presetId];
+  const preset = presetOf(f.presetId);
   const minSize = minSizeOf(FURNITURE_PRESETS, f.presetId);
+  // 실제 상품은 크기가 정해져 있어 빠른 선택을 숨김
+  const choices = preset && !f.product && SIZE_CHOICES[preset.category];
   const size = (key: "width" | "depth" | "height") => (value: number) =>
     update(resizeFurniture(room, FURNITURE_PRESETS, f.id, { [key]: value }));
   const set = (patch: Partial<Omit<PlacedFurniture, "id">>) =>
@@ -259,7 +342,27 @@ function FurnitureProps({
         action={headerAction}
       />
       {f.product && <ProductOffers productId={f.product.id} />}
+      <SectionTitle>내 가격</SectionTitle>
+      <OwnPrice
+        value={f.price}
+        productId={f.product?.id}
+        onChange={(price) => set({ price })}
+      />
       <SectionTitle>크기</SectionTitle>
+      {choices && (
+        <SizeChoices
+          choices={choices}
+          size={f.size}
+          onPick={(c) =>
+            update(
+              resizeFurniture(room, FURNITURE_PRESETS, f.id, {
+                width: c.width,
+                depth: c.depth,
+              }),
+            )
+          }
+        />
+      )}
       <div className="flex gap-2">
         {(
           [
