@@ -8,7 +8,7 @@ values
   ('shoe-cabinet-zeus-lpm-800', 'shoe-cabinet', '제우스가구 LPM 양문 수납장 800', 80, 40, 80, 'white', 'https://link.coupang.com/a/iVbQeAPs5s', 38970, '2026-11-24'),
   ('mattress-kurua-spring-ss', 'mattress', 'KURUA 독립스프링 매트리스 슈퍼싱글 20cm', 110, 200, 20, 'white', 'https://link.coupang.com/a/iVbT0bDEYe', 69800, '2026-11-24'),
   ('stool-comet-fold-xl', 'stool', '코멧 홈 폴딩 체어 XL', 41, 35, 45, 'grey', 'https://link.coupang.com/a/iVb1FNX5Iy', 7900, '2026-11-24'),
-  ('cabinet-dongseo-penta-4', 'cabinet', '동서가구 팬타 광폭 서랍장 800 4단', 80, 50, 94, 'white', 'https://link.coupang.com/a/iV1hlStyV2', 102770, '2026-11-24'),
+  ('cabinet-dongseo-penta-4', 'cabinet', '동서가구 팬타 광폭 서랍장 800 4단', 80, 50, 94, 'white', 'https://link.coupang.com/a/iV1hlStyV2', 121000, '2026-11-24'),
   ('cart-destem-mono-3', 'cart', '데스텀 모노 3단 트롤리', 40, 22, 64, 'white', 'https://link.coupang.com/a/iV1i4lRN8e', 9900, '2026-11-24'),
   ('storage-box-kumho-50l', 'storage-box', '금호화학 리빙박스 50L', 58, 41, 30, 'white', 'https://link.coupang.com/a/iV1k6OY4I0', 25930, '2026-11-24'),
   ('floor-chair-ogu-oak', 'floor-chair', '오구 좌식의자 오크', 37, 47, 43, 'oak', 'https://link.coupang.com/a/iV1mB7mRS9', 13800, '2026-11-24'),
