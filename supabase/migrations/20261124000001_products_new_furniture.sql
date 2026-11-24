@@ -1,14 +1,13 @@
--- 새 가구 30종 실제 상품 - 종류마다 쿠팡 판매량 상위 상품 하나, 파트너스 링크
--- 크기·가격은 상품 페이지와 파트너스 화면 기준 - 일부 크기는 추정이라 확인 필요 (fan, floor-lamp, plant, loft-bed, trash-can, partition, cat-tower, pet-house, bicycle, mirror 깊이)
+-- 새 가구 실제 상품 - 종류마다 쿠팡 판매량 상위 하나
 insert into public.products
   (id, base, name, width, depth, height, color, url, price, checked_at)
 values
   ('low-table-comet-fold-600', 'low-table', '코멧 홈 접이식 좌식 테이블 600', 60, 40, 25, 'oak', 'https://link.coupang.com/a/iVbnQbsKf6', 9330, '2026-11-24'),
   ('shelf-obmin-lpm-3', 'shelf', '오브민 LPM 조립식 선반 3단', 60, 40, 80, 'white', 'https://link.coupang.com/a/iVbv9Ip8YS', 19900, '2026-11-24'),
-  ('shoe-cabinet-zeus-lpm-800', 'shoe-cabinet', '제우스가구 LPM 양문 수납장 800', 80, 40, 80, 'white', 'https://link.coupang.com/a/iVbQeAPs5s', 38970, '2026-11-24'),
+  ('shoe-cabinet-dongseo-olive-800', 'shoe-cabinet', '동서가구 올리브 800 신발장 도어형 7단', 80, 40, 100, 'white', 'https://link.coupang.com/a/iWy4ZBL91o', 90900, '2026-11-24'),
+  ('cabinet-zeus-lpm-800', 'cabinet', '제우스가구 LPM 양문 수납장 800', 80, 40, 80, 'white', 'https://link.coupang.com/a/iVbQeAPs5s', 38970, '2026-11-24'),
   ('mattress-kurua-spring-ss', 'mattress', 'KURUA 독립스프링 매트리스 슈퍼싱글 20cm', 110, 200, 20, 'white', 'https://link.coupang.com/a/iVbT0bDEYe', 69800, '2026-11-24'),
   ('stool-comet-fold-xl', 'stool', '코멧 홈 폴딩 체어 XL', 41, 35, 45, 'grey', 'https://link.coupang.com/a/iVb1FNX5Iy', 7900, '2026-11-24'),
-  ('cabinet-dongseo-penta-4', 'cabinet', '동서가구 팬타 광폭 서랍장 800 4단', 80, 50, 94, 'white', 'https://link.coupang.com/a/iV1hlStyV2', 121000, '2026-11-24'),
   ('cart-destem-mono-3', 'cart', '데스텀 모노 3단 트롤리', 40, 22, 64, 'white', 'https://link.coupang.com/a/iV1i4lRN8e', 9900, '2026-11-24'),
   ('storage-box-kumho-50l', 'storage-box', '금호화학 리빙박스 50L', 58, 41, 30, 'white', 'https://link.coupang.com/a/iV1k6OY4I0', 25930, '2026-11-24'),
   ('floor-chair-ogu-oak', 'floor-chair', '오구 좌식의자 오크', 37, 47, 43, 'oak', 'https://link.coupang.com/a/iV1mB7mRS9', 13800, '2026-11-24'),
@@ -32,4 +31,4 @@ values
   ('piano-casio-cdps160', 'piano', '카시오 디지털피아노 CDP-S160 스탠드 세트', 132, 37, 75, 'charcoal', 'https://link.coupang.com/a/iV4vct2pvU', 799000, '2026-11-24'),
   ('bicycle-samchully-typhoon-dx', 'bicycle', '삼천리 태풍DX 26 MTB 21단', 169, 60, 100, 'charcoal', 'https://link.coupang.com/a/iV4w00fUL6', 299000, '2026-11-24'),
   ('cat-tower-pawzroad-175', 'cat-tower', 'PAWZ Road 8단 캣타워 175cm', 55, 50, 175, 'beige-fabric', 'https://link.coupang.com/a/iV4y5CFaY8', 75550, '2026-11-24'),
-  ('pet-house-lebonheur-tent', 'pet-house', '르보네르 보온 텐트 숨숨집', 55, 55, 50, 'walnut', 'https://link.coupang.com/a/iV4A8z5ku4', 32300, '2026-11-24');
+  ('pet-house-lebonheur-tent', 'pet-house', '르보네르 보온 텐트 숨숨집', 55, 55, 50, 'grey', 'https://link.coupang.com/a/iV4A8z5ku4', 32300, '2026-11-24');
