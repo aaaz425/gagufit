@@ -49,6 +49,18 @@ const SURFACE: Readonly<
 /** 선택 외곽선 CSS px - drei Outlines 기본 모드는 그리기 버퍼 px */
 const SELECTION_PX = 3;
 
+/** 이보다 얇은 조각은 외곽선이 몸통을 덮어 가늘게 - 이 두께(cm)부터 전체 굵기 */
+const OUTLINE_FULL_CM = 10;
+/** 이보다 얇은 조각(유리·손잡이 덧댐)은 외곽선을 생략 - 아래 몸체 외곽선이 대신함 */
+const OUTLINE_MIN_CM = 1;
+
+/** 조각 가장 얇은 변 기준 외곽선 굵기 배율 - 0이면 그리지 않음 */
+function outlineScale(part: Part): number {
+  const thin = Math.min(...part.size);
+  if (thin < OUTLINE_MIN_CM) return 0;
+  return Math.min(1, Math.max(0.35, thin / OUTLINE_FULL_CM));
+}
+
 const materialCache = new Map<string, MeshStandardMaterial>();
 
 /** 재질·색·톤 조합마다 하나 - 가구끼리 공유 */
@@ -404,9 +416,9 @@ export const FurnitureMesh = memo(function FurnitureMesh({
               receiveShadow
             >
               {/* 러그는 바닥에 붙은 판이라 뒤집힌 셸이 바닥과 깊이 경쟁해 번짐 - 바닥 표시만 */}
-              {selected && shadow && (
+              {selected && shadow && outlineScale(part) > 0 && (
                 <Outlines
-                  thickness={SELECTION_PX * dpr}
+                  thickness={SELECTION_PX * dpr * outlineScale(part)}
                   // 2D와 같이 경고 우선
                   color={SCENE_COLORS[warning ?? "primary"]}
                 />
