@@ -1,4 +1,4 @@
--- 새 가구 실제 상품 - 종류마다 쿠팡 판매량 상위 하나
+-- 새 가구 실제 상품 - 종류마다 쿠팡 랭킹 상위 하나
 insert into public.products
   (id, base, name, width, depth, height, color, url, price, checked_at)
 values
