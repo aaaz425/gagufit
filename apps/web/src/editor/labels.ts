@@ -64,7 +64,10 @@ export const CATEGORY_GROUPS: {
 }[] = [
   { label: "전체" },
   { label: "침대", categories: ["bed", "nightstand", "mattress", "loft-bed"] },
-  { label: "책상", categories: ["desk", "chair", "dressing-table", "stool"] },
+  { label: "책상", categories: ["desk", "dressing-table"] },
+  { label: "의자", categories: ["chair", "stool", "floor-chair"] },
+  { label: "소파", categories: ["sofa", "bean-bag"] },
+  { label: "테이블", categories: ["dining-table", "bar-table", "low-table"] },
   {
     label: "수납",
     categories: [
@@ -77,13 +80,9 @@ export const CATEGORY_GROUPS: {
       "cabinet",
       "cart",
       "storage-box",
+      "tv-stand",
     ],
   },
-  {
-    label: "소파",
-    categories: ["sofa", "floor-chair", "bean-bag", "tv-stand", "rug"],
-  },
-  { label: "테이블", categories: ["dining-table", "bar-table", "low-table"] },
   {
     label: "가전",
     categories: [
@@ -103,6 +102,7 @@ export const CATEGORY_GROUPS: {
       "mirror",
       "drying-rack",
       "floor-lamp",
+      "rug",
       "plant",
       "treadmill",
       "exercise-bike",
