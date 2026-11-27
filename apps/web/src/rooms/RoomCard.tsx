@@ -1,6 +1,7 @@
 "use client";
 
 import type { RoomSummary } from "@gagufit/api";
+import { formatTimestamp } from "@gagufit/core";
 import { MoreVertical, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -17,7 +18,7 @@ function modifiedLabel(iso: string, now: number): string {
   if (diff < HOUR) return `${Math.floor(diff / MINUTE)}분 전 수정`;
   if (diff < DAY) return `${Math.floor(diff / HOUR)}시간 전 수정`;
   if (diff < 30 * DAY) return `${Math.floor(diff / DAY)}일 전 수정`;
-  return `${new Date(iso).toLocaleDateString("ko")} 수정`;
+  return `${formatTimestamp(iso)} 수정`;
 }
 
 export function RoomCard({

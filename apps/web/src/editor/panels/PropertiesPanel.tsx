@@ -9,6 +9,7 @@ import {
   resizeFurniture,
   setOpeningKind,
   setOpeningWidth,
+  formatDay,
   updateFurniture,
   updateOpening,
   wallFrame,
@@ -143,7 +144,7 @@ function Offers({
           {o.price.toLocaleString("ko-KR")}원
         </span>
         <span className="text-xs text-ink-muted tabular-nums">
-          {o.checkedAt} 기준
+          {formatDay(o.checkedAt)} 기준
         </span>
       </p>
       <p className="text-xs text-ink-muted">실제 가격은 쿠팡에서 확인</p>

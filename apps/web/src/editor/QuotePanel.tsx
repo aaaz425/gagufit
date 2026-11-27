@@ -1,7 +1,12 @@
 "use client";
 
 import { useProducts } from "@gagufit/api";
-import { quoteRoom, type Quote, type QuoteItem } from "@gagufit/core";
+import {
+  formatDay,
+  quoteRoom,
+  type Quote,
+  type QuoteItem,
+} from "@gagufit/core";
 import { FURNITURE_COLORS, presetOf } from "@gagufit/data";
 import { ChevronDown, Receipt } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -230,7 +235,8 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
       {quote.refCheckedAt && (
         <p className="rounded-sm bg-surface px-3 py-2 text-xs leading-[1.4] text-ink-muted">
           참고가 {counts.ref}건은{" "}
-          <span className="tabular-nums">{quote.refCheckedAt}</span> 기준이에요
+          <span className="tabular-nums">{formatDay(quote.refCheckedAt)}</span>{" "}
+          기준이에요
           <br />
           실제 가격은 쿠팡에서 확인
         </p>

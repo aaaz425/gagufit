@@ -36,3 +36,4 @@ export {
 } from "./room";
 export { currentPresetId, CURRENT_SCHEMA_VERSION, migrate } from "./schema";
 export { quoteRoom, type Quote, type QuoteItem } from "./quote";
+export { formatDay, formatTimestamp } from "./date";
