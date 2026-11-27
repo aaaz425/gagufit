@@ -6,7 +6,7 @@ import { CirclePlus, CloudOff, LoaderCircle, Search } from "lucide-react";
 import { useState } from "react";
 import { addPresetToRoom } from "../actions";
 import { CATEGORY_GROUPS } from "../labels";
-import { FurnitureThumb } from "../plan/FurnitureSymbol";
+import { ProductImage } from "./ProductImage";
 import { Segment, TOUCH_44 } from "../ui";
 
 /** 검색창 id - 빈 방 안내가 찾아 포커스 */
@@ -87,7 +87,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
               }}
               className="flex w-full items-center gap-3 rounded-sm p-2 text-left hover:bg-surface"
             >
-              <FurnitureThumb category={preset.category} size={preset.size} />
+              <ProductImage preset={preset} px={48} />
               <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="truncate text-sm font-semibold text-ink">
                   {preset.name}
