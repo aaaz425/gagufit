@@ -47,8 +47,8 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
         <input
           id={FURNITURE_SEARCH_ID}
           type="search"
-          aria-label="가구 검색"
-          placeholder="가구 검색"
+          aria-label={source === "product" ? "상품 검색" : "가구 검색"}
+          placeholder={source === "product" ? "상품 검색" : "가구 검색"}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-ink-subtle"
@@ -132,7 +132,9 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
         ) : (
           list.length === 0 && (
             <li className="py-6 text-center text-sm text-ink-muted">
-              찾는 가구가 없어요
+              {source === "product"
+                ? "찾는 상품이 없어요"
+                : "찾는 가구가 없어요"}
             </li>
           )
         )}
