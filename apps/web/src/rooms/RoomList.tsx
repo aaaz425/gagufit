@@ -1,7 +1,7 @@
 "use client";
 
 import { useRooms, type RoomSummary } from "@gagufit/api";
-import { CloudOff, Info } from "lucide-react";
+import { CloudOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { exitDelay } from "@/motion";
@@ -29,12 +29,9 @@ export function RoomList() {
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4 py-6 md:px-10 md:py-10">
         <header className="flex flex-col gap-2 pb-2">
           <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
-          <p className="flex items-start gap-1.5 text-sm text-ink-muted">
-            <Info size={16} className="mt-0.5 shrink-0" aria-hidden />
-            <span>
-              로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
-              삭제돼요
-            </span>
+          <p className="text-sm text-balance text-ink-muted">
+            로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일간 접속하지 않으면
+            삭제돼요
           </p>
         </header>
 

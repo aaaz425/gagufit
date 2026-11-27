@@ -36,7 +36,6 @@ export function EmptyHint({ at, compact }: { at: Vec2; compact: boolean }) {
     >
       <Sofa size={28} className="text-primary" aria-hidden />
       <p className="text-base font-bold text-ink">아직 가구가 없어요</p>
-      <p className="text-xs text-ink-muted">가구를 골라 방에 놓아 보세요</p>
       <button
         type="button"
         className="h-11 rounded-sm bg-primary px-4 text-sm font-semibold text-white hover:bg-primary-hover"

@@ -1,12 +1,18 @@
 "use client";
 
 import { useProducts } from "@gagufit/api";
-import { quoteRoom, type Quote, type QuoteItem } from "@gagufit/core";
+import {
+  formatDay,
+  quoteRoom,
+  type Quote,
+  type QuoteItem,
+  type Warning,
+} from "@gagufit/core";
 import { FURNITURE_COLORS, presetOf } from "@gagufit/data";
 import { ChevronDown, Receipt } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePresence } from "@/motion";
-import { placedName } from "./labels";
+import { placedName, strongestTone, warningBadgeLabel } from "./labels";
 import { FurnitureThumb } from "./plan/FurnitureSymbol";
 import { useEditor, useRoom } from "./store";
 
@@ -33,7 +39,14 @@ export function useQuote(): {
 }
 
 /** 상단 바 견적 알약 - 데스크톱은 아래 팝오버, 모바일은 바텀시트 */
-export function QuoteButton({ compact }: { compact: boolean }) {
+export function QuoteButton({
+  compact,
+  warnings,
+}: {
+  compact: boolean;
+  /** 모바일은 경고 수를 알약 모서리에 합쳐 보여 줌 */
+  warnings: Warning[];
+}) {
   const room = useRoom();
   const { quote } = useQuote();
   const setSheet = useEditor((s) => s.setSheet);
@@ -48,12 +61,16 @@ export function QuoteButton({ compact }: { compact: boolean }) {
       <button
         type="button"
         aria-expanded={open}
-        aria-label={`견적 ${won(quote.total)}`}
+        aria-label={`견적 ${won(quote.total)}${
+          compact && warnings.length > 0
+            ? `, ${warningBadgeLabel(warnings)}`
+            : ""
+        }`}
         onClick={() =>
           compact ? setSheet(sheetOpen ? null : "quote") : setPopover((v) => !v)
         }
         className={`flex shrink-0 items-center gap-1.5 rounded-full text-sm font-bold whitespace-nowrap tabular-nums ${
-          compact ? "h-10 px-3" : "h-9 px-3"
+          compact ? "relative h-11 px-3" : "h-9 px-3"
         } ${
           open
             ? "bg-primary-soft text-primary"
@@ -63,6 +80,18 @@ export function QuoteButton({ compact }: { compact: boolean }) {
         <Receipt size={16} aria-hidden />
         {compact ? shortWon(quote.total) : `견적 ${won(quote.total)}`}
         {!compact && <ChevronDown size={16} aria-hidden />}
+        {compact && warnings.length > 0 && (
+          <span
+            aria-hidden
+            className={`absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full text-xs font-bold ${
+              strongestTone(warnings) === "danger"
+                ? "bg-danger text-white"
+                : "bg-caution text-white"
+            }`}
+          >
+            {warnings.length}
+          </span>
+        )}
       </button>
       {!compact && mounted && (
         <QuotePopover exiting={exiting} onClose={() => setPopover(false)} />
@@ -192,11 +221,13 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
                     <span className="truncate text-sm font-semibold text-ink">
                       {placedName(f)}
                     </span>
-                    <span
-                      className={`shrink-0 rounded-full px-1.5 text-[11px] font-bold ${tag.cls}`}
-                    >
-                      {tag.text}
-                    </span>
+                    {item.source !== "none" && (
+                      <span
+                        className={`shrink-0 rounded-full px-1.5 text-xs font-bold ${tag.cls}`}
+                      >
+                        {tag.text}
+                      </span>
+                    )}
                   </span>
                   <span className="text-xs text-ink-muted tabular-nums">
                     {f.size.width} × {f.size.depth} cm
@@ -218,21 +249,20 @@ export function QuoteBody({ onPick }: { onPick?: () => void }) {
       </ul>
       {loading && counts.none > 0 && (
         <p role="status" className="text-xs text-ink-muted">
-          상품 참고가를 불러오는 중이에요
+          참고가를 불러오는 중이에요
         </p>
       )}
       {failed &&
         room.furniture.some((f) => f.product && f.price === undefined) && (
           <p role="status" className="text-xs text-ink-muted">
-            상품 참고가를 불러오지 못해 견적에서 빠졌어요
+            참고가를 불러오지 못해 견적에서 빠졌어요
           </p>
         )}
       {quote.refCheckedAt && (
-        <p className="rounded-sm bg-surface px-3 py-2 text-xs leading-[1.4] text-ink-muted">
+        <p className="shrink-0 rounded-sm bg-surface px-3 py-2 text-xs leading-[1.4] text-ink-muted">
           참고가 {counts.ref}건은{" "}
-          <span className="tabular-nums">{quote.refCheckedAt}</span> 기준이에요
-          <br />
-          실제 가격은 쿠팡에서 확인
+          <span className="tabular-nums">{formatDay(quote.refCheckedAt)}</span>{" "}
+          기준 · 실제 가격은 쿠팡에서 확인
         </p>
       )}
     </>

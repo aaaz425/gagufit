@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDay } from "@gagufit/core";
 import { FURNITURE_PRESETS } from "@gagufit/data";
 import { useProducts } from "@gagufit/api";
 import { CirclePlus, CloudOff, LoaderCircle, Search } from "lucide-react";
@@ -30,8 +31,13 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
       (!words || p.name.replace(/\s+/g, "").includes(words)),
   );
 
+  // 목록 가격 중 가장 오래된 기준일 - 견적과 같은 규칙
+  const oldest = list
+    .flatMap((p) => p.offers?.[0]?.checkedAt ?? [])
+    .reduce<string | null>((a, d) => (a === null || d < a ? d : a), null);
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
       <Segment
         full
         label="가구 종류"
@@ -47,14 +53,15 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
         <input
           id={FURNITURE_SEARCH_ID}
           type="search"
-          aria-label="가구 검색"
-          placeholder="가구 검색"
+          aria-label={source === "product" ? "상품 검색" : "가구 검색"}
+          placeholder={source === "product" ? "상품 검색" : "가구 검색"}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-ink-subtle"
         />
       </label>
-      <div className="-mx-4 flex shrink-0 [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-2 md:mx-0 md:flex-wrap md:px-0">
+      {/* 오른쪽 끝이 흐려져 더 있음을 알림 - 폭은 오른쪽 여백(px-4) */}
+      <div className="-mx-4 flex shrink-0 [scrollbar-width:none] gap-2 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-16px),transparent)] px-4 md:mx-0 md:flex-wrap md:[mask-image:none] md:px-0">
         {CATEGORY_GROUPS.map((g, i) => (
           <button
             key={g.label}
@@ -73,7 +80,8 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
       </div>
       {source === "product" && (
         <p className="shrink-0 text-xs text-ink-muted">
-          실제 가격은 쿠팡에서 확인
+          {oldest && `참고가 ${formatDay(oldest)} 기준 · `}실제 가격은 쿠팡에서
+          확인
         </p>
       )}
       <ul className="-mr-4 -ml-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-4 pl-1">
@@ -89,7 +97,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             >
               <ProductImage preset={preset} px={48} />
               <span className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="truncate text-sm font-semibold text-ink">
+                <span className="line-clamp-2 text-sm font-semibold break-keep text-ink">
                   {preset.name}
                 </span>
                 <span className="text-xs text-ink-muted tabular-nums">
@@ -132,7 +140,9 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
         ) : (
           list.length === 0 && (
             <li className="py-6 text-center text-sm text-ink-muted">
-              찾는 가구가 없어요
+              {source === "product"
+                ? "찾는 상품이 없어요"
+                : "찾는 가구가 없어요"}
             </li>
           )
         )}
