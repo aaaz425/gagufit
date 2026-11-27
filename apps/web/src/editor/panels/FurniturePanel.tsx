@@ -31,7 +31,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
       <Segment
         full
         label="가구 종류"
@@ -54,7 +54,8 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
           className="w-full min-w-0 bg-transparent text-base text-ink outline-none placeholder:text-ink-subtle"
         />
       </label>
-      <div className="-mx-4 flex shrink-0 [scrollbar-width:none] gap-2 overflow-x-auto px-4 py-2 md:mx-0 md:flex-wrap md:px-0">
+      {/* 오른쪽 끝이 흐려져 더 있음을 알림 - 폭은 오른쪽 여백(px-4) */}
+      <div className="-mx-4 flex shrink-0 [scrollbar-width:none] gap-2 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-16px),transparent)] px-4 md:mx-0 md:flex-wrap md:[mask-image:none] md:px-0">
         {CATEGORY_GROUPS.map((g, i) => (
           <button
             key={g.label}
@@ -89,7 +90,7 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
             >
               <ProductImage preset={preset} px={48} />
               <span className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="truncate text-sm font-semibold text-ink">
+                <span className="line-clamp-2 text-sm font-semibold break-keep text-ink">
                   {preset.name}
                 </span>
                 <span className="text-xs text-ink-muted tabular-nums">

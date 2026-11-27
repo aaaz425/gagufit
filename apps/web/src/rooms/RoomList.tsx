@@ -31,7 +31,7 @@ export function RoomList() {
           <h1 className="text-2xl font-extrabold text-ink">내 방</h1>
           <p className="flex items-start gap-1.5 text-sm text-ink-muted">
             <Info size={16} className="mt-0.5 shrink-0" aria-hidden />
-            <span>
+            <span className="text-balance">
               로그인 없이 만든 방은 {ANON_RETENTION_DAYS}일 동안 접속하지 않으면
               삭제돼요
             </span>

@@ -98,7 +98,9 @@ function Header({
     <div className="flex items-center gap-3">
       {icon}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <h2 className="truncate text-base font-bold text-ink">{title}</h2>
+        <h2 className="line-clamp-2 text-base font-bold break-keep text-ink">
+          {title}
+        </h2>
         <p className="text-xs text-ink-muted">{subtitle}</p>
       </div>
       {action}
@@ -218,7 +220,7 @@ function OwnPrice({
         onCommit={onChange}
         onClear={() => onChange(undefined)}
       />
-      <p className="-mt-2 text-xs text-ink-muted">
+      <p className="-mt-2 text-xs text-pretty break-keep text-ink-muted">
         {ref
           ? `내가 찾은 가격을 넣으면 견적에 이 값이 먼저 쓰여요. 비우면 참고가 ${ref.price.toLocaleString("ko-KR")}원으로 계산해요`
           : "내가 찾은 가격을 넣으면 견적에 더해져요"}
@@ -455,7 +457,7 @@ function ColorPicker({
 }) {
   return (
     <div
-      className="flex flex-wrap gap-3"
+      className="grid auto-cols-fr grid-flow-col md:flex md:flex-wrap md:gap-3"
       role="radiogroup"
       aria-label="가구 색"
     >
@@ -470,7 +472,7 @@ function ColorPicker({
             aria-label={c.name}
             title={c.name}
             onClick={() => !on && onChange(c.id)}
-            className="flex size-11 items-center justify-center rounded-sm hover:bg-surface"
+            className="flex h-11 items-center justify-center rounded-sm hover:bg-surface md:size-11"
           >
             <span
               className={`size-8 rounded-full ${

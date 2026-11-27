@@ -3,6 +3,7 @@
 import { history } from "@gagufit/core";
 import {
   ChevronLeft,
+  CloudAlert,
   LoaderCircle,
   Redo2,
   Settings,
@@ -38,7 +39,7 @@ export function TopBar({ compact }: { compact: boolean }) {
   return (
     <header
       className={`flex shrink-0 items-center border-b border-border bg-canvas ${
-        compact ? "h-13 gap-1 px-2" : "h-15 gap-3 px-4"
+        compact ? "h-13 gap-0 px-1" : "h-15 gap-3 px-4"
       }`}
     >
       <Link
@@ -69,23 +70,31 @@ export function TopBar({ compact }: { compact: boolean }) {
           <Redo2 size={20} />
         </IconButton>
       </div>
-      {/* 배지가 생기고 없어져도 옆 버튼이 밀리지 않게 데스크톱은 자리 고정 - 모바일은 이름 자리가 좁아 고정 안 함 */}
-      <span role="status" className={`flex shrink-0 ${compact ? "" : "w-26"}`}>
-        {warnings.length > 0 && (
-          <span
-            aria-label={warningBadgeLabel(warnings)}
-            className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap tabular-nums ${
-              strongestTone(warnings) === "danger"
-                ? "bg-danger-soft text-danger"
-                : "bg-caution-soft text-caution"
-            }`}
-          >
-            <TriangleAlert size={14} aria-hidden />
-            {compact ? warnings.length : warningBadgeLabel(warnings)}
-          </span>
-        )}
-      </span>
-      <QuoteButton compact={compact} />
+      {/* 모바일은 견적 알약에 합쳐 시각 배지가 없어 안내만 남김 */}
+      {compact && (
+        <span role="status" className="sr-only">
+          {warnings.length > 0 && warningBadgeLabel(warnings)}
+        </span>
+      )}
+      {/* 배지가 생기고 없어져도 옆 버튼이 밀리지 않게 데스크톱은 자리 고정 - 모바일은 견적 알약에 합침 */}
+      {!compact && (
+        <span role="status" className="flex w-26 shrink-0">
+          {warnings.length > 0 && (
+            <span
+              aria-label={warningBadgeLabel(warnings)}
+              className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap tabular-nums ${
+                strongestTone(warnings) === "danger"
+                  ? "bg-danger-soft text-danger"
+                  : "bg-caution-soft text-caution"
+              }`}
+            >
+              <TriangleAlert size={14} aria-hidden />
+              {warningBadgeLabel(warnings)}
+            </span>
+          )}
+        </span>
+      )}
+      <QuoteButton compact={compact} warnings={warnings} />
       {!compact && <ViewSwitch />}
       <SettingsButton compact={compact} />
     </header>
@@ -101,6 +110,17 @@ const SAVE_LABELS: Record<SaveStatus, string> = {
 
 function SaveState({ compact }: { compact: boolean }) {
   const status = useEditor((s) => s.saveStatus);
+  // 모바일은 이름 자리가 좁아 실패일 때만 아이콘, 나머지는 스크린 리더용
+  if (compact) {
+    return (
+      <span role="status" className="flex min-w-0 flex-1 items-center">
+        {status === "failed" && (
+          <CloudAlert size={18} aria-hidden className="mx-1 text-danger" />
+        )}
+        <span className="sr-only">{SAVE_LABELS[status]}</span>
+      </span>
+    );
+  }
   return (
     <span
       role="status"
@@ -115,9 +135,7 @@ function SaveState({ compact }: { compact: boolean }) {
           className="mr-1 inline animate-spin align-[-2px]"
         />
       )}
-      {status === "failed" && !compact
-        ? "저장 실패 - 다시 시도 중"
-        : SAVE_LABELS[status]}
+      {status === "failed" ? "저장 실패 - 다시 시도 중" : SAVE_LABELS[status]}
     </span>
   );
 }
