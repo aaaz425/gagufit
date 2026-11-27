@@ -22,12 +22,7 @@ import {
 } from "@gagufit/core";
 import { useProducts } from "@gagufit/api";
 import { FURNITURE_COLORS, FURNITURE_PRESETS, presetOf } from "@gagufit/data";
-import {
-  ExternalLink,
-  LoaderCircle,
-  RotateCw,
-  TriangleAlert,
-} from "lucide-react";
+import { LoaderCircle, RotateCw, TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import { trackCoupangClick } from "@/site/analytics";
 import { COUPANG_NOTICE } from "@/site/constants";
@@ -49,6 +44,7 @@ import {
   warningText,
 } from "../labels";
 import { FurnitureThumb } from "../plan/FurnitureSymbol";
+import { ProductImage } from "./ProductImage";
 import { useEditor, useRoom, warningsOf, type Selection } from "../store";
 import { NumberField, SectionTitle, Segment, TOUCH_44 } from "../ui";
 import { OpeningIcon } from "./RoomPanel";
@@ -162,10 +158,20 @@ function Offers({
             referencePrice: o.price,
           })
         }
-        className="flex h-11 items-center justify-center gap-2 rounded-sm bg-primary-soft text-sm font-bold text-primary hover:bg-primary hover:text-white"
+        className="flex min-h-18 overflow-hidden rounded-sm border border-border bg-canvas hover:shadow-raised"
       >
-        쿠팡에서 보기
-        <ExternalLink size={16} aria-hidden />
+        <span className="flex shrink-0 items-center border-r border-border bg-canvas">
+          <ProductImage preset={product} px={72} square />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3 py-2">
+          <span className="line-clamp-2 text-sm leading-[1.35] font-bold text-ink">
+            {product.name}
+          </span>
+          <span className="text-xs tracking-[0.02em] text-ink-subtle">
+            COUPANG
+          </span>
+          <span className="text-xs text-primary">link.coupang.com</span>
+        </span>
       </a>
       <p className="text-xs leading-[1.4] text-ink-muted">{COUPANG_NOTICE}</p>
     </div>

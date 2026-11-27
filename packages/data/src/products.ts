@@ -18,6 +18,7 @@ export type ProductRow = {
   url: string;
   price: number;
   checked_at: string;
+  image_url: string | null;
 };
 
 const BASE_ORDER = Object.keys(FURNITURE_PRESETS);
@@ -57,6 +58,7 @@ export function productsFromRows(
         defaultColor: color,
         layer: base.layer,
         baseId,
+        imageUrl: r.image_url,
         offers: [{ url: r.url, price: r.price, checkedAt: r.checked_at }],
       },
     });

@@ -284,7 +284,9 @@ shadow:
 
 - 대가성 문구 - 쿠팡 링크 바로 옆, `caption` `ink-muted`, 접기·숨김 금지
 - 참고가 - 기준일과 "실제 가격은 쿠팡에서 확인" 함께, 사용자 입력가와 구분 표시
-- 속성 패널 쿠팡 영역 - `surface` 바탕 `border` `md` 카드 - 참고가·기준일, 안내 한 줄, "쿠팡에서 보기" 링크(`primary-soft` 버튼형, 44px), 그 아래 대가성 문구
+- 속성 패널 쿠팡 영역 - `surface` 바탕 `border` `md` 카드 - 참고가·기준일, 안내 한 줄, 상품 링크 카드, 그 아래 대가성 문구
+- 상품 링크 카드 - 전체가 링크, `canvas` 바탕 `border` `sm`, 왼쪽 72px 정사각 사진 + 세로 구분선, 오른쪽 상품명(14px bold, 2줄 말줄임)·COUPANG(`caption` `ink-subtle`)·link.coupang.com(`caption` `primary`), hover `raised`
+- 상품 사진 - 목록 48px `md` 모서리·`border`·`canvas` 바탕 cover, 없거나 로딩 실패면 평면 기호 썸네일로 대체, 쿠팡 로고 이미지 금지
 - 가구 패널 - 위에 "기본 가구 / 실제 상품" 전환, 상품 항목에 규격과 참고가 표시
 
 ## 카카오 로그인 - 2차
