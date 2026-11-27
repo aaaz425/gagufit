@@ -164,7 +164,7 @@ function Offers({
         }
         className="flex min-h-18 overflow-hidden rounded-sm border border-border bg-canvas hover:shadow-raised"
       >
-        <span className="shrink-0 border-r border-border">
+        <span className="flex shrink-0 items-center border-r border-border bg-canvas">
           <ProductImage preset={product} px={72} square />
         </span>
         <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3 py-2">
