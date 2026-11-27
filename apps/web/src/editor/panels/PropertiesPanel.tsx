@@ -183,7 +183,7 @@ function hostOf(url: string) {
   try {
     return new URL(url).host;
   } catch {
-    return "";
+    return "link.coupang.com";
   }
 }
 
