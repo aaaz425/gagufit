@@ -35,13 +35,9 @@ describe("productsFromRows", () => {
     ]);
   });
 
-  it("사진 주소를 imageUrl로 옮기고 없으면 null", () => {
-    const [a, b] = productsFromRows([
-      row("a", { image_url: "https://thumbnail1.coupangcdn.com/a.jpg" }),
-      row("b"),
-    ]);
-    expect(a.imageUrl).toBe("https://thumbnail1.coupangcdn.com/a.jpg");
-    expect(b.imageUrl).toBeNull();
+  it("DB 사진 주소가 null이면 imageUrl 없음", () => {
+    const [a] = productsFromRows([row("a")]);
+    expect(a.imageUrl).toBeUndefined();
   });
 
   it("color가 비었거나 모르는 값이면 base 기본색", () => {

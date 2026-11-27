@@ -58,7 +58,7 @@ export function productsFromRows(
         defaultColor: color,
         layer: base.layer,
         baseId,
-        imageUrl: r.image_url,
+        imageUrl: r.image_url ?? undefined,
         offers: [{ url: r.url, price: r.price, checkedAt: r.checked_at }],
       },
     });

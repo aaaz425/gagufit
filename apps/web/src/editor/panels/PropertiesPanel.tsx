@@ -158,6 +158,7 @@ function Offers({
             referencePrice: o.price,
           })
         }
+        aria-label={`${product.name} 쿠팡에서 보기, 새 탭에서 열림`}
         className="flex min-h-18 overflow-hidden rounded-sm border border-border bg-canvas hover:shadow-raised"
       >
         <span className="flex shrink-0 items-center border-r border-border bg-canvas">
@@ -170,12 +171,20 @@ function Offers({
           <span className="text-xs tracking-[0.02em] text-ink-subtle">
             COUPANG
           </span>
-          <span className="text-xs text-primary">link.coupang.com</span>
+          <span className="text-xs text-primary">{hostOf(o.url)}</span>
         </span>
       </a>
       <p className="text-xs leading-[1.4] text-ink-muted">{COUPANG_NOTICE}</p>
     </div>
   );
+}
+
+function hostOf(url: string) {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "link.coupang.com";
+  }
 }
 
 /** 내 가격 입력 상한 원 */
