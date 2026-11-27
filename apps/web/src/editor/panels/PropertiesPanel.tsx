@@ -23,7 +23,12 @@ import {
 } from "@gagufit/core";
 import { useProducts } from "@gagufit/api";
 import { FURNITURE_COLORS, FURNITURE_PRESETS, presetOf } from "@gagufit/data";
-import { LoaderCircle, RotateCw, TriangleAlert } from "lucide-react";
+import {
+  ExternalLink,
+  LoaderCircle,
+  RotateCw,
+  TriangleAlert,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { trackCoupangClick } from "@/site/analytics";
 import { COUPANG_NOTICE } from "@/site/constants";
@@ -50,36 +55,24 @@ import { useEditor, useRoom, warningsOf, type Selection } from "../store";
 import { NumberField, SectionTitle, Segment, TOUCH_44 } from "../ui";
 import { OpeningIcon } from "./RoomPanel";
 
-/** 선택한 가구·문·창문 속성 - header는 모바일 시트 접기 버튼 자리 */
+/** 선택한 가구·문·창문 속성 */
 export function PropertiesPanel({
   selection,
-  headerAction,
   showActions,
 }: {
   selection: NonNullable<Selection>;
-  headerAction?: ReactNode;
   showActions?: boolean;
 }) {
   const room = useRoom();
   if (selection.kind === "furniture") {
     const f = room.furniture.find((item) => item.id === selection.id);
     return f ? (
-      <FurnitureProps
-        room={room}
-        furniture={f}
-        headerAction={headerAction}
-        showActions={showActions}
-      />
+      <FurnitureProps room={room} furniture={f} showActions={showActions} />
     ) : null;
   }
   const o = room.openings.find((item) => item.id === selection.id);
   return o ? (
-    <OpeningProps
-      room={room}
-      opening={o}
-      headerAction={headerAction}
-      showActions={showActions}
-    />
+    <OpeningProps room={room} opening={o} showActions={showActions} />
   ) : null;
 }
 
@@ -87,12 +80,10 @@ function Header({
   icon,
   title,
   subtitle,
-  action,
 }: {
   icon: ReactNode;
   title: string;
-  subtitle: string;
-  action?: ReactNode;
+  subtitle?: string;
 }) {
   return (
     <div className="flex items-center gap-3">
@@ -101,9 +92,8 @@ function Header({
         <h2 className="line-clamp-2 text-base font-bold break-keep text-ink">
           {title}
         </h2>
-        <p className="text-xs text-ink-muted">{subtitle}</p>
+        {subtitle && <p className="text-xs text-ink-muted">{subtitle}</p>}
       </div>
-      {action}
     </div>
   );
 }
@@ -115,14 +105,12 @@ function ProductOffers({ productId }: { productId: string }) {
     return (
       <div className="flex h-11 items-center justify-center gap-2 rounded-md border border-border bg-surface text-xs text-ink-muted">
         <LoaderCircle size={16} className="animate-spin" aria-hidden />
-        <span role="status">가격과 링크를 불러오는 중이에요</span>
+        <span role="status">불러오는 중이에요</span>
       </div>
     );
   }
   if (isError) {
-    return (
-      <p className="text-xs text-ink-muted">가격과 링크를 불러오지 못했어요</p>
-    );
+    return <p className="text-xs text-ink-muted">불러오지 못했어요</p>;
   }
   const product = data?.find((p) => p.id === productId);
   // 판매처가 여럿이어도 첫 offer만 표시
@@ -140,16 +128,14 @@ function Offers({
 }) {
   return (
     <div className="flex flex-col gap-2 rounded-md border border-border bg-surface p-3">
-      <p className="flex items-baseline gap-2">
-        <span className="text-xs text-ink-muted">참고가</span>
+      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-xs text-ink-muted">
+        <span>참고가</span>
         <span className="text-base font-bold text-ink tabular-nums">
           {o.price.toLocaleString("ko-KR")}원
         </span>
-        <span className="text-xs text-ink-muted tabular-nums">
-          {formatDay(o.checkedAt)} 기준
-        </span>
+        <span className="tabular-nums">{formatDay(o.checkedAt)} 기준</span>
+        <span>실제 가격은 쿠팡에서 확인</span>
       </p>
-      <p className="text-xs text-ink-muted">실제 가격은 쿠팡에서 확인</p>
       <a
         href={o.url}
         target="_blank"
@@ -168,11 +154,9 @@ function Offers({
           <ProductImage preset={product} px={72} square />
         </span>
         <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3 py-2">
-          <span className="line-clamp-2 text-sm leading-[1.35] font-bold text-ink">
-            {product.name}
-          </span>
-          <span className="text-xs tracking-[0.02em] text-ink-subtle">
-            COUPANG
+          <span className="flex items-center gap-1 text-sm font-bold text-ink">
+            쿠팡에서 보기
+            <ExternalLink size={14} aria-hidden />
           </span>
           <span className="text-xs text-primary">{hostOf(o.url)}</span>
         </span>
@@ -222,8 +206,8 @@ function OwnPrice({
       />
       <p className="-mt-2 text-xs text-pretty break-keep text-ink-muted">
         {ref
-          ? `내가 찾은 가격을 넣으면 견적에 이 값이 먼저 쓰여요. 비우면 참고가 ${ref.price.toLocaleString("ko-KR")}원으로 계산해요`
-          : "내가 찾은 가격을 넣으면 견적에 더해져요"}
+          ? `입력하면 견적에 먼저 쓰여요. 비우면 참고가 ${ref.price.toLocaleString("ko-KR")}원으로 계산해요`
+          : "입력하면 견적에 더해져요"}
       </p>
     </>
   );
@@ -311,12 +295,10 @@ function Actions({ furniture }: { furniture: boolean }) {
 function FurnitureProps({
   room,
   furniture: f,
-  headerAction,
   showActions,
 }: {
   room: Room;
   furniture: PlacedFurniture;
-  headerAction?: ReactNode;
   showActions?: boolean;
 }) {
   const update = useEditor((s) => s.update);
@@ -356,8 +338,14 @@ function FurnitureProps({
           />
         }
         title={placedName(f)}
-        subtitle={preset ? CATEGORY_LABELS[preset.category] : "기타"}
-        action={headerAction}
+        // 기본 가구는 이름이 곧 종류라 부제 생략
+        subtitle={
+          f.product
+            ? preset
+              ? CATEGORY_LABELS[preset.category]
+              : "기타"
+            : undefined
+        }
       />
       {f.product && <ProductOffers productId={f.product.id} />}
       <SectionTitle>내 가격</SectionTitle>
@@ -493,12 +481,10 @@ function ColorPicker({
 function OpeningProps({
   room,
   opening: o,
-  headerAction,
   showActions,
 }: {
   room: Room;
   opening: Opening;
-  headerAction?: ReactNode;
   showActions?: boolean;
 }) {
   const update = useEditor((s) => s.update);
@@ -522,7 +508,6 @@ function OpeningProps({
         }
         title={OPENING_LABELS[o.kind]}
         subtitle={`${o.kind === "window" ? "창문" : "문"} · ${wallLabel(o.wall)}`}
-        action={headerAction}
       />
       {o.kind !== "window" && (
         <>

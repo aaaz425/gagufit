@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { usePresence } from "@/motion";
 import { QuoteBody } from "../QuotePanel";
@@ -26,12 +25,7 @@ export function MobileSheet() {
 
   let body: ReactNode;
   if (sheet === "furniture") {
-    body = (
-      <>
-        <h2 className="text-xl font-bold text-ink">가구 추가</h2>
-        <FurniturePanel onAdded={close} />
-      </>
-    );
+    body = <FurniturePanel onAdded={close} />;
   } else if (sheet === "quote") {
     body = <QuoteBody onPick={close} />;
   } else if (sheet === "room") {
@@ -44,22 +38,7 @@ export function MobileSheet() {
   } else {
     body = (
       <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 pb-1">
-        {selection && (
-          <PropertiesPanel
-            selection={selection}
-            showActions
-            headerAction={
-              <button
-                type="button"
-                aria-label="접기"
-                onClick={close}
-                className="flex size-11 items-center justify-center rounded-sm text-ink hover:bg-surface"
-              >
-                <ChevronDown size={22} />
-              </button>
-            }
-          />
-        )}
+        {selection && <PropertiesPanel selection={selection} showActions />}
       </div>
     );
   }
@@ -77,6 +56,7 @@ export function MobileSheet() {
       <section
         role="dialog"
         aria-modal
+        aria-label={sheet === "furniture" ? "가구 추가" : undefined}
         data-exiting={exit}
         className={`motion-sheet relative flex max-h-[72dvh] flex-col gap-4 rounded-t-lg bg-canvas px-4 pb-[max(24px,env(safe-area-inset-bottom))] ${
           // 검색 결과 수에 따라 시트 높이가 흔들리지 않게

@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDay } from "@gagufit/core";
 import { FURNITURE_PRESETS } from "@gagufit/data";
 import { useProducts } from "@gagufit/api";
 import { CirclePlus, CloudOff, LoaderCircle, Search } from "lucide-react";
@@ -29,6 +30,11 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
       (!categories || categories.includes(p.category)) &&
       (!words || p.name.replace(/\s+/g, "").includes(words)),
   );
+
+  // 목록 가격 중 가장 오래된 기준일 - 견적과 같은 규칙
+  const oldest = list
+    .flatMap((p) => p.offers?.[0]?.checkedAt ?? [])
+    .reduce<string | null>((a, d) => (a === null || d < a ? d : a), null);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
@@ -74,7 +80,8 @@ export function FurniturePanel({ onAdded }: { onAdded?: () => void }) {
       </div>
       {source === "product" && (
         <p className="shrink-0 text-xs text-ink-muted">
-          실제 가격은 쿠팡에서 확인
+          {oldest && `참고가 ${formatDay(oldest)} 기준 · `}실제 가격은 쿠팡에서
+          확인
         </p>
       )}
       <ul className="-mr-4 -ml-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-4 pl-1">
