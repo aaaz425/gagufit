@@ -9,7 +9,7 @@ export async function listProducts(
   const { data, error } = await client
     .from("products")
     .select(
-      "id, base, name, width, depth, height, color, url, price, checked_at",
+      "id, base, name, width, depth, height, color, url, price, checked_at, image_url",
     );
   if (error) throw error;
   return productsFromRows(data);

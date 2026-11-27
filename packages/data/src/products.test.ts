@@ -13,6 +13,7 @@ const row = (id: string, over: Partial<ProductRow> = {}): ProductRow => ({
   url: "https://link.coupang.com/a/x",
   price: 10000,
   checked_at: "2026-11-21",
+  image_url: null,
   ...over,
 });
 
@@ -32,6 +33,15 @@ describe("productsFromRows", () => {
         checkedAt: "2026-11-21",
       },
     ]);
+  });
+
+  it("사진 주소를 imageUrl로 옮기고 없으면 null", () => {
+    const [a, b] = productsFromRows([
+      row("a", { image_url: "https://thumbnail1.coupangcdn.com/a.jpg" }),
+      row("b"),
+    ]);
+    expect(a.imageUrl).toBe("https://thumbnail1.coupangcdn.com/a.jpg");
+    expect(b.imageUrl).toBeNull();
   });
 
   it("color가 비었거나 모르는 값이면 base 기본색", () => {
