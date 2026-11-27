@@ -152,8 +152,8 @@ export type FurniturePreset = {
   offers?: Offer[];
   /** 실제 상품만 - 분류·크기 규칙을 이어받은 기본 프리셋 id, 배치 때 presetId로 저장 */
   baseId?: string;
-  /** 실제 상품만 - 쿠팡 상품 사진 주소, 없으면 null */
-  imageUrl?: string | null;
+  /** 실제 상품만 - 쿠팡 상품 사진 주소 */
+  imageUrl?: string;
 };
 
 export type PlacedFurniture = {
