@@ -22,11 +22,7 @@ import {
 } from "@gagufit/core";
 import { useProducts } from "@gagufit/api";
 import { FURNITURE_COLORS, FURNITURE_PRESETS, presetOf } from "@gagufit/data";
-import {
-  LoaderCircle,
-  RotateCw,
-  TriangleAlert,
-} from "lucide-react";
+import { LoaderCircle, RotateCw, TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import { trackCoupangClick } from "@/site/analytics";
 import { COUPANG_NOTICE } from "@/site/constants";
